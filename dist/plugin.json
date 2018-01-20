@@ -1,0 +1,31 @@
+{
+  "type": "panel",
+  "name": "Boom Table",
+  "id": "yesoreyeram-boomtable-panel",
+  "info": {
+    "description": "Boom table panel for Grafana",
+    "author": {
+      "name": "Sriramajeyam Sugumaran",
+      "url": "https://www.google.com/search?q=Sriramajeyam+Sugumaran"
+    },
+    "keywords": [
+      "grafana",
+      "plugin",
+      "panel",
+      "table",
+      "graphite",
+      "multi column"
+    ],
+    "links": [
+      {
+        "name": "Github",
+        "url": "https://github.com/yesoreyeram/yesoreyeram-boomtable-panel"
+      }
+    ],
+    "version": "0.1.0"
+  },
+  "dependencies": {
+    "grafanaVersion": "4.x.x",
+    "plugins": []
+  }
+}

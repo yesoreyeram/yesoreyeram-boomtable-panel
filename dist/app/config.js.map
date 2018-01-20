@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/app/config.js"],"names":["config","plugin_id","title"],"mappings":";;;;;;;;;wBAAIA,M,GAAS;AACXC,mBAAW,6BADA;AAEXC,eAAO;AAFI,O;;wBAKJF,M","file":"config.js","sourcesContent":["var config = {\r\n  plugin_id: \"yesoreyeram-boomtable-panel\",\r\n  title: \"Boom Table\"\r\n};\r\n\r\nexport { config };"]}
