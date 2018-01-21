@@ -122,6 +122,7 @@ System.register(["./app/app"], function (_export, _context) {
           value: function removePattern(index) {
             this.panel.patterns.splice(index, 1);
             this.panel.activePatternIndex = -1;
+            this.render();
           }
         }]);
 

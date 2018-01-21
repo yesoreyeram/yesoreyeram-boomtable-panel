@@ -47,6 +47,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   removePattern(index) {
     this.panel.patterns.splice(index, 1);
     this.panel.activePatternIndex = -1;
+    this.render();
   }
 }
 
