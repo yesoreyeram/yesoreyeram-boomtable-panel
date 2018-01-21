@@ -1,2 +1,5 @@
 <h4 data-ng-bind="ctrl.panel.plugin_title"></h4>
 <p>Hello.. Welcome to {{ctrl.panel.plugin_title | uppercase}}</p>
+<div data-ng-if="ctrl.panel.debug_mode === true">
+    {{ctrl.panel.data}}
+</div>
