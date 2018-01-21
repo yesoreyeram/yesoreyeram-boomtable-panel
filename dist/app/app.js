@@ -22,7 +22,8 @@ System.register(["app/plugins/sdk", "app/core/time_series2"], function (_export,
                     nullPointMode: "connected",
                     patterns: [],
                     defaultPattern: {
-                        delimiter: "."
+                        delimiter: ".",
+                        valueName: "avg"
                     },
                     activePatternIndex: -1
                 },
@@ -38,6 +39,40 @@ System.register(["app/plugins/sdk", "app/core/time_series2"], function (_export,
                     name: "Options",
                     template: "/partials/options.html",
                     position: 3
+                }],
+                valueNameOptions: [{
+                    value: "min",
+                    text: "Min"
+                }, {
+                    value: "max",
+                    text: "Max"
+                }, {
+                    value: "avg",
+                    text: "Average"
+                }, {
+                    value: "current",
+                    text: "Current"
+                }, {
+                    value: "total",
+                    text: "Total"
+                }, {
+                    value: "name",
+                    text: "Name"
+                }, {
+                    value: "first",
+                    text: "First"
+                }, {
+                    value: "delta",
+                    text: "Delta"
+                }, {
+                    value: "diff",
+                    text: "Difference"
+                }, {
+                    value: "range",
+                    text: "Range"
+                }, {
+                    value: "last_time",
+                    text: "Time of last point"
                 }]
             });
 

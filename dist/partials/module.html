@@ -5,12 +5,14 @@
             <tr>
                 <th style="padding:4px;text-align:center">Metric</th>
                 <th style="padding:4px;text-align:center">Pattern</th>
+                <th style="padding:4px;text-align:center">Value</th>
             </tr>
         </thead>
         <tbody>
             <tr data-ng-repeat="data in ctrl.panel.data">
                 <td style="padding:4px;" width="40%">{{data.alias}}</td>
-                <td style="padding:4px;" width="40%">{{data.pattern.pattern || "Default"}}</td>
+                <td style="padding:4px;">{{data.pattern.pattern || "Default"}}</td>
+                <td style="padding:4px;">{{data.value}}</td>
             </tr>
         </tbody>
     </table>

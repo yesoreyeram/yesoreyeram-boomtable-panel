@@ -13,9 +13,10 @@ const config = {
         nullPointMode: "connected",
         patterns: [],
         defaultPattern: {
-            delimiter : "."
+            delimiter: ".",
+            valueName: "avg"
         },
-        activePatternIndex : -1
+        activePatternIndex: -1
     },
     list_of_stylesheets: {
         dark: "plugins/" + plugin_id + "/css/default.dark.css",
@@ -29,7 +30,52 @@ const config = {
         name: "Options",
         template: "/partials/options.html",
         position: 3
-    }]
+    }],
+    valueNameOptions: [{
+            value: "min",
+            text: "Min"
+        },
+        {
+            value: "max",
+            text: "Max"
+        },
+        {
+            value: "avg",
+            text: "Average"
+        },
+        {
+            value: "current",
+            text: "Current"
+        },
+        {
+            value: "total",
+            text: "Total"
+        },
+        {
+            value: "name",
+            text: "Name"
+        },
+        {
+            value: "first",
+            text: "First"
+        },
+        {
+            value: "delta",
+            text: "Delta"
+        },
+        {
+            value: "diff",
+            text: "Difference"
+        },
+        {
+            value: "range",
+            text: "Range"
+        },
+        {
+            value: "last_time",
+            text: "Time of last point"
+        }
+    ],
 };
 
 export {
