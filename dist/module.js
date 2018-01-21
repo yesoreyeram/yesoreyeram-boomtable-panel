@@ -109,7 +109,9 @@ System.register(["./app/app"], function (_export, _context) {
             var newPattern = {
               pattern: "^server.*cpu$",
               delimiter: ".",
-              valueName: "avg"
+              valueName: "avg",
+              row_name: "_0_",
+              col_name: "_1_"
             };
             this.panel.patterns.push(newPattern);
             this.panel.activePatternIndex = this.panel.patterns.length - 1;
@@ -143,6 +145,20 @@ System.register(["./app/app"], function (_export, _context) {
           // Assign value
           this.dataComputed = this.dataComputed.map(function (series) {
             series.value = series.stats[series.pattern.valueName || "avg"] || "N/A";
+            return series;
+          });
+          // Assign Row Name
+          this.dataComputed = this.dataComputed.map(function (series) {
+            series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce(function (r, it, i) {
+              return r.replace(new RegExp("_" + i + "_", "g"), it);
+            }, series.pattern.row_name || config.panelDefaults.defaultPattern.row_name);
+            return series;
+          });
+          // Assign Col Name
+          this.dataComputed = this.dataComputed.map(function (series) {
+            series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce(function (r, it, i) {
+              return r.replace(new RegExp("_" + i + "_", "g"), it);
+            }, series.pattern.col_name || config.panelDefaults.defaultPattern.col_name);
             return series;
           });
           // Assigning computed data to output panel

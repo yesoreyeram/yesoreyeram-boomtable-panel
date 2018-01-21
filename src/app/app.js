@@ -14,7 +14,9 @@ const config = {
         patterns: [],
         defaultPattern: {
             delimiter: ".",
-            valueName: "avg"
+            valueName: "avg",
+            row_name:"_0_",
+            col_name:"_1_"
         },
         activePatternIndex: -1
     },

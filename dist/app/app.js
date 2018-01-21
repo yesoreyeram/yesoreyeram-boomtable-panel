@@ -23,7 +23,9 @@ System.register(["app/plugins/sdk", "app/core/time_series2"], function (_export,
                     patterns: [],
                     defaultPattern: {
                         delimiter: ".",
-                        valueName: "avg"
+                        valueName: "avg",
+                        row_name: "_0_",
+                        col_name: "_1_"
                     },
                     activePatternIndex: -1
                 },
