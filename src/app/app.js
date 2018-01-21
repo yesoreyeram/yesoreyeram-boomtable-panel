@@ -1,4 +1,5 @@
 import {
+    loadPluginCss,
     MetricsPanelCtrl
 } from "app/plugins/sdk";
 import TimeSeries from "app/core/time_series2";
@@ -9,10 +10,15 @@ const config = {
     panelDefaults: {
         plugin_title: "Boom Table",
         nullPointMode: "connected"
+    },
+    list_of_stylesheets: {
+        dark: "plugins/" + plugin_id + "/css/default.dark.css",
+        light: "plugins/" + plugin_id + "/css/default.light.css"
     }
 };
 
 export {
+    loadPluginCss,
     MetricsPanelCtrl,
     TimeSeries,
     config

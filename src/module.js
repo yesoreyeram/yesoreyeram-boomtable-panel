@@ -1,9 +1,11 @@
 import {
+  loadPluginCss,
   MetricsPanelCtrl,
   TimeSeries,
   config
 } from "./app/app"
 
+loadPluginCss(config.list_of_stylesheets);
 
 class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   constructor($scope, $injector, $sce) {

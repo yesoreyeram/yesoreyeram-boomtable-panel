@@ -3,9 +3,10 @@
 System.register(["app/plugins/sdk", "app/core/time_series2"], function (_export, _context) {
     "use strict";
 
-    var MetricsPanelCtrl, TimeSeries, plugin_id, config;
+    var loadPluginCss, MetricsPanelCtrl, TimeSeries, plugin_id, config;
     return {
         setters: [function (_appPluginsSdk) {
+            loadPluginCss = _appPluginsSdk.loadPluginCss;
             MetricsPanelCtrl = _appPluginsSdk.MetricsPanelCtrl;
         }, function (_appCoreTime_series) {
             TimeSeries = _appCoreTime_series.default;
@@ -18,8 +19,14 @@ System.register(["app/plugins/sdk", "app/core/time_series2"], function (_export,
                 panelDefaults: {
                     plugin_title: "Boom Table",
                     nullPointMode: "connected"
+                },
+                list_of_stylesheets: {
+                    dark: "plugins/" + plugin_id + "/css/default.dark.css",
+                    light: "plugins/" + plugin_id + "/css/default.light.css"
                 }
             });
+
+            _export("loadPluginCss", loadPluginCss);
 
             _export("MetricsPanelCtrl", MetricsPanelCtrl);
 

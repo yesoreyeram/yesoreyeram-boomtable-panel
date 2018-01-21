@@ -3,7 +3,7 @@
 System.register(["./app/app"], function (_export, _context) {
   "use strict";
 
-  var MetricsPanelCtrl, TimeSeries, config, _createClass, GrafanaBoomTableCtrl;
+  var loadPluginCss, MetricsPanelCtrl, TimeSeries, config, _createClass, GrafanaBoomTableCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -37,6 +37,7 @@ System.register(["./app/app"], function (_export, _context) {
 
   return {
     setters: [function (_appApp) {
+      loadPluginCss = _appApp.loadPluginCss;
       MetricsPanelCtrl = _appApp.MetricsPanelCtrl;
       TimeSeries = _appApp.TimeSeries;
       config = _appApp.config;
@@ -59,6 +60,8 @@ System.register(["./app/app"], function (_export, _context) {
           return Constructor;
         };
       }();
+
+      loadPluginCss(config.list_of_stylesheets);
 
       _export("PanelCtrl", GrafanaBoomTableCtrl = function (_MetricsPanelCtrl) {
         _inherits(GrafanaBoomTableCtrl, _MetricsPanelCtrl);
