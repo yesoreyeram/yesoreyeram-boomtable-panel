@@ -80,7 +80,11 @@ System.register(["./app/app"], function (_export, _context) {
         _createClass(GrafanaBoomTableCtrl, [{
           key: "onInitEditMode",
           value: function onInitEditMode() {
-            console.log("Edit mode activated");
+            var _this2 = this;
+
+            _.each(config.editorTabs, function (editor) {
+              _this2.addEditorTab(editor.name, "public/plugins/" + config.plugin_id + editor.template, editor.position);
+            });
           }
         }, {
           key: "onDataReceived",

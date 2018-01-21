@@ -23,7 +23,12 @@ System.register(["app/plugins/sdk", "app/core/time_series2"], function (_export,
                 list_of_stylesheets: {
                     dark: "plugins/" + plugin_id + "/css/default.dark.css",
                     light: "plugins/" + plugin_id + "/css/default.light.css"
-                }
+                },
+                editorTabs: [{
+                    name: "Options",
+                    template: "/partials/options.html",
+                    position: 2
+                }]
             });
 
             _export("loadPluginCss", loadPluginCss);

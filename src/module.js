@@ -15,7 +15,9 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
   }
   onInitEditMode() {
-    console.log("Edit mode activated");
+    _.each(config.editorTabs, editor => {
+      this.addEditorTab(editor.name, "public/plugins/" + config.plugin_id + editor.template, editor.position);
+    })
   }
   onDataReceived(data) {
     this.dataReceived = data;
