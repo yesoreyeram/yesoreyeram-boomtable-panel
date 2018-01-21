@@ -1,9 +1,9 @@
 "use strict";
 
-System.register(["app/core/utils/kbn", "app/plugins/sdk", "app/core/time_series2", "./app/config"], function (_export, _context) {
+System.register(["./app/app"], function (_export, _context) {
   "use strict";
 
-  var kbn, loadPluginCss, MetricsPanelCtrl, TimeSeries, config, _createClass, panelDefaults, GrafanaBoomTableCtrl;
+  var MetricsPanelCtrl, TimeSeries, config, _createClass, GrafanaBoomTableCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -36,15 +36,10 @@ System.register(["app/core/utils/kbn", "app/plugins/sdk", "app/core/time_series2
   }
 
   return {
-    setters: [function (_appCoreUtilsKbn) {
-      kbn = _appCoreUtilsKbn.default;
-    }, function (_appPluginsSdk) {
-      loadPluginCss = _appPluginsSdk.loadPluginCss;
-      MetricsPanelCtrl = _appPluginsSdk.MetricsPanelCtrl;
-    }, function (_appCoreTime_series) {
-      TimeSeries = _appCoreTime_series.default;
-    }, function (_appConfig) {
-      config = _appConfig.config;
+    setters: [function (_appApp) {
+      MetricsPanelCtrl = _appApp.MetricsPanelCtrl;
+      TimeSeries = _appApp.TimeSeries;
+      config = _appApp.config;
     }],
     execute: function () {
       _createClass = function () {
@@ -65,16 +60,6 @@ System.register(["app/core/utils/kbn", "app/plugins/sdk", "app/core/time_series2
         };
       }();
 
-      loadPluginCss({
-        dark: "plugins/" + config.plugin_id + "/css/default.dark.css",
-        light: "plugins/" + config.plugin_id + "/css/default.light.css"
-      });
-
-      panelDefaults = {
-        plugin_title: config.title,
-        nullPointMode: "connected"
-      };
-
       _export("PanelCtrl", GrafanaBoomTableCtrl = function (_MetricsPanelCtrl) {
         _inherits(GrafanaBoomTableCtrl, _MetricsPanelCtrl);
 
@@ -83,7 +68,7 @@ System.register(["app/core/utils/kbn", "app/plugins/sdk", "app/core/time_series2
 
           var _this = _possibleConstructorReturn(this, (GrafanaBoomTableCtrl.__proto__ || Object.getPrototypeOf(GrafanaBoomTableCtrl)).call(this, $scope, $injector));
 
-          _.defaults(_this.panel, panelDefaults);
+          _.defaults(_this.panel, config.panelDefaults);
           _this.events.on("data-received", _this.onDataReceived.bind(_this));
           _this.events.on("init-edit-mode", _this.onInitEditMode.bind(_this));
           return _this;
@@ -97,8 +82,7 @@ System.register(["app/core/utils/kbn", "app/plugins/sdk", "app/core/time_series2
         }, {
           key: "onDataReceived",
           value: function onDataReceived(data) {
-            console.log("Data received");
-            this.dataComputed = data.map(this.seriesHandler.bind(this));
+            this.dataReceived = data;
             this.render();
           }
         }, {
@@ -117,11 +101,16 @@ System.register(["app/core/utils/kbn", "app/plugins/sdk", "app/core/time_series2
       }(MetricsPanelCtrl));
 
       GrafanaBoomTableCtrl.prototype.render = function () {
-        console.log("Rendering");
-        this.panel.data = this.dataComputed;
+        if (this.dataReceived) {
+          console.log("Rendering");
+          // Binding the grafana computations to the metrics received
+          this.dataComputed = this.dataReceived.map(this.seriesHandler.bind(this));
+          // Assigning computed data to output panel
+          this.panel.data = this.dataComputed;
+        }
       };
 
-      GrafanaBoomTableCtrl.templateUrl = "module.html";
+      GrafanaBoomTableCtrl.templateUrl = "partials/module.html";
 
       _export("PanelCtrl", GrafanaBoomTableCtrl);
     }

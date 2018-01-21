@@ -1,22 +1,14 @@
-import kbn from "app/core/utils/kbn";
-import { loadPluginCss, MetricsPanelCtrl } from "app/plugins/sdk";
-import TimeSeries from "app/core/time_series2";
-import { config } from "./app/config";
+import {
+  MetricsPanelCtrl,
+  TimeSeries,
+  config
+} from "./app/app"
 
-loadPluginCss({
-  dark: "plugins/" + config.plugin_id + "/css/default.dark.css",
-  light: "plugins/" + config.plugin_id + "/css/default.light.css"
-});
-
-const panelDefaults = {
-  plugin_title: config.title,
-  nullPointMode: "connected"
-};
 
 class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   constructor($scope, $injector, $sce) {
     super($scope, $injector);
-    _.defaults(this.panel, panelDefaults);
+    _.defaults(this.panel, config.panelDefaults);
     this.events.on("data-received", this.onDataReceived.bind(this));
     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
   }
@@ -24,8 +16,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     console.log("Edit mode activated");
   }
   onDataReceived(data) {
-    console.log("Data received");
-    this.dataComputed = data.map(this.seriesHandler.bind(this));
+    this.dataReceived = data;
     this.render();
   }
   seriesHandler(seriesData) {
@@ -38,11 +29,18 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   }
 }
 
-GrafanaBoomTableCtrl.prototype.render = function() {
-  console.log("Rendering");
-  this.panel.data = this.dataComputed;
+GrafanaBoomTableCtrl.prototype.render = function () {
+  if (this.dataReceived) {
+    console.log("Rendering");
+    // Binding the grafana computations to the metrics received
+    this.dataComputed = this.dataReceived.map(this.seriesHandler.bind(this));
+    // Assigning computed data to output panel
+    this.panel.data = this.dataComputed;
+  }
 };
 
-GrafanaBoomTableCtrl.templateUrl = "module.html";
+GrafanaBoomTableCtrl.templateUrl = "partials/module.html";
 
-export { GrafanaBoomTableCtrl as PanelCtrl };
+export {
+  GrafanaBoomTableCtrl as PanelCtrl
+};
