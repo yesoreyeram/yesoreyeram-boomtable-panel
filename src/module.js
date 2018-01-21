@@ -31,6 +31,19 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     series.flotpairs = series.getFlotPairs(this.panel.nullPointMode);
     return series;
   }
+  addPattern() {
+    var newPattern = {
+      pattern: "^server.*cpu$",
+      delimiter: "."
+    };
+    this.panel.patterns.push(newPattern);
+    this.panel.activePatternIndex = this.panel.patterns.length - 1;
+    this.render();
+  }
+  removePattern(index) {
+    this.panel.patterns.splice(index, 1);
+    this.panel.activePatternIndex = -1;
+  }
 }
 
 GrafanaBoomTableCtrl.prototype.render = function () {
@@ -38,6 +51,13 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     console.log("Rendering");
     // Binding the grafana computations to the metrics received
     this.dataComputed = this.dataReceived.map(this.seriesHandler.bind(this));
+    // Assign pattern
+    this.dataComputed = this.dataComputed.map(series => {
+      series.pattern = _.find(this.panel.patterns.concat(this.panel.defaultPattern), function (p) {
+        return series.alias.match(p.pattern || "");
+      });
+      return series;
+    })
     // Assigning computed data to output panel
     this.panel.data = this.dataComputed;
   }

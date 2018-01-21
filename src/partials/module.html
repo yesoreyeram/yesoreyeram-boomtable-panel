@@ -1,5 +1,17 @@
-<h4 data-ng-bind="ctrl.panel.plugin_title"></h4>
-<p>Hello.. Welcome to {{ctrl.panel.plugin_title | uppercase}}</p>
 <div data-ng-if="ctrl.panel.debug_mode === true">
-    {{ctrl.panel.data}}
+    <h5 class="text-warning">WARNIG: Panel running in debug mode </h5>
+    <table class="table-panel-table">
+        <thead>
+            <tr>
+                <th style="padding:4px;text-align:center">Metric</th>
+                <th style="padding:4px;text-align:center">Pattern</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-ng-repeat="data in ctrl.panel.data">
+                <td style="padding:4px;" width="40%">{{data.alias}}</td>
+                <td style="padding:4px;" width="40%">{{data.pattern.pattern || "Default"}}</td>
+            </tr>
+        </tbody>
+    </table>
 </div>

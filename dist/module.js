@@ -102,16 +102,42 @@ System.register(["./app/app"], function (_export, _context) {
             series.flotpairs = series.getFlotPairs(this.panel.nullPointMode);
             return series;
           }
+        }, {
+          key: "addPattern",
+          value: function addPattern() {
+            var newPattern = {
+              pattern: "^server.*cpu$",
+              delimiter: "."
+            };
+            this.panel.patterns.push(newPattern);
+            this.panel.activePatternIndex = this.panel.patterns.length - 1;
+            this.render();
+          }
+        }, {
+          key: "removePattern",
+          value: function removePattern(index) {
+            this.panel.patterns.splice(index, 1);
+            this.panel.activePatternIndex = -1;
+          }
         }]);
 
         return GrafanaBoomTableCtrl;
       }(MetricsPanelCtrl));
 
       GrafanaBoomTableCtrl.prototype.render = function () {
+        var _this3 = this;
+
         if (this.dataReceived) {
           console.log("Rendering");
           // Binding the grafana computations to the metrics received
           this.dataComputed = this.dataReceived.map(this.seriesHandler.bind(this));
+          // Assign pattern
+          this.dataComputed = this.dataComputed.map(function (series) {
+            series.pattern = _.find(_this3.panel.patterns.concat(_this3.panel.defaultPattern), function (p) {
+              return series.alias.match(p.pattern || "");
+            });
+            return series;
+          });
           // Assigning computed data to output panel
           this.panel.data = this.dataComputed;
         }

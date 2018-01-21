@@ -19,16 +19,25 @@ System.register(["app/plugins/sdk", "app/core/time_series2"], function (_export,
                 debug_mode: false,
                 panelDefaults: {
                     plugin_title: "Boom Table",
-                    nullPointMode: "connected"
+                    nullPointMode: "connected",
+                    patterns: [],
+                    defaultPattern: {
+                        delimiter: "."
+                    },
+                    activePatternIndex: -1
                 },
                 list_of_stylesheets: {
                     dark: "plugins/" + plugin_id + "/css/default.dark.css",
                     light: "plugins/" + plugin_id + "/css/default.light.css"
                 },
                 editorTabs: [{
+                    name: "Patterns",
+                    template: "/partials/patterns.html",
+                    position: 2
+                }, {
                     name: "Options",
                     template: "/partials/options.html",
-                    position: 2
+                    position: 3
                 }]
             });
 
