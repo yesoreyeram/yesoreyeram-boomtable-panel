@@ -1,15 +1,17 @@
 "use strict";
 
-System.register(["app/plugins/sdk", "app/core/time_series2"], function (_export, _context) {
+System.register(["app/plugins/sdk", "app/core/time_series2", "./utils"], function (_export, _context) {
     "use strict";
 
-    var loadPluginCss, MetricsPanelCtrl, TimeSeries, plugin_id, config;
+    var loadPluginCss, MetricsPanelCtrl, TimeSeries, utils, plugin_id, config;
     return {
         setters: [function (_appPluginsSdk) {
             loadPluginCss = _appPluginsSdk.loadPluginCss;
             MetricsPanelCtrl = _appPluginsSdk.MetricsPanelCtrl;
         }, function (_appCoreTime_series) {
             TimeSeries = _appCoreTime_series.default;
+        }, function (_utils) {
+            utils = _utils.default;
         }],
         execute: function () {
             plugin_id = "yesoreyeram-boomtable-panel";
@@ -88,6 +90,8 @@ System.register(["app/plugins/sdk", "app/core/time_series2"], function (_export,
             _export("MetricsPanelCtrl", MetricsPanelCtrl);
 
             _export("TimeSeries", TimeSeries);
+
+            _export("utils", utils);
 
             _export("config", config);
         }

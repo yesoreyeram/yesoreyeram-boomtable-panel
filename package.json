@@ -23,8 +23,7 @@
   "bugs": {
     "url": "https://github.com/yesoreyeram/yesoreyeram-boomtable-panel/issues"
   },
-  "homepage":
-    "https://github.com/yesoreyeram/yesoreyeram-boomtable-panel#readme",
+  "homepage": "https://github.com/yesoreyeram/yesoreyeram-boomtable-panel#readme",
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-eslint": "^6.1.2",

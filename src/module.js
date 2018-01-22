@@ -2,6 +2,7 @@ import {
   loadPluginCss,
   MetricsPanelCtrl,
   TimeSeries,
+  utils,
   config
 } from "./app/app"
 

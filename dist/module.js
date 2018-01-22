@@ -3,7 +3,7 @@
 System.register(["./app/app"], function (_export, _context) {
   "use strict";
 
-  var loadPluginCss, MetricsPanelCtrl, TimeSeries, config, _createClass, GrafanaBoomTableCtrl;
+  var loadPluginCss, MetricsPanelCtrl, TimeSeries, utils, config, _createClass, GrafanaBoomTableCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -40,6 +40,7 @@ System.register(["./app/app"], function (_export, _context) {
       loadPluginCss = _appApp.loadPluginCss;
       MetricsPanelCtrl = _appApp.MetricsPanelCtrl;
       TimeSeries = _appApp.TimeSeries;
+      utils = _appApp.utils;
       config = _appApp.config;
     }],
     execute: function () {
