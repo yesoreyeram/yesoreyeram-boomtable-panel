@@ -134,6 +134,9 @@ System.register(["./app/app"], function (_export, _context) {
           value: function computeBgColor(thresholds, bgColors, value) {
             var c = "transparent";
             if (thresholds && bgColors && value && thresholds.length + 1 === bgColors.length) {
+              if (bgColors[bgColors.length - 1] === "") {
+                bgColors[bgColors.length - 1] = "transparent";
+              }
               for (var i = thresholds.length; i > 0; i--) {
                 if (value >= thresholds[i - 1]) {
                   return bgColors[i];
@@ -148,6 +151,9 @@ System.register(["./app/app"], function (_export, _context) {
           value: function transformValue(thresholds, transform_values, value) {
             var t = value;
             if (thresholds && transform_values && value && thresholds.length + 1 === transform_values.length) {
+              if (transform_values[transform_values.length - 1] === "") {
+                transform_values[transform_values.length - 1] = "_value_";
+              }
               for (var i = thresholds.length; i > 0; i--) {
                 if (value >= thresholds[i - 1]) {
                   return transform_values[i].replace(new RegExp("_value_", "g"), value);

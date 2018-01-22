@@ -43,7 +43,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       enable_bgColor: false,
       bgColors: "green|orange|red",
       enable_transform: false,
-      transform_values:"_value_|_value_|_value_"
+      transform_values: "_value_|_value_|_value_"
     };
     this.panel.patterns.push(newPattern);
     this.panel.activePatternIndex = this.panel.patterns.length - 1;
@@ -57,6 +57,9 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   computeBgColor(thresholds, bgColors, value) {
     var c = "transparent";
     if (thresholds && bgColors && value && thresholds.length + 1 === bgColors.length) {
+      if (bgColors[bgColors.length - 1] === "") {
+        bgColors[bgColors.length - 1] = "transparent";
+      }
       for (var i = thresholds.length; i > 0; i--) {
         if (value >= thresholds[i - 1]) {
           return bgColors[i];
@@ -69,6 +72,9 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   transformValue(thresholds, transform_values, value) {
     var t = value;
     if (thresholds && transform_values && value && thresholds.length + 1 === transform_values.length) {
+      if (transform_values[transform_values.length - 1] === "") {
+        transform_values[transform_values.length - 1] = "_value_";
+      }
       for (var i = thresholds.length; i > 0; i--) {
         if (value >= thresholds[i - 1]) {
           return transform_values[i].replace(new RegExp("_value_", "g"), value);
