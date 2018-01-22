@@ -11,7 +11,7 @@ System.register(["app/plugins/sdk", "app/core/time_series2", "./utils"], functio
         }, function (_appCoreTime_series) {
             TimeSeries = _appCoreTime_series.default;
         }, function (_utils) {
-            utils = _utils.default;
+            utils = _utils;
         }],
         execute: function () {
             plugin_id = "yesoreyeram-boomtable-panel";

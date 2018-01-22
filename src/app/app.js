@@ -3,7 +3,7 @@ import {
     MetricsPanelCtrl
 } from "app/plugins/sdk";
 import TimeSeries from "app/core/time_series2";
-import utils from "./utils";
+import * as utils from "./utils";
 
 const plugin_id = "yesoreyeram-boomtable-panel";
 const config = {
