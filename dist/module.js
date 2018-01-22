@@ -140,10 +140,10 @@ System.register(["./app/app"], function (_export, _context) {
               }
               for (var i = thresholds.length; i > 0; i--) {
                 if (value >= thresholds[i - 1]) {
-                  return bgColors[i];
+                  return utils.normalizeColor(bgColors[i]);
                 }
               }
-              return _.first(bgColors);
+              return utils.normalizeColor(_.first(bgColors));
             }
             return c;
           }
