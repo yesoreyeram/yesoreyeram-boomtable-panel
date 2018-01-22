@@ -48,7 +48,9 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       enable_transform: false,
       transform_values: "_value_|_value_|_value_",
       decimals: 2,
-      format: "none"
+      format: "none",
+      null_color: "darkred",
+      null_value: "No data"
     };
     this.panel.patterns.push(newPattern);
     this.panel.activePatternIndex = this.panel.patterns.length - 1;
@@ -156,8 +158,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       }));
       var err = new Error();
       err.name = "Duplicate data received";
-      err.message = "Check console for more details. <br/> Duplicate keys : <br/>" + duplicateKeys.join("<br/> ");
-      console.log(err, duplicateKeys);
+      err.message = "Duplicate keys : <br/>" + duplicateKeys.join("<br/> ");
       this.panel.error = err;
       this.panel.data = undefined;
     } else {
@@ -178,12 +179,20 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       });
       // Assign value
       this.dataComputed = this.dataComputed.map(series => {
-        series.value = series.stats[series.pattern.valueName || "avg"];
-        let decimalInfo = this.getDecimalsForValue(series.value, series.decimals);
-        let formatFunc = kbn.valueFormats[series.pattern.format || "none"];
-        series.valueFormatted = formatFunc(series.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
-        series.valueRounded = kbn.roundValue(series.value, decimalInfo.decimals);
-        series.displayValue = series.valueFormatted;
+        if (series.stats) {
+          series.value = series.stats[series.pattern.valueName || config.panelDefaults.defaultPattern.valueName] || NaN;
+          let decimalInfo = this.getDecimalsForValue(series.value, series.decimals);
+          let formatFunc = kbn.valueFormats[series.pattern.format || config.panelDefaults.defaultPattern.format];
+          if (!isNaN(series.value)) {
+            series.valueFormatted = formatFunc(series.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
+            series.valueRounded = kbn.roundValue(series.value, decimalInfo.decimals);
+            series.displayValue = series.valueFormatted;
+          } else {
+            series.valueFormatted = formatFunc(0, decimalInfo.decimals, decimalInfo.scaledDecimals);
+            series.valueRounded = kbn.roundValue(0, decimalInfo.decimals);
+            series.displayValue = series.pattern.null_value || "Null";
+          }
+        }
         return series;
       });
       // Assign Row Name
@@ -221,6 +230,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         series.enable_bgColor = series.pattern.enable_bgColor;
         series.bgColors = (series.pattern.bgColors || config.panelDefaults.defaultPattern.bgColors).split("|");
         series.bgColor = series.enable_bgColor === true ? this.computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
+        if (series.displayValue === (series.pattern.null_value || "Null")) {
+          series.bgColor = series.pattern.null_color || config.panelDefaults.defaultPattern.null_color;
+        }
         return series;
       });
       // Value Transform
@@ -268,9 +280,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         }));
         var err = new Error();
         err.name = "Duplicate keys found";
-        err.message = "Check console for more details";
-        err.message = "Check console for more details. <br/> Duplicate key values : <br/>" + duplicateKeys.join("<br/> ");
-        console.log(err, duplicateKeys);
+        err.message = "Duplicate key values : <br/>" + duplicateKeys.join("<br/> ");
         this.panel.error = err;
       }
 

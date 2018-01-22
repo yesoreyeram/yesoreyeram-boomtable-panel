@@ -38,7 +38,9 @@ System.register(["app/core/utils/kbn", "app/plugins/sdk", "app/core/time_series2
                         enable_transform: false,
                         transform_values: "_value_|_value_|_value_",
                         decimals: 2,
-                        format: "none"
+                        format: "none",
+                        null_color: "darkred",
+                        null_value: "No data"
                     },
                     activePatternIndex: -1
                 },
