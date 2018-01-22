@@ -1,3 +1,6 @@
+const getFields = function (collection, field) {
+    return _.map(collection, d => d[field]);
+};
 const getUniqueFields = function (collection, field) {
     return _.uniq(_.map(collection, d => d[field]));
 };
@@ -8,6 +11,7 @@ const normalizeColor = function (color) {
     else return color.toLowerCase();
 }
 export {
+    getFields,
     getUniqueFields,
     normalizeColor
 };

@@ -1,9 +1,9 @@
 "use strict";
 
-System.register(["./app/app"], function (_export, _context) {
+System.register(["./app/app", "lodash"], function (_export, _context) {
   "use strict";
 
-  var loadPluginCss, MetricsPanelCtrl, TimeSeries, utils, config, _createClass, GrafanaBoomTableCtrl;
+  var loadPluginCss, MetricsPanelCtrl, TimeSeries, utils, config, _, _createClass, GrafanaBoomTableCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -42,6 +42,8 @@ System.register(["./app/app"], function (_export, _context) {
       TimeSeries = _appApp.TimeSeries;
       utils = _appApp.utils;
       config = _appApp.config;
+    }, function (_lodash) {
+      _ = _lodash.default;
     }],
     execute: function () {
       _createClass = function () {
@@ -174,64 +176,133 @@ System.register(["./app/app"], function (_export, _context) {
 
         if (this.dataReceived) {
           console.log("Rendering");
-          // Binding the grafana computations to the metrics received
-          this.dataComputed = this.dataReceived.map(this.seriesHandler.bind(this));
-          // Assign pattern
-          this.dataComputed = this.dataComputed.map(function (series) {
-            series.pattern = _.find(_this3.panel.patterns.concat(_this3.panel.defaultPattern), function (p) {
-              return series.alias.match(p.pattern || "");
+          // Copying the data received
+          this.dataComputed = this.dataReceived;
+          var metricsReceived = utils.getFields(this.dataComputed, "target");
+          if (metricsReceived.length !== _.uniq(metricsReceived).length) {
+            var duplicateKeys = _.uniq(metricsReceived.filter(function (v) {
+              return metricsReceived.filter(function (t) {
+                return t === v;
+              }).length > 1;
+            }));
+            var err = new Error();
+            err.name = "Duplicate data received";
+            err.message = "Check console for more details. <br/> Duplicate keys : <br/>" + duplicateKeys.join("<br/> ");
+            console.log(err, duplicateKeys);
+            this.panel.error = err;
+            this.panel.data = undefined;
+          } else {
+            this.panel.error = undefined;
+            // Binding the grafana computations to the metrics received
+            this.dataComputed = this.dataReceived.map(this.seriesHandler.bind(this));
+            // Assign pattern
+            this.dataComputed = this.dataComputed.map(function (series) {
+              series.pattern = _.find(_this3.panel.patterns.concat(_this3.panel.defaultPattern), function (p) {
+                return series.alias.match(p.pattern || "");
+              });
+              return series;
             });
-            return series;
-          });
-          // Assign value
-          this.dataComputed = this.dataComputed.map(function (series) {
-            series.value = series.stats[series.pattern.valueName || "avg"] || "N/A";
-            series.displayValue = series.value;
-            return series;
-          });
-          // Assign Row Name
-          this.dataComputed = this.dataComputed.map(function (series) {
-            series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce(function (r, it, i) {
-              return r.replace(new RegExp("_" + i + "_", "g"), it);
-            }, series.pattern.row_name || config.panelDefaults.defaultPattern.row_name);
-            if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
-              series.row_name = series.alias;
-            }
-            return series;
-          });
-          // Assign Col Name
-          this.dataComputed = this.dataComputed.map(function (series) {
-            series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce(function (r, it, i) {
-              return r.replace(new RegExp("_" + i + "_", "g"), it);
-            }, series.pattern.col_name || config.panelDefaults.defaultPattern.col_name);
-            if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
-              series.col_name = "value";
-            }
-            return series;
-          });
-          // Assign Thresholds
-          this.dataComputed = this.dataComputed.map(function (series) {
-            series.thresholds = (series.pattern.thresholds || config.panelDefaults.defaultPattern.thresholds).split(",").map(function (d) {
-              return +d;
+            // Assign value
+            this.dataComputed = this.dataComputed.map(function (series) {
+              series.value = series.stats[series.pattern.valueName || "avg"] || "N/A";
+              series.displayValue = series.value;
+              return series;
             });
-            return series;
-          });
-          // Assign BG Colors
-          this.dataComputed = this.dataComputed.map(function (series) {
-            series.enable_bgColor = series.pattern.enable_bgColor;
-            series.bgColors = (series.pattern.bgColors || config.panelDefaults.defaultPattern.bgColors).split("|");
-            series.bgColor = series.enable_bgColor === true ? _this3.computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
-            return series;
-          });
-          // Value Transform
-          this.dataComputed = this.dataComputed.map(function (series) {
-            series.enable_transform = series.pattern.enable_transform;
-            series.transform_values = (series.pattern.transform_values || config.panelDefaults.defaultPattern.transform_values).split("|");
-            series.displayValue = series.enable_transform === true ? _this3.transformValue(series.thresholds, series.transform_values, series.value) : series.displayValue;
-            return series;
-          });
-          // Assigning computed data to output panel
-          this.panel.data = this.dataComputed;
+            // Assign Row Name
+            this.dataComputed = this.dataComputed.map(function (series) {
+              series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce(function (r, it, i) {
+                return r.replace(new RegExp("_" + i + "_", "g"), it);
+              }, series.pattern.row_name || config.panelDefaults.defaultPattern.row_name);
+              if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
+                series.row_name = series.alias;
+              }
+              return series;
+            });
+            // Assign Col Name
+            this.dataComputed = this.dataComputed.map(function (series) {
+              series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce(function (r, it, i) {
+                return r.replace(new RegExp("_" + i + "_", "g"), it);
+              }, series.pattern.col_name || config.panelDefaults.defaultPattern.col_name);
+              if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
+                series.col_name = "value";
+              }
+              return series;
+            });
+            // Assign RowCol Key
+            this.dataComputed = this.dataComputed.map(function (series) {
+              series.key_name = series.row_name + "#" + series.col_name;
+              return series;
+            });
+            // Assign Thresholds
+            this.dataComputed = this.dataComputed.map(function (series) {
+              series.thresholds = (series.pattern.thresholds || config.panelDefaults.defaultPattern.thresholds).split(",").map(function (d) {
+                return +d;
+              });
+              return series;
+            });
+            // Assign BG Colors
+            this.dataComputed = this.dataComputed.map(function (series) {
+              series.enable_bgColor = series.pattern.enable_bgColor;
+              series.bgColors = (series.pattern.bgColors || config.panelDefaults.defaultPattern.bgColors).split("|");
+              series.bgColor = series.enable_bgColor === true ? _this3.computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
+              return series;
+            });
+            // Value Transform
+            this.dataComputed = this.dataComputed.map(function (series) {
+              series.enable_transform = series.pattern.enable_transform;
+              series.transform_values = (series.pattern.transform_values || config.panelDefaults.defaultPattern.transform_values).split("|");
+              series.displayValue = series.enable_transform === true ? _this3.transformValue(series.thresholds, series.transform_values, series.value) : series.displayValue;
+              return series;
+            });
+            // Grouping
+            var rows_found = utils.getFields(this.dataComputed, "row_name");
+            var cols_found = utils.getFields(this.dataComputed, "col_name");
+            var keys_found = utils.getFields(this.dataComputed, "key_name");
+            var is_unique_keys = keys_found.length === _.uniq(keys_found).length;
+            if (is_unique_keys) {
+              this.panel.error = undefined;
+              var output = [];
+              _.each(_.uniq(rows_found), function (row_name) {
+                var o = {};
+                o.row = row_name;
+                o.cols = [];
+                _.each(_.uniq(cols_found), function (col_name) {
+                  var matched_value = _.find(_this3.dataComputed, function (e) {
+                    return e.row_name === row_name && e.col_name === col_name;
+                  });
+                  if (!matched_value) matched_value = {
+                    value: NaN,
+                    displayValue: "N/A"
+                  };
+                  o.cols.push({
+                    "name": col_name,
+                    "value": matched_value.value,
+                    "displayValue": matched_value.displayValue || matched_value.value,
+                    "bgColor": matched_value.bgColor || "transparent"
+                  });
+                });
+                output.push(o);
+              });
+              this.panel.cols = _.uniq(cols_found);
+              this.panel.groupedData = output;
+              // Group Data
+            } else {
+              var duplicateKeys = _.uniq(keys_found.filter(function (v) {
+                return keys_found.filter(function (t) {
+                  return t === v;
+                }).length > 1;
+              }));
+              var err = new Error();
+              err.name = "Duplicate keys found";
+              err.message = "Check console for more details";
+              err.message = "Check console for more details. <br/> Duplicate key values : <br/>" + duplicateKeys.join("<br/> ");
+              console.log(err, duplicateKeys);
+              this.panel.error = err;
+            }
+
+            // Assigning computed data to output panel
+            this.panel.data = this.dataComputed;
+          }
         }
       };
 

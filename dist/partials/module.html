@@ -1,5 +1,23 @@
-<div data-ng-if="ctrl.panel.debug_mode === true">
-    <h5 class="text-warning">WARNIG: Panel running in debug mode </h5>
+<div data-ng-if="ctrl.panel.error">
+    <h4 class="text-warning">{{ctrl.panel.error.name}}</h4>
+    <p ng-bind-html="ctrl.panel.error.message"></p>
+</div>
+<div data-ng-if="!ctrl.panel.error && ctrl.panel.groupedData && ctrl.panel.debug_mode === false">
+    <table class="table-panel-table">
+        <thead>
+            <tr>
+                <th style="padding:4px;text-align:center"></th>
+                <th style="padding:4px;text-align:center" data-ng-repeat="col in ctrl.panel.cols">{{col}}</th>
+            </tr>
+        </thead>
+        <tr data-ng-repeat="data in ctrl.panel.groupedData">
+            <td style="padding:4px;">{{data.row}}</td>
+            <td style="padding:4px;background-color:{{col.bgColor}};" data-ng-repeat="col in data.cols">{{col.displayValue}}</td>
+        </tr>
+    </table>
+</div>
+<div data-ng-if="ctrl.panel.debug_mode === true && ctrl.panel.data && ctrl.panel.data.length >0">
+    <h5 class="text-warning">WARNING: Panel running in debug mode </h5>
     <table class="table-panel-table">
         <thead>
             <tr>
