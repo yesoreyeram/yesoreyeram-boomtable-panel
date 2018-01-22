@@ -65,30 +65,6 @@ const config = {
         {
             value: "total",
             text: "Total"
-        },
-        {
-            value: "name",
-            text: "Name"
-        },
-        {
-            value: "first",
-            text: "First"
-        },
-        {
-            value: "delta",
-            text: "Delta"
-        },
-        {
-            value: "diff",
-            text: "Difference"
-        },
-        {
-            value: "range",
-            text: "Range"
-        },
-        {
-            value: "last_time",
-            text: "Time of last point"
         }
     ],
 };
