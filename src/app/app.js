@@ -9,6 +9,8 @@ const plugin_id = "yesoreyeram-boomtable-panel";
 const config = {
     plugin_id: plugin_id,
     debug_mode: false,
+    error: undefined,
+    groupedData:undefined,
     panelDefaults: {
         plugin_title: "Boom Table",
         nullPointMode: "connected",

@@ -57,7 +57,8 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   }
   computeBgColor(thresholds, bgColors, value) {
     var c = "transparent";
-    if (thresholds && bgColors && value && thresholds.length + 1 === bgColors.length) {
+    if (thresholds && bgColors && value && thresholds.length + 1 <= bgColors.length) {
+      bgColors = _.dropRight(bgColors, bgColors.length - thresholds.length - 1);
       if (bgColors[bgColors.length - 1] === "") {
         bgColors[bgColors.length - 1] = "transparent";
       }
@@ -72,7 +73,8 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   }
   transformValue(thresholds, transform_values, value) {
     var t = value;
-    if (thresholds && transform_values && value && thresholds.length + 1 === transform_values.length) {
+    if (thresholds && transform_values && value && thresholds.length + 1 <= transform_values.length) {
+      transform_values = _.dropRight(transform_values, transform_values.length - thresholds.length - 1);
       if (transform_values[transform_values.length - 1] === "") {
         transform_values[transform_values.length - 1] = "_value_";
       }

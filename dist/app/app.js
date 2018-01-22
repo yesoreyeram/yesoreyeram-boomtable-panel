@@ -19,6 +19,8 @@ System.register(["app/plugins/sdk", "app/core/time_series2", "./utils"], functio
             _export("config", config = {
                 plugin_id: plugin_id,
                 debug_mode: false,
+                error: undefined,
+                groupedData: undefined,
                 panelDefaults: {
                     plugin_title: "Boom Table",
                     nullPointMode: "connected",
