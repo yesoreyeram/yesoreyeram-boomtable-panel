@@ -108,7 +108,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       series.thresholds = (series.pattern.thresholds || config.panelDefaults.defaultPattern.thresholds).split(",").map(d => +d);
       return series;
     });
-    // Assign BG COlors
+    // Assign BG Colors
     this.dataComputed = this.dataComputed.map(series => {
       series.enable_bgColor = series.pattern.enable_bgColor;
       series.bgColors = (series.pattern.bgColors || config.panelDefaults.defaultPattern.bgColors).split("|");

@@ -192,7 +192,7 @@ System.register(["./app/app"], function (_export, _context) {
             });
             return series;
           });
-          // Assign BG COlors
+          // Assign BG Colors
           this.dataComputed = this.dataComputed.map(function (series) {
             series.enable_bgColor = series.pattern.enable_bgColor;
             series.bgColors = (series.pattern.bgColors || config.panelDefaults.defaultPattern.bgColors).split("|");
