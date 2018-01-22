@@ -1,3 +1,4 @@
+import kbn from 'app/core/utils/kbn';
 import {
     loadPluginCss,
     MetricsPanelCtrl
@@ -24,7 +25,9 @@ const config = {
             enable_bgColor : false,
             bgColors: "green|orange|red",
             enable_transform: false,
-            transform_values:"_value_|_value_|_value_"
+            transform_values:"_value_|_value_|_value_",
+            decimals : 2,
+            format:"none"
         },
         activePatternIndex: -1
     },
@@ -89,6 +92,7 @@ const config = {
 };
 
 export {
+    kbn,
     loadPluginCss,
     MetricsPanelCtrl,
     TimeSeries,

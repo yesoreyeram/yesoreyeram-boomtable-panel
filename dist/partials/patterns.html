@@ -52,6 +52,19 @@
                         <input type="text" placeholder="Col Name" class="gf-form-input width-18" ng-model="pattern.col_name" bs-tooltip="'Index of col'"
                             ng-blur="ctrl.render()">
                     </div>
+                </div>                
+                <div class="gr-form-inline">
+                    <div class="gf-form">
+                        <label class="gf-form-label width-13">Decimals</label>
+                        <input type="text" placeholder="2" class="gf-form-input width-4" ng-model="pattern.decimals" bs-tooltip="'Decimals'"
+                            ng-blur="ctrl.render()">
+                    </div>
+                </div>            
+                <div class="gr-form-inline">
+                    <div class="gf-form">
+                        <label class="gf-form-label width-13">Format</label>
+                        <div class="gf-form-dropdown-typeahead width-18" ng-model="pattern.format" dropdown-typeahead2="ctrl.unitFormats" dropdown-typeahead-on-select="ctrl.setUnitFormat($subItem,$index)"></div>
+                    </div>
                 </div>
             </div>
             <div class="section gf-form-group">
@@ -133,6 +146,19 @@
                         <label class="gf-form-label width-13">Col Name</label>
                         <input type="text" placeholder="Col Index" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.col_name" bs-tooltip="'Example : represent coloumn 2 as _2_'"
                             ng-blur="ctrl.render()">
+                    </div>
+                </div>                
+                <div class="gr-form-inline">
+                    <div class="gf-form">
+                        <label class="gf-form-label width-13">Decimals</label>
+                        <input type="text" placeholder="2" class="gf-form-input width-4" ng-model="ctrl.panel.defaultPattern.decimals" bs-tooltip="'Decimals'"
+                            ng-blur="ctrl.render()">
+                    </div>
+                </div>            
+                <div class="gr-form-inline">
+                    <div class="gf-form">
+                        <label class="gf-form-label width-13">Format</label>
+                        <div class="gf-form-dropdown-typeahead width-18" ng-model="ctrl.panel.defaultPattern.format" dropdown-typeahead2="ctrl.unitFormats" dropdown-typeahead-on-select="ctrl.setUnitFormat($subItem,-1)"></div>
                     </div>
                 </div>
             </div>

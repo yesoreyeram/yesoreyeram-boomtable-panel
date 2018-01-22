@@ -1,11 +1,13 @@
 "use strict";
 
-System.register(["app/plugins/sdk", "app/core/time_series2", "./utils"], function (_export, _context) {
+System.register(["app/core/utils/kbn", "app/plugins/sdk", "app/core/time_series2", "./utils"], function (_export, _context) {
     "use strict";
 
-    var loadPluginCss, MetricsPanelCtrl, TimeSeries, utils, plugin_id, config;
+    var kbn, loadPluginCss, MetricsPanelCtrl, TimeSeries, utils, plugin_id, config;
     return {
-        setters: [function (_appPluginsSdk) {
+        setters: [function (_appCoreUtilsKbn) {
+            kbn = _appCoreUtilsKbn.default;
+        }, function (_appPluginsSdk) {
             loadPluginCss = _appPluginsSdk.loadPluginCss;
             MetricsPanelCtrl = _appPluginsSdk.MetricsPanelCtrl;
         }, function (_appCoreTime_series) {
@@ -34,7 +36,9 @@ System.register(["app/plugins/sdk", "app/core/time_series2", "./utils"], functio
                         enable_bgColor: false,
                         bgColors: "green|orange|red",
                         enable_transform: false,
-                        transform_values: "_value_|_value_|_value_"
+                        transform_values: "_value_|_value_|_value_",
+                        decimals: 2,
+                        format: "none"
                     },
                     activePatternIndex: -1
                 },
@@ -86,6 +90,8 @@ System.register(["app/plugins/sdk", "app/core/time_series2", "./utils"], functio
                     text: "Time of last point"
                 }]
             });
+
+            _export("kbn", kbn);
 
             _export("loadPluginCss", loadPluginCss);
 

@@ -3,7 +3,7 @@
 System.register(["./app/app", "lodash"], function (_export, _context) {
   "use strict";
 
-  var loadPluginCss, MetricsPanelCtrl, TimeSeries, utils, config, _, _createClass, GrafanaBoomTableCtrl;
+  var kbn, loadPluginCss, MetricsPanelCtrl, TimeSeries, utils, config, _, _createClass, GrafanaBoomTableCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -37,6 +37,7 @@ System.register(["./app/app", "lodash"], function (_export, _context) {
 
   return {
     setters: [function (_appApp) {
+      kbn = _appApp.kbn;
       loadPluginCss = _appApp.loadPluginCss;
       MetricsPanelCtrl = _appApp.MetricsPanelCtrl;
       TimeSeries = _appApp.TimeSeries;
@@ -85,6 +86,7 @@ System.register(["./app/app", "lodash"], function (_export, _context) {
           value: function onInitEditMode() {
             var _this2 = this;
 
+            this.unitFormats = kbn.getUnitFormats();
             this.valueNameOptions = config.valueNameOptions;
             _.each(config.editorTabs, function (editor) {
               _this2.addEditorTab(editor.name, "public/plugins/" + config.plugin_id + editor.template, editor.position);
@@ -119,7 +121,9 @@ System.register(["./app/app", "lodash"], function (_export, _context) {
               enable_bgColor: false,
               bgColors: "green|orange|red",
               enable_transform: false,
-              transform_values: "_value_|_value_|_value_"
+              transform_values: "_value_|_value_|_value_",
+              decimals: 2,
+              format: "none"
             };
             this.panel.patterns.push(newPattern);
             this.panel.activePatternIndex = this.panel.patterns.length - 1;
@@ -168,6 +172,62 @@ System.register(["./app/app", "lodash"], function (_export, _context) {
             }
             return t;
           }
+        }, {
+          key: "getDecimalsForValue",
+          value: function getDecimalsForValue(value, _decimals) {
+            if (_.isNumber(+_decimals)) {
+              return {
+                decimals: _decimals,
+                scaledDecimals: null
+              };
+            }
+
+            var delta = value / 2;
+            var dec = -Math.floor(Math.log(delta) / Math.LN10);
+
+            var magn = Math.pow(10, -dec),
+                norm = delta / magn,
+                // norm is between 1.0 and 10.0
+            size;
+
+            if (norm < 1.5) {
+              size = 1;
+            } else if (norm < 3) {
+              size = 2;
+              // special case for 2.5, requires an extra decimal
+              if (norm > 2.25) {
+                size = 2.5;
+                ++dec;
+              }
+            } else if (norm < 7.5) {
+              size = 5;
+            } else {
+              size = 10;
+            }
+
+            size *= magn;
+
+            // reduce starting decimals if not needed
+            if (Math.floor(value) === value) {
+              dec = 0;
+            }
+
+            var result = {};
+            result.decimals = Math.max(0, dec);
+            result.scaledDecimals = result.decimals - Math.floor(Math.log(size) / Math.LN10) + 2;
+
+            return result;
+          }
+        }, {
+          key: "setUnitFormat",
+          value: function setUnitFormat(subItem, index) {
+            if (index === -1) {
+              this.panel.defaultPattern.format = subItem.value;
+            } else {
+              this.panel.patterns[index].format = subItem.value;
+            }
+            this.render();
+          }
         }]);
 
         return GrafanaBoomTableCtrl;
@@ -204,10 +264,19 @@ System.register(["./app/app", "lodash"], function (_export, _context) {
               });
               return series;
             });
+            // Assign Decimal Values
+            this.dataComputed = this.dataComputed.map(function (series) {
+              series.decimals = series.pattern.decimals || config.panelDefaults.defaultPattern.decimals;
+              return series;
+            });
             // Assign value
             this.dataComputed = this.dataComputed.map(function (series) {
-              series.value = series.stats[series.pattern.valueName || "avg"] || "N/A";
-              series.displayValue = series.value;
+              series.value = series.stats[series.pattern.valueName || "avg"];
+              var decimalInfo = _this3.getDecimalsForValue(series.value, series.decimals);
+              var formatFunc = kbn.valueFormats[series.pattern.format || "none"];
+              series.valueFormatted = formatFunc(series.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
+              series.valueRounded = kbn.roundValue(series.value, decimalInfo.decimals);
+              series.displayValue = series.valueFormatted;
               return series;
             });
             // Assign Row Name
@@ -253,7 +322,7 @@ System.register(["./app/app", "lodash"], function (_export, _context) {
             this.dataComputed = this.dataComputed.map(function (series) {
               series.enable_transform = series.pattern.enable_transform;
               series.transform_values = (series.pattern.transform_values || config.panelDefaults.defaultPattern.transform_values).split("|");
-              series.displayValue = series.enable_transform === true ? _this3.transformValue(series.thresholds, series.transform_values, series.value) : series.displayValue;
+              series.displayValue = series.enable_transform === true ? _this3.transformValue(series.thresholds, series.transform_values, series.displayValue) : series.displayValue;
               return series;
             });
             // Grouping

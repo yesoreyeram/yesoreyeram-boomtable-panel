@@ -1,4 +1,5 @@
 import {
+  kbn,
   loadPluginCss,
   MetricsPanelCtrl,
   TimeSeries,
@@ -16,6 +17,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
   }
   onInitEditMode() {
+    this.unitFormats = kbn.getUnitFormats();
     this.valueNameOptions = config.valueNameOptions;
     _.each(config.editorTabs, editor => {
       this.addEditorTab(editor.name, "public/plugins/" + config.plugin_id + editor.template, editor.position);
@@ -44,7 +46,9 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       enable_bgColor: false,
       bgColors: "green|orange|red",
       enable_transform: false,
-      transform_values: "_value_|_value_|_value_"
+      transform_values: "_value_|_value_|_value_",
+      decimals: 2,
+      format: "none"
     };
     this.panel.patterns.push(newPattern);
     this.panel.activePatternIndex = this.panel.patterns.length - 1;
@@ -87,6 +91,57 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     return t;
   }
+  getDecimalsForValue(value, _decimals) {
+    if (_.isNumber(+_decimals)) {
+      return {
+        decimals: _decimals,
+        scaledDecimals: null
+      };
+    }
+
+    var delta = value / 2;
+    var dec = -Math.floor(Math.log(delta) / Math.LN10);
+
+    var magn = Math.pow(10, -dec),
+      norm = delta / magn, // norm is between 1.0 and 10.0
+      size;
+
+    if (norm < 1.5) {
+      size = 1;
+    } else if (norm < 3) {
+      size = 2;
+      // special case for 2.5, requires an extra decimal
+      if (norm > 2.25) {
+        size = 2.5;
+        ++dec;
+      }
+    } else if (norm < 7.5) {
+      size = 5;
+    } else {
+      size = 10;
+    }
+
+    size *= magn;
+
+    // reduce starting decimals if not needed
+    if (Math.floor(value) === value) {
+      dec = 0;
+    }
+
+    var result = {};
+    result.decimals = Math.max(0, dec);
+    result.scaledDecimals = result.decimals - Math.floor(Math.log(size) / Math.LN10) + 2;
+
+    return result;
+  }
+  setUnitFormat(subItem, index) {
+    if (index === -1) {
+      this.panel.defaultPattern.format = subItem.value;
+    } else {
+      this.panel.patterns[index].format = subItem.value;
+    }
+    this.render();
+  }
 }
 
 GrafanaBoomTableCtrl.prototype.render = function () {
@@ -116,10 +171,19 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         });
         return series;
       });
+      // Assign Decimal Values
+      this.dataComputed = this.dataComputed.map(series => {
+        series.decimals = (series.pattern.decimals) || config.panelDefaults.defaultPattern.decimals;
+        return series;
+      });
       // Assign value
       this.dataComputed = this.dataComputed.map(series => {
-        series.value = series.stats[series.pattern.valueName || "avg"] || "N/A";
-        series.displayValue = series.value;
+        series.value = series.stats[series.pattern.valueName || "avg"];
+        let decimalInfo = this.getDecimalsForValue(series.value, series.decimals);
+        let formatFunc = kbn.valueFormats[series.pattern.format || "none"];
+        series.valueFormatted = formatFunc(series.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
+        series.valueRounded = kbn.roundValue(series.value, decimalInfo.decimals);
+        series.displayValue = series.valueFormatted;
         return series;
       });
       // Assign Row Name
@@ -163,7 +227,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       this.dataComputed = this.dataComputed.map(series => {
         series.enable_transform = series.pattern.enable_transform;
         series.transform_values = (series.pattern.transform_values || config.panelDefaults.defaultPattern.transform_values).split("|");
-        series.displayValue = series.enable_transform === true ? this.transformValue(series.thresholds, series.transform_values, series.value) : series.displayValue;
+        series.displayValue = series.enable_transform === true ? this.transformValue(series.thresholds, series.transform_values, series.displayValue) : series.displayValue;
         return series;
       });
       // Grouping
