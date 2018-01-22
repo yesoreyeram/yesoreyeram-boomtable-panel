@@ -28,7 +28,9 @@ System.register(["app/plugins/sdk", "app/core/time_series2"], function (_export,
                         col_name: "_1_",
                         thresholds: "70,90",
                         enable_bgColor: false,
-                        bgColors: "green|orange|red"
+                        bgColors: "green|orange|red",
+                        enable_transform: false,
+                        transform_values: "_value_|_value_|_value_"
                     },
                     activePatternIndex: -1
                 },

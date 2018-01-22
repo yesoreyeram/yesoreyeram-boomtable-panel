@@ -114,7 +114,9 @@ System.register(["./app/app"], function (_export, _context) {
               col_name: "_1_",
               thresholds: "70,90",
               enable_bgColor: false,
-              bgColors: "green|orange|red"
+              bgColors: "green|orange|red",
+              enable_transform: false,
+              transform_values: "_value_|_value_|_value_"
             };
             this.panel.patterns.push(newPattern);
             this.panel.activePatternIndex = this.panel.patterns.length - 1;
@@ -141,6 +143,20 @@ System.register(["./app/app"], function (_export, _context) {
             }
             return c;
           }
+        }, {
+          key: "transformValue",
+          value: function transformValue(thresholds, transform_values, value) {
+            var t = value;
+            if (thresholds && transform_values && value && thresholds.length + 1 === transform_values.length) {
+              for (var i = thresholds.length; i > 0; i--) {
+                if (value >= thresholds[i - 1]) {
+                  return transform_values[i].replace(new RegExp("_value_", "g"), value);
+                }
+              }
+              return _.first(transform_values).replace(new RegExp("_value_", "g"), value);
+            }
+            return t;
+          }
         }]);
 
         return GrafanaBoomTableCtrl;
@@ -163,6 +179,7 @@ System.register(["./app/app"], function (_export, _context) {
           // Assign value
           this.dataComputed = this.dataComputed.map(function (series) {
             series.value = series.stats[series.pattern.valueName || "avg"] || "N/A";
+            series.displayValue = series.value;
             return series;
           });
           // Assign Row Name
@@ -197,6 +214,13 @@ System.register(["./app/app"], function (_export, _context) {
             series.enable_bgColor = series.pattern.enable_bgColor;
             series.bgColors = (series.pattern.bgColors || config.panelDefaults.defaultPattern.bgColors).split("|");
             series.bgColor = series.enable_bgColor === true ? _this3.computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
+            return series;
+          });
+          // Value Transform
+          this.dataComputed = this.dataComputed.map(function (series) {
+            series.enable_transform = series.pattern.enable_transform;
+            series.transform_values = (series.pattern.transform_values || config.panelDefaults.defaultPattern.transform_values).split("|");
+            series.displayValue = series.enable_transform === true ? _this3.transformValue(series.thresholds, series.transform_values, series.value) : series.displayValue;
             return series;
           });
           // Assigning computed data to output panel

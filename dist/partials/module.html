@@ -9,18 +9,24 @@
                 <th style="padding:4px;text-align:center">Row Name</th>
                 <th style="padding:4px;text-align:center">Col Name</th>
                 <th style="padding:4px;text-align:center">Thresholds</th>
+                <!--
                 <th style="padding:4px;text-align:center">BG Color</th>
+                <th style="padding:4px;text-align:center">Transform</th>
+                -->
             </tr>
         </thead>
         <tbody>
             <tr data-ng-repeat="data in ctrl.panel.data">
                 <td style="padding:4px;" width="40%">{{data.alias}}</td>
                 <td style="padding:4px;">{{data.pattern.pattern || "Default"}}</td>
-                <td style="padding:4px;background-color:{{data.bgColor}}">{{data.value}}</td>
+                <td style="padding:4px;background-color:{{data.bgColor}}">{{data.displayValue}}</td>
                 <td style="padding:4px;">{{data.row_name}}</td>
                 <td style="padding:4px;">{{data.col_name}}</td>
                 <td style="padding:4px;">{{data.thresholds}}</td>
+                <!--
                 <td style="padding:4px;">{{data.enable_bgColor === true ? 'Y' : 'N'}} / {{data.bgColors}}</td>
+                <td style="padding:4px;">{{data.enable_transform === true ? 'Y' : 'N'}} / {{data.transform_values}}</td>
+                -->
             </tr>
         </tbody>
     </table>
