@@ -38,7 +38,10 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       delimiter: ".",
       valueName: "avg",
       row_name: "_0_",
-      col_name: "_1_"
+      col_name: "_1_",
+      thresholds: "70,90",
+      enable_bgColor: false,
+      bgColors: "green|orange|red"
     };
     this.panel.patterns.push(newPattern);
     this.panel.activePatternIndex = this.panel.patterns.length - 1;
@@ -48,6 +51,18 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.patterns.splice(index, 1);
     this.panel.activePatternIndex = -1;
     this.render();
+  }
+  computeBgColor(thresholds, bgColors, value) {
+    var c = "transparent";
+    if (thresholds && bgColors && value && thresholds.length + 1 === bgColors.length) {
+      for (var i = thresholds.length; i > 0; i--) {
+        if (value >= thresholds[i - 1]) {
+          return bgColors[i];
+        }
+      }
+      return _.first(bgColors);
+    }
+    return c;
   }
 }
 
@@ -73,6 +88,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
         return r.replace(new RegExp("_" + i + "_", "g"), it)
       }, series.pattern.row_name || config.panelDefaults.defaultPattern.row_name);
+      if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
+        series.row_name = series.alias;
+      }
       return series;
     });
     // Assign Col Name
@@ -80,6 +98,21 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
         return r.replace(new RegExp("_" + i + "_", "g"), it)
       }, series.pattern.col_name || config.panelDefaults.defaultPattern.col_name);
+      if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
+        series.col_name = "value";
+      }
+      return series;
+    });
+    // Assign Thresholds
+    this.dataComputed = this.dataComputed.map(series => {
+      series.thresholds = (series.pattern.thresholds || config.panelDefaults.defaultPattern.thresholds).split(",").map(d => +d);
+      return series;
+    });
+    // Assign BG COlors
+    this.dataComputed = this.dataComputed.map(series => {
+      series.enable_bgColor = series.pattern.enable_bgColor;
+      series.bgColors = (series.pattern.bgColors || config.panelDefaults.defaultPattern.bgColors).split("|");
+      series.bgColor = series.enable_bgColor === true ? this.computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
       return series;
     });
     // Assigning computed data to output panel

@@ -25,7 +25,10 @@ System.register(["app/plugins/sdk", "app/core/time_series2"], function (_export,
                         delimiter: ".",
                         valueName: "avg",
                         row_name: "_0_",
-                        col_name: "_1_"
+                        col_name: "_1_",
+                        thresholds: "70,90",
+                        enable_bgColor: false,
+                        bgColors: "green|orange|red"
                     },
                     activePatternIndex: -1
                 },
