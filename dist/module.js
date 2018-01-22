@@ -239,7 +239,6 @@ System.register(["./app/app", "lodash"], function (_export, _context) {
         var _this3 = this;
 
         if (this.dataReceived) {
-          console.log("Rendering");
           // Copying the data received
           this.dataComputed = this.dataReceived;
           var metricsReceived = utils.getFields(this.dataComputed, "target");

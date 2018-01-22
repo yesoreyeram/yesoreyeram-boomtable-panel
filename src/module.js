@@ -148,7 +148,6 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
 
 GrafanaBoomTableCtrl.prototype.render = function () {
   if (this.dataReceived) {
-    console.log("Rendering");
     // Copying the data received
     this.dataComputed = this.dataReceived;
     const metricsReceived = utils.getFields(this.dataComputed, "target");
