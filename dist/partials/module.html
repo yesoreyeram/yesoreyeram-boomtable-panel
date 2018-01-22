@@ -1,3 +1,6 @@
+<div data-ng-if="ctrl.panel.debug_mode === true">
+    <h5 class="text-warning">WARNING: Panel running in debug mode </h5>
+</div>
 <div data-ng-if="ctrl.panel.error">
     <h4 class="text-warning">{{ctrl.panel.error.name}}</h4>
     <p ng-bind-html="ctrl.panel.error.message"></p>
@@ -17,7 +20,6 @@
     </table>
 </div>
 <div data-ng-if="ctrl.panel.debug_mode === true && ctrl.panel.data && ctrl.panel.data.length >0">
-    <h5 class="text-warning">WARNING: Panel running in debug mode </h5>
     <table class="table-panel-table">
         <thead>
             <tr>
@@ -27,10 +29,6 @@
                 <th style="padding:4px;text-align:center">Row Name</th>
                 <th style="padding:4px;text-align:center">Col Name</th>
                 <th style="padding:4px;text-align:center">Thresholds</th>
-                <!--
-                <th style="padding:4px;text-align:center">BG Color</th>
-                <th style="padding:4px;text-align:center">Transform</th>
-                -->
             </tr>
         </thead>
         <tbody>
@@ -41,10 +39,6 @@
                 <td style="padding:4px;">{{data.row_name}}</td>
                 <td style="padding:4px;">{{data.col_name}}</td>
                 <td style="padding:4px;">{{data.thresholds}}</td>
-                <!--
-                <td style="padding:4px;">{{data.enable_bgColor === true ? 'Y' : 'N'}} / {{data.bgColors}}</td>
-                <td style="padding:4px;">{{data.enable_transform === true ? 'Y' : 'N'}} / {{data.transform_values}}</td>
-                -->
             </tr>
         </tbody>
     </table>
