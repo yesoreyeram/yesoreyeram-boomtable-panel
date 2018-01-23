@@ -117,7 +117,7 @@ Example:
 Background color based on thresholds
 ------------------------------------
 
-Works the same way as single stat panel. Background color is a list of colors seperated by pipe (|) symbol. Colors can be named or hexadecimal colors or rgb or rgba. Number of colors should be greater than the number of thresholds.
+Works the same way as single stat panel. Background color is a list of colors seperated by pipe symbol. Colors can be named or hexadecimal colors or rgb or rgba. Number of colors should be greater than the number of thresholds.
 
 Example of color patterns:
      
