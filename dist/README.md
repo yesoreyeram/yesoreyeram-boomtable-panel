@@ -111,8 +111,8 @@ Thresholds are numbers seperated by comma. There can be multiple thresholds.
 
 Example:
 
-   10,20
-   70,90,95
+    10,20
+    70,90,95
 
 Background color based on thresholds
 ------------------------------------
@@ -165,5 +165,5 @@ Example value transformation: (Assume your metrics results, 95 and it is percent
 
     _value_                 -->     95%
     GOOD (_value_)          -->     GOOD (95%)
-    HOT (_value_ > 95%)     -->     HOT (95% > 80%)
+    HOT (_value_ > threshold of 80%)     -->     HOT (95% > threshold of 80%)
     Contact helpdesk        -->     Contact helpdesk
