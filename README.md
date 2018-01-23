@@ -154,13 +154,13 @@ Logic is same as background color. But the value to be displayed can be altered 
 
 Example transformation patterns :
 
-    _value_ |_value_ |_value_
+    _value_|_value_|_value_
     GOOD|BETTER|BAD
     GOOD (_value_)|_value_|_value
     Time to party|Ill|RIP
 
 
-Example value transformation: (Assume your metrics results, 95 and it is percentage data type)
+Sample value transformation: (Assume your metrics results, 95 and it is percentage data type)
  
 
     _value_                 -->     95%
