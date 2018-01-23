@@ -5,7 +5,7 @@
     <h4 class="text-warning">{{ctrl.panel.error.name}}</h4>
     <p ng-bind-html="ctrl.panel.error.message"></p>
 </div>
-<div data-ng-if="!ctrl.panel.error && ctrl.panel.groupedData && ctrl.panel.debug_mode === false">
+<div data-ng-if="!ctrl.panel.error && ctrl.panel.groupedData">
     <table class="table-panel-table">
         <thead>
             <tr>
