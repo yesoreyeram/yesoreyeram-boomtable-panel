@@ -158,7 +158,7 @@ System.register(["./app/app", "lodash"], function (_export, _context) {
           }
         }, {
           key: "transformValue",
-          value: function transformValue(thresholds, transform_values, value) {
+          value: function transformValue(thresholds, transform_values, value, displayValue) {
             var t = value;
             if (thresholds && transform_values && value && thresholds.length + 1 <= transform_values.length) {
               transform_values = _.dropRight(transform_values, transform_values.length - thresholds.length - 1);
@@ -167,10 +167,10 @@ System.register(["./app/app", "lodash"], function (_export, _context) {
               }
               for (var i = thresholds.length; i > 0; i--) {
                 if (value >= thresholds[i - 1]) {
-                  return transform_values[i].replace(new RegExp("_value_", "g"), value);
+                  return transform_values[i].replace(new RegExp("_value_", "g"), displayValue);
                 }
               }
-              return _.first(transform_values).replace(new RegExp("_value_", "g"), value);
+              return _.first(transform_values).replace(new RegExp("_value_", "g"), displayValue);
             }
             return t;
           }
@@ -333,7 +333,7 @@ System.register(["./app/app", "lodash"], function (_export, _context) {
             this.dataComputed = this.dataComputed.map(function (series) {
               series.enable_transform = series.pattern.enable_transform;
               series.transform_values = (series.pattern.transform_values || config.panelDefaults.defaultPattern.transform_values).split("|");
-              series.displayValue = series.enable_transform === true ? _this3.transformValue(series.thresholds, series.transform_values, series.displayValue) : series.displayValue;
+              series.displayValue = series.enable_transform === true ? _this3.transformValue(series.thresholds, series.transform_values, series.value, series.displayValue) : series.displayValue;
               return series;
             });
             // Grouping
