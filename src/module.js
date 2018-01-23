@@ -187,9 +187,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
             series.valueRounded = kbn.roundValue(series.value, decimalInfo.decimals);
             series.displayValue = series.valueFormatted;
           } else {
-            series.valueFormatted = formatFunc(0, decimalInfo.decimals, decimalInfo.scaledDecimals);
-            series.valueRounded = kbn.roundValue(0, decimalInfo.decimals);
-            series.displayValue = series.pattern.null_value || "Null";
+            series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null";
           }
         }
         return series;
@@ -229,7 +227,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         series.enable_bgColor = series.pattern.enable_bgColor;
         series.bgColors = (series.pattern.bgColors || config.panelDefaults.defaultPattern.bgColors).split("|");
         series.bgColor = series.enable_bgColor === true ? this.computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
-        if (series.displayValue === (series.pattern.null_value || "Null")) {
+        if (series.displayValue === (series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null")) {
           series.bgColor = series.pattern.null_color || config.panelDefaults.defaultPattern.null_color;
         }
         return series;
@@ -239,6 +237,12 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         series.enable_transform = series.pattern.enable_transform;
         series.transform_values = (series.pattern.transform_values || config.panelDefaults.defaultPattern.transform_values).split("|");
         series.displayValue = series.enable_transform === true ? this.transformValue(series.thresholds, series.transform_values, series.value, series.displayValue) : series.displayValue;
+        if (series.displayValue === (series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null")) {
+          series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value;
+        }
+        else if(isNaN(series.value)){
+         series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value;
+        }
         return series;
       });
       // Grouping
