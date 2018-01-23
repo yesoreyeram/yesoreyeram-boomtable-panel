@@ -167,3 +167,9 @@ Sample value transformation: (Assume your metrics results, 95 and it is percenta
     GOOD (_value_)          -->     GOOD (95%)
     HOT (_value_ > threshold of 80%)     -->     HOT (95% > threshold of 80%)
     Contact helpdesk        -->     Contact helpdesk
+
+# ChangeLog
+
+**Version 0.1.0**
+
+* First working version
