@@ -144,6 +144,12 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     this.render();
   }
+  limitText(text, maxlength) {
+    if (text.split('').length > maxlength) {
+      text = text.substring(0, maxlength - 3) + "...";
+    }
+    return text.toUpperCase();
+  }
 }
 
 GrafanaBoomTableCtrl.prototype.render = function () {

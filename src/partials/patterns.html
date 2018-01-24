@@ -2,7 +2,7 @@
     <aside class="edit-sidemenu-aside">
         <ul class="edit-sidemenu">
             <li ng-repeat="pattern in ctrl.panel.patterns" ng-class="{active: ctrl.panel.activePatternIndex === $index}">
-                <a ng-click="ctrl.panel.activePatternIndex = $index">{{pattern.pattern || 'Default'}}</a>
+                <a ng-click="ctrl.panel.activePatternIndex = $index">{{ctrl.limitText(pattern.pattern || 'Default',10)}}</a>
             </li>
             <li ng-class="{active: ctrl.panel.activePatternIndex === -1}">
                 <a ng-click="ctrl.panel.activePatternIndex = -1">Default</a>

@@ -230,6 +230,14 @@ System.register(["./app/app", "lodash"], function (_export, _context) {
             }
             this.render();
           }
+        }, {
+          key: "limitText",
+          value: function limitText(text, maxlength) {
+            if (text.split('').length > maxlength) {
+              text = text.substring(0, maxlength - 3) + "...";
+            }
+            return text.toUpperCase();
+          }
         }]);
 
         return GrafanaBoomTableCtrl;
