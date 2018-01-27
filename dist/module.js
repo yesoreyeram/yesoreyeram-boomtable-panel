@@ -249,6 +249,8 @@ System.register(["./app/app", "lodash"], function (_export, _context) {
         if (this.dataReceived) {
           // Copying the data received
           this.dataComputed = this.dataReceived;
+          this.panel.default_title_for_rows = this.panel.default_title_for_rows || config.default_title_for_rows;
+          this.panel.default_title_for_cols = this.panel.default_title_for_cols || config.default_title_for_cols;
           var metricsReceived = utils.getFields(this.dataComputed, "target");
           if (metricsReceived.length !== _.uniq(metricsReceived).length) {
             var duplicateKeys = _.uniq(metricsReceived.filter(function (v) {
@@ -309,7 +311,7 @@ System.register(["./app/app", "lodash"], function (_export, _context) {
                 return r.replace(new RegExp("_" + i + "_", "g"), it);
               }, series.pattern.col_name || config.panelDefaults.defaultPattern.col_name);
               if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
-                series.col_name = "value";
+                series.col_name = _this3.panel.default_title_for_cols || config.default_title_for_cols || "Value";
               }
               return series;
             });
