@@ -3,6 +3,7 @@ module.exports = grunt => {
 
   grunt.loadNpmTasks("grunt-execute");
   grunt.loadNpmTasks("grunt-contrib-clean");
+  grunt.loadNpmTasks('grunt-typescript');
 
   grunt.initConfig({
     clean: ["dist"],
@@ -11,7 +12,7 @@ module.exports = grunt => {
       src_to_dist: {
         cwd: "src",
         expand: true,
-        src: ["**/*", "css/*.css", "!**/*.js", "!**/*.scss", "!img/**/*"],
+        src: ["**/*", "css/*.css", "!**/*.ts", "!**/*.js", "!**/*.scss", "!img/**/*"],
         dest: "dist"
       },
       pluginDef: {
@@ -37,27 +38,22 @@ module.exports = grunt => {
       }
     },
 
-    babel: {
-      options: {
-        sourceMap: true,
-        presets: ["es2015"],
-        plugins: [
-          "transform-es2015-modules-systemjs",
-          "transform-es2015-for-of"
-        ]
-      },
-      dist: {
-        files: [
-          {
-            cwd: "src",
-            expand: true,
-            src: ["*.js", "app/*.js"],
-            dest: "dist",
-            ext: ".js"
-          }
-        ]
+    typescript: {
+      build: {
+        src: ['src/**/*.ts', '!**/*.d.ts'],
+        dest: 'dist/',
+        options: {
+          module: 'system',
+          target: 'es5',
+          declaration: false,
+          emitDecoratorMetadata: true,
+          experimentalDecorators: true,
+          sourceMap: true,
+          noImplicitAny: false,
+        }
       }
     }
+
   });
 
   grunt.registerTask("default", [
@@ -65,6 +61,6 @@ module.exports = grunt => {
     "copy:src_to_dist",
     "copy:pluginDef",
     "copy:img_to_dist",
-    "babel"
+    "typescript"
   ]);
 };
