@@ -42,7 +42,9 @@ System.register(["app/core/utils/kbn", "app/plugins/sdk", "app/core/time_series2
                         null_color: "darkred",
                         null_value: "No data"
                     },
-                    activePatternIndex: -1
+                    activePatternIndex: -1,
+                    default_title_for_rows: "Metric",
+                    default_title_for_cols: "Value"
                 },
                 list_of_stylesheets: {
                     dark: "plugins/" + plugin_id + "/css/default.dark.css",

@@ -155,7 +155,9 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
 GrafanaBoomTableCtrl.prototype.render = function () {
   if (this.dataReceived) {
     // Copying the data received
-    this.dataComputed = this.dataReceived;
+    this.dataComputed = this.dataReceived;    
+    this.panel.default_title_for_rows = this.panel.default_title_for_rows || config.default_title_for_rows;
+    this.panel.default_title_for_cols = this.panel.default_title_for_cols || config.default_title_for_cols;
     const metricsReceived = utils.getFields(this.dataComputed, "target");
     if (metricsReceived.length !== _.uniq(metricsReceived).length) {
       var duplicateKeys = _.uniq(metricsReceived.filter(v => {
@@ -214,7 +216,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           return r.replace(new RegExp("_" + i + "_", "g"), it)
         }, series.pattern.col_name || config.panelDefaults.defaultPattern.col_name);
         if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
-          series.col_name = "value";
+          series.col_name = this.panel.default_title_for_cols || config.default_title_for_cols || "Value";
         }
         return series;
       });
