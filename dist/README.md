@@ -1,5 +1,8 @@
 # Boom Table Panel for Grafana
 
+
+[![CircleCI](https://circleci.com/gh/yesoreyeram/yesoreyeram-boomtable-panel.svg?style=svg)](https://circleci.com/gh/yesoreyeram/yesoreyeram-boomtable-panel)
+
 Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for Graphite.
 
 ![Boom Table - Sample Panel](src/img/panel.png)
