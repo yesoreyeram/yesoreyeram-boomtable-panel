@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 const getFields = function (collection, field) {
     return _.map(collection, d => d[field]);
 };

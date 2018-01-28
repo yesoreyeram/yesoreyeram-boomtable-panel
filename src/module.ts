@@ -10,6 +10,11 @@ import _ from "lodash";
 loadPluginCss(config.list_of_stylesheets);
 
 class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
+  static templateUrl: string = "partials/module.html";
+  unitFormats: any = kbn.getUnitFormats();
+  valueNameOptions: Object = config.valueNameOptions;
+  dataReceived: any;
+  templateUrl: string;
   constructor($scope, $injector, $sce) {
     super($scope, $injector);
     _.defaults(this.panel, config.panelDefaults);
@@ -17,8 +22,6 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
   }
   onInitEditMode() {
-    this.unitFormats = kbn.getUnitFormats();
-    this.valueNameOptions = config.valueNameOptions;
     _.each(config.editorTabs, editor => {
       this.addEditorTab(editor.name, "public/plugins/" + config.plugin_id + editor.template, editor.position);
     })
@@ -95,10 +98,11 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   }
   getDecimalsForValue(value, _decimals) {
     if (_.isNumber(+_decimals)) {
-      return {
+      var o: Object = {
         decimals: _decimals,
         scaledDecimals: null
       };
+      return o;
     }
 
     var delta = value / 2;
@@ -130,9 +134,10 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       dec = 0;
     }
 
-    var result = {};
-    result.decimals = Math.max(0, dec);
-    result.scaledDecimals = result.decimals - Math.floor(Math.log(size) / Math.LN10) + 2;
+    var result: Object = {
+      decimals: Math.max(0, dec),
+      scaledDecimals: Math.max(0, dec) - Math.floor(Math.log(size) / Math.LN10) + 2
+    };
 
     return result;
   }
@@ -155,7 +160,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
 GrafanaBoomTableCtrl.prototype.render = function () {
   if (this.dataReceived) {
     // Copying the data received
-    this.dataComputed = this.dataReceived;    
+    this.dataComputed = this.dataReceived;
     this.panel.default_title_for_rows = this.panel.default_title_for_rows || config.default_title_for_rows;
     this.panel.default_title_for_cols = this.panel.default_title_for_cols || config.default_title_for_cols;
     const metricsReceived = utils.getFields(this.dataComputed, "target");
@@ -248,8 +253,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         if (series.displayValue === (series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null")) {
           series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value;
         }
-        else if(isNaN(series.value)){
-         series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value;
+        else if (isNaN(series.value)) {
+          series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value;
         }
         return series;
       });
@@ -259,10 +264,10 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       const keys_found = utils.getFields(this.dataComputed, "key_name");
       const is_unique_keys = (keys_found.length === _.uniq(keys_found).length);
       if (is_unique_keys) {
-        this.panel.error = undefined;
+        this.panel.error = undefined; ////
         var output = [];
         _.each(_.uniq(rows_found), (row_name) => {
-          var o = {};
+          var o: any = {};
           o.row = row_name;
           o.cols = [];
           _.each(_.uniq(cols_found), (col_name) => {
@@ -300,8 +305,6 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     }
   }
 };
-
-GrafanaBoomTableCtrl.templateUrl = "partials/module.html";
 
 export {
   GrafanaBoomTableCtrl as PanelCtrl
