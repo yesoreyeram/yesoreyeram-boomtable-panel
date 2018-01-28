@@ -155,7 +155,7 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                     if (text.split('').length > maxlength) {
                         text = text.substring(0, maxlength - 3) + "...";
                     }
-                    return text.toUpperCase();
+                    return text;
                 };
                 GrafanaBoomTableCtrl.templateUrl = "partials/module.html";
                 return GrafanaBoomTableCtrl;

@@ -14,7 +14,6 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   unitFormats: any = kbn.getUnitFormats();
   valueNameOptions: Object = config.valueNameOptions;
   dataReceived: any;
-  templateUrl: string;
   constructor($scope, $injector, $sce) {
     super($scope, $injector);
     _.defaults(this.panel, config.panelDefaults);
@@ -153,7 +152,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     if (text.split('').length > maxlength) {
       text = text.substring(0, maxlength - 3) + "...";
     }
-    return text.toUpperCase();
+    return text;
   }
 }
 
