@@ -166,7 +166,6 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                     // Copying the data received
                     this.dataComputed = this.dataReceived;
                     this.panel.default_title_for_rows = this.panel.default_title_for_rows || app_1.config.default_title_for_rows;
-                    this.panel.default_title_for_cols = this.panel.default_title_for_cols || app_1.config.default_title_for_cols;
                     var metricsReceived = app_1.utils.getFields(this.dataComputed, "target");
                     if (metricsReceived.length !== lodash_1.default.uniq(metricsReceived).length) {
                         var duplicateKeys = lodash_1.default.uniq(metricsReceived.filter(function (v) {
@@ -184,9 +183,10 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                         this.dataComputed = this.dataReceived.map(this.seriesHandler.bind(this));
                         // Assign pattern
                         this.dataComputed = this.dataComputed.map(function (series) {
-                            series.pattern = lodash_1.default.find(_this.panel.patterns.concat(_this.panel.defaultPattern), function (p) {
-                                return series.alias.match(p.pattern || "");
+                            series.pattern = lodash_1.default.find(_this.panel.patterns, function (p) {
+                                return series.alias.match(p.pattern);
                             });
+                            series.pattern = series.pattern || app_1.config.panelDefaults.defaultPattern;
                             return series;
                         });
                         // Assign Decimal Values
@@ -215,7 +215,7 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                         this.dataComputed = this.dataComputed.map(function (series) {
                             series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce(function (r, it, i) {
                                 return r.replace(new RegExp("_" + i + "_", "g"), it);
-                            }, series.pattern.row_name || app_1.config.panelDefaults.defaultPattern.row_name);
+                            }, series.pattern.row_name.replace(new RegExp("_series_", "g"), series.alias) || app_1.config.panelDefaults.defaultPattern.row_name.replace(new RegExp("_series_", "g"), series.alias));
                             if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
                                 series.row_name = series.alias;
                             }
@@ -226,8 +226,8 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                             series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce(function (r, it, i) {
                                 return r.replace(new RegExp("_" + i + "_", "g"), it);
                             }, series.pattern.col_name || app_1.config.panelDefaults.defaultPattern.col_name);
-                            if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
-                                series.col_name = _this.panel.default_title_for_cols || app_1.config.default_title_for_cols || "Value";
+                            if (series.alias.split(series.pattern.delimiter || ".").length === 1 || series.row_name === series.alias) {
+                                series.col_name = series.pattern.col_name || "Value";
                             }
                             return series;
                         });

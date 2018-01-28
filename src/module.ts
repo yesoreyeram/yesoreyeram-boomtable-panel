@@ -161,7 +161,6 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     // Copying the data received
     this.dataComputed = this.dataReceived;
     this.panel.default_title_for_rows = this.panel.default_title_for_rows || config.default_title_for_rows;
-    this.panel.default_title_for_cols = this.panel.default_title_for_cols || config.default_title_for_cols;
     const metricsReceived = utils.getFields(this.dataComputed, "target");
     if (metricsReceived.length !== _.uniq(metricsReceived).length) {
       var duplicateKeys = _.uniq(metricsReceived.filter(v => {
@@ -178,9 +177,10 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       this.dataComputed = this.dataReceived.map(this.seriesHandler.bind(this));
       // Assign pattern
       this.dataComputed = this.dataComputed.map(series => {
-        series.pattern = _.find(this.panel.patterns.concat(this.panel.defaultPattern), function (p) {
-          return series.alias.match(p.pattern || "");
+        series.pattern = _.find(this.panel.patterns, function (p) {
+          return series.alias.match(p.pattern);
         });
+        series.pattern = series.pattern || config.panelDefaults.defaultPattern;
         return series;
       });
       // Assign Decimal Values
@@ -208,7 +208,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       this.dataComputed = this.dataComputed.map(series => {
         series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
           return r.replace(new RegExp("_" + i + "_", "g"), it)
-        }, series.pattern.row_name || config.panelDefaults.defaultPattern.row_name);
+        }, series.pattern.row_name.replace(new RegExp("_series_", "g"), series.alias) || config.panelDefaults.defaultPattern.row_name.replace(new RegExp("_series_", "g"), series.alias));
         if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
           series.row_name = series.alias;
         }
@@ -219,8 +219,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
           return r.replace(new RegExp("_" + i + "_", "g"), it)
         }, series.pattern.col_name || config.panelDefaults.defaultPattern.col_name);
-        if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
-          series.col_name = this.panel.default_title_for_cols || config.default_title_for_cols || "Value";
+        if (series.alias.split(series.pattern.delimiter || ".").length === 1 || series.row_name === series.alias) {
+          series.col_name = series.pattern.col_name || "Value";
         }
         return series;
       });

@@ -30,8 +30,8 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
                     defaultPattern: {
                         delimiter: ".",
                         valueName: "avg",
-                        row_name: "_0_",
-                        col_name: "_1_",
+                        row_name: "_series_",
+                        col_name: "Value",
                         thresholds: "70,90",
                         enable_bgColor: false,
                         bgColors: "green|orange|red",
@@ -43,8 +43,7 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
                         null_value: "No data"
                     },
                     activePatternIndex: -1,
-                    default_title_for_rows: "Metric",
-                    default_title_for_cols: "Value"
+                    default_title_for_rows: "Metric"
                 },
                 list_of_stylesheets: {
                     dark: "plugins/" + plugin_id + "/css/default.dark.css",
