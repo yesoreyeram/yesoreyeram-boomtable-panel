@@ -173,6 +173,12 @@ Sample value transformation: (Assume your metrics results, 95 and it is percenta
 
 # ChangeLog
 
+**Version 0.2.0**
+
+* Build script changed from babel to typescript
+* Assign series alias as row to the default pattern 
+* Bug fixes
+
 **Version 0.1.0**
 
 * First working version
