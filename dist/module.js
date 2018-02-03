@@ -186,7 +186,9 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                             series.pattern = lodash_1.default.find(_this.panel.patterns, function (p) {
                                 return series.alias.match(p.pattern);
                             });
-                            series.pattern = series.pattern || app_1.config.panelDefaults.defaultPattern;
+                            if (series.pattern === undefined) {
+                                series.pattern = _this.panel.defaultPattern || app_1.config.panelDefaults.defaultPattern;
+                            }
                             return series;
                         });
                         // Assign Decimal Values
@@ -197,10 +199,13 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                         // Assign value
                         this.dataComputed = this.dataComputed.map(function (series) {
                             if (series.stats) {
-                                series.value = series.stats[series.pattern.valueName || app_1.config.panelDefaults.defaultPattern.valueName] || NaN;
+                                series.value = series.stats[series.pattern.valueName || app_1.config.panelDefaults.defaultPattern.valueName];
                                 var decimalInfo = _this.getDecimalsForValue(series.value, series.decimals);
                                 var formatFunc = app_1.kbn.valueFormats[series.pattern.format || app_1.config.panelDefaults.defaultPattern.format];
-                                if (!isNaN(series.value)) {
+                                if (series.value === null) {
+                                    series.displayValue = series.pattern.null_value || app_1.config.panelDefaults.defaultPattern.null_value || "Null";
+                                }
+                                else if (!isNaN(series.value)) {
                                     series.valueFormatted = formatFunc(series.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
                                     series.valueRounded = app_1.kbn.roundValue(series.value, decimalInfo.decimals);
                                     series.displayValue = series.valueFormatted;

@@ -180,7 +180,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         series.pattern = _.find(this.panel.patterns, function (p) {
           return series.alias.match(p.pattern);
         });
-        series.pattern = series.pattern || config.panelDefaults.defaultPattern;
+        if (series.pattern === undefined) {
+          series.pattern = this.panel.defaultPattern || config.panelDefaults.defaultPattern;
+        }
         return series;
       });
       // Assign Decimal Values
@@ -191,10 +193,13 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       // Assign value
       this.dataComputed = this.dataComputed.map(series => {
         if (series.stats) {
-          series.value = series.stats[series.pattern.valueName || config.panelDefaults.defaultPattern.valueName] || NaN;
+          series.value = series.stats[series.pattern.valueName || config.panelDefaults.defaultPattern.valueName];
           let decimalInfo = this.getDecimalsForValue(series.value, series.decimals);
           let formatFunc = kbn.valueFormats[series.pattern.format || config.panelDefaults.defaultPattern.format];
-          if (!isNaN(series.value)) {
+          if(series.value === null){
+            series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null";
+          }
+          else if (!isNaN(series.value)) {
             series.valueFormatted = formatFunc(series.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
             series.valueRounded = kbn.roundValue(series.value, decimalInfo.decimals);
             series.displayValue = series.valueFormatted;
