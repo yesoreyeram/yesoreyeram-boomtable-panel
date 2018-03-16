@@ -30,6 +30,13 @@ Supported / Tested Data Sources :
 
 * Graphite
 
+Tested Grafana versions :
+-------------------------
+
+* Grafana version 4.5.2
+* Grafana version 5.0.2
+
+
 Screenshots :
 -------------
 
