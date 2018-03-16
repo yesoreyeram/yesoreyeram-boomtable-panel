@@ -56,6 +56,10 @@ Metrics screenshots
 
 ![Boom Table - Metrics Screenshot](src/img/metrics.png)
 
+Version 5 screenshots
+
+![Boom Table - Version 5 support Screenshot](src/img/version-5.0.2.png)
+
 # Setup
 
 **TLDR** : Use debug mode unless you have time to read the below leeeengthy notes.
