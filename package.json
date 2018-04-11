@@ -1,6 +1,6 @@
 {
   "name": "yesoreyeram-boomtable-panel",
-  "version": "0.2.0",
+  "version": "0.2.4",
   "description": "Boom Table Panel for Grafana",
   "main": "dist/module.js",
   "scripts": {
