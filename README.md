@@ -5,7 +5,7 @@
 
 Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for Graphite.
 
-![Boom Table - Sample Panel](src/img/panel.png)
+![Boom Table - Sample Panel](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panel.png)
 
 Features :
 ----------
@@ -42,23 +42,23 @@ Screenshots :
 
 Pattern Editors Sample screenshots
 
-![Boom Table - Editor 1 Screenshot](src/img/editor-1.png)
+![Boom Table - Editor 1 Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/editor-1.png)
 
-![Boom Table - Editor 2 Screenshot](src/img/editor-2.png)
+![Boom Table - Editor 2 Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/editor-2.png)
 
-![Boom Table - Editor Default Screenshot](src/img/editor-default.png)
+![Boom Table - Editor Default Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/editor-default.png)
 
 Debug UI Sample screenshots
 
-![Boom Table - Debug UI Screenshot](src/img/debug-ui.png)
+![Boom Table - Debug UI Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/debug-ui.png)
 
 Metrics screenshots
 
-![Boom Table - Metrics Screenshot](src/img/metrics.png)
+![Boom Table - Metrics Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/metrics.png)
 
 Version 5 screenshots
 
-![Boom Table - Version 5 support Screenshot](src/img/version-5.0.2.png)
+![Boom Table - Version 5 support Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/version-5.0.2.png)
 
 # Setup
 
