@@ -1,0 +1,6 @@
+.boom-table .debug{
+    margin-top :30px;
+}
+.boom-table .debug table tr{
+    border: 2px solid red;
+}

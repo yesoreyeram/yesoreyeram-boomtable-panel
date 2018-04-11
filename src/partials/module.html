@@ -1,6 +1,4 @@
-<div data-ng-if="ctrl.panel.debug_mode === true">
-    <h5 class="text-warning">WARNING: Panel running in debug mode </h5>
-</div>
+<div class="boom-table">
 <div data-ng-if="ctrl.panel.error">
     <h4 class="text-warning">{{ctrl.panel.error.name}}</h4>
     <p ng-bind-html="ctrl.panel.error.message"></p>
@@ -19,27 +17,31 @@
         </tr>
     </table>
 </div>
-<div data-ng-if="ctrl.panel.debug_mode === true && ctrl.panel.data && ctrl.panel.data.length >0">
-    <table class="table-panel-table">
-        <thead>
-            <tr>
-                <th style="padding:4px;text-align:center">Metric</th>
-                <th style="padding:4px;text-align:center">Pattern</th>
-                <th style="padding:4px;text-align:center">Value</th>
-                <th style="padding:4px;text-align:center">Row Name</th>
-                <th style="padding:4px;text-align:center">Col Name</th>
-                <th style="padding:4px;text-align:center">Thresholds</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr data-ng-repeat="data in ctrl.panel.data">
-                <td style="padding:4px;" width="40%">{{data.alias}}</td>
-                <td style="padding:4px;">{{data.pattern.pattern || "Default"}}</td>
-                <td style="padding:4px;background-color:{{data.bgColor}}">{{data.displayValue}}</td>
-                <td style="padding:4px;">{{data.row_name}}</td>
-                <td style="padding:4px;">{{data.col_name}}</td>
-                <td style="padding:4px;">{{data.thresholds}}</td>
-            </tr>
-        </tbody>
-    </table>
+<div data-ng-if="ctrl.panel.debug_mode === true" class="debug">
+    <h5 class="text-warning">WARNING: Panel running in debug mode </h5>
+    <div data-ng-if="ctrl.panel.data && ctrl.panel.data.length >0">
+        <table class="table-panel-table">
+            <thead>
+                <tr>
+                    <th style="padding:4px;text-align:center">Metric</th>
+                    <th style="padding:4px;text-align:center">Pattern</th>
+                    <th style="padding:4px;text-align:center">Value</th>
+                    <th style="padding:4px;text-align:center">Row Name</th>
+                    <th style="padding:4px;text-align:center">Col Name</th>
+                    <th style="padding:4px;text-align:center">Thresholds</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-ng-repeat="data in ctrl.panel.data">
+                    <td style="padding:4px;" width="40%">{{data.alias}}</td>
+                    <td style="padding:4px;">{{data.pattern.pattern || "Default"}}</td>
+                    <td style="padding:4px;background-color:{{data.bgColor}}">{{data.displayValue}}</td>
+                    <td style="padding:4px;">{{data.row_name}}</td>
+                    <td style="padding:4px;">{{data.col_name}}</td>
+                    <td style="padding:4px;">{{data.thresholds}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 </div>
