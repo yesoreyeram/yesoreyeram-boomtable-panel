@@ -14,6 +14,8 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   unitFormats: any = kbn.getUnitFormats();
   valueNameOptions: Object = config.valueNameOptions;
   dataReceived: any;
+  ctrl:any;
+  elem:any;
   constructor($scope, $injector, $sce) {
     super($scope, $injector);
     _.defaults(this.panel, config.panelDefaults);
@@ -153,6 +155,10 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       text = text.substring(0, maxlength - 3) + "...";
     }
     return text;
+  }
+  link (scope, elem, attrs, ctrl) {
+    this.ctrl = ctrl;
+    this.elem = elem;
   }
 }
 
@@ -307,6 +313,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       // Assigning computed data to output panel
       this.panel.data = this.dataComputed;
     }
+    var rootElem = this.elem.find('.table-panel-scroll');
+    var maxheightofpanel = this.panel.debug_mode ?  this.ctrl.height - 71 : this.ctrl.height - 31;
+    rootElem.css({ 'max-height': maxheightofpanel+ "px"  });
   }
 };
 
