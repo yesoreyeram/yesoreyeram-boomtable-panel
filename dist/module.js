@@ -157,6 +157,10 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                     }
                     return text;
                 };
+                GrafanaBoomTableCtrl.prototype.link = function (scope, elem, attrs, ctrl) {
+                    this.ctrl = ctrl;
+                    this.elem = elem;
+                };
                 GrafanaBoomTableCtrl.templateUrl = "partials/module.html";
                 return GrafanaBoomTableCtrl;
             })(app_1.MetricsPanelCtrl);
@@ -314,6 +318,9 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                         // Assigning computed data to output panel
                         this.panel.data = this.dataComputed;
                     }
+                    var rootElem = this.elem.find('.table-panel-scroll');
+                    var maxheightofpanel = this.panel.debug_mode ? this.ctrl.height - 71 : this.ctrl.height - 31;
+                    rootElem.css({ 'max-height': maxheightofpanel + "px" });
                 }
             };
             exports_1("PanelCtrl", GrafanaBoomTableCtrl);
