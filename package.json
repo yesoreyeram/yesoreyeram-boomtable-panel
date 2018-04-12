@@ -1,6 +1,6 @@
 {
   "name": "yesoreyeram-boomtable-panel",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Boom Table Panel for Graphite",
   "main": "dist/module.js",
   "scripts": {
