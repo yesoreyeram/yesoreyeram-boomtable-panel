@@ -72,7 +72,7 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                 };
                 GrafanaBoomTableCtrl.prototype.computeBgColor = function (thresholds, bgColors, value) {
                     var c = "transparent";
-                    if (thresholds && bgColors && value && thresholds.length + 1 <= bgColors.length) {
+                    if (thresholds && bgColors && typeof value === "number" && thresholds.length + 1 <= bgColors.length) {
                         bgColors = lodash_1.default.dropRight(bgColors, bgColors.length - thresholds.length - 1);
                         if (bgColors[bgColors.length - 1] === "") {
                             bgColors[bgColors.length - 1] = "transparent";
