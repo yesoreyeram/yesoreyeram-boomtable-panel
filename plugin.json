@@ -3,7 +3,7 @@
   "name": "Boom Table",
   "id": "yesoreyeram-boomtable-panel",
   "info": {
-    "description": "Boom table panel for Grafana",
+    "description": "Boom table panel for Graphite",
     "author": {
       "name": "Sriramajeyam Sugumaran",
       "url": "https://www.google.com/search?q=Sriramajeyam+Sugumaran"
@@ -22,7 +22,7 @@
         "url": "https://github.com/yesoreyeram/yesoreyeram-boomtable-panel"
       }
     ],
-    "version": "0.2.4"
+    "version": "0.2.5"
   },
   "dependencies": {
     "grafanaVersion": "4.x.x",

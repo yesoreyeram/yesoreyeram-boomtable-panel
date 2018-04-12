@@ -1,7 +1,7 @@
 {
   "name": "yesoreyeram-boomtable-panel",
-  "version": "0.2.4",
-  "description": "Boom Table Panel for Grafana",
+  "version": "0.2.5",
+  "description": "Boom Table Panel for Graphite",
   "main": "dist/module.js",
   "scripts": {
     "test": "echo \"Warning: no test specified\" && exit 0"
