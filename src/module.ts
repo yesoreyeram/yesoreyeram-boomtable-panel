@@ -83,7 +83,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   }
   transformValue(thresholds, transform_values, value, displayValue) {
     var t = value;
-    if (thresholds && transform_values && value && thresholds.length + 1 <= transform_values.length) {
+    if (thresholds && transform_values && typeof value === "number" && thresholds.length + 1 <= transform_values.length) {
       transform_values = _.dropRight(transform_values, transform_values.length - thresholds.length - 1);
       if (transform_values[transform_values.length - 1] === "") {
         transform_values[transform_values.length - 1] = "_value_";
