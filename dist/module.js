@@ -70,6 +70,14 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                     this.panel.activePatternIndex = (this.panel.patterns && this.panel.patterns.length > 0) ? (this.panel.patterns.length - 1) : -1;
                     this.render();
                 };
+                GrafanaBoomTableCtrl.prototype.inverseBGColors = function (index) {
+                    this.panel.patterns[index].bgColors = this.panel.patterns[index].bgColors.split("|").reverse().join("|");
+                    this.render();
+                };
+                GrafanaBoomTableCtrl.prototype.inverseTransformValues = function (index) {
+                    this.panel.patterns[index].transform_values = this.panel.patterns[index].transform_values.split("|").reverse().join("|");
+                    this.render();
+                };
                 GrafanaBoomTableCtrl.prototype.computeBgColor = function (thresholds, bgColors, value) {
                     var c = "transparent";
                     if (thresholds && bgColors && typeof value === "number" && thresholds.length + 1 <= bgColors.length) {
