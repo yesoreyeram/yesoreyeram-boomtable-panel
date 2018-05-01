@@ -41,6 +41,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   }
   addPattern() {
     var newPattern = {
+      name: "New Pattern", 
       pattern: "^server.*cpu$",
       delimiter: ".",
       valueName: "avg",

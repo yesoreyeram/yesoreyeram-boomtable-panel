@@ -2,7 +2,7 @@
     <aside class="edit-sidemenu-aside">
         <ul class="edit-sidemenu">
             <li ng-repeat="pattern in ctrl.panel.patterns" ng-class="{active: ctrl.panel.activePatternIndex === $index}">
-                <a ng-click="ctrl.panel.activePatternIndex = $index">{{ctrl.limitText(pattern.pattern || 'Default',10)}}</a>
+                <a ng-click="ctrl.panel.activePatternIndex = $index">{{ctrl.limitText(pattern.name || pattern.pattern || 'Default',12)}}</a>
             </li>
             <li ng-class="{active: ctrl.panel.activePatternIndex === -1}">
                 <a ng-click="ctrl.panel.activePatternIndex = -1">Default</a>
@@ -18,6 +18,12 @@
         <div class="editor-row">
             <div class="section gf-form-group">
                 <h5 class="section-heading">Pattern</h5>
+                <div class="gr-form-inline">
+                    <div class="gf-form">
+                        <label class="gf-form-label width-13">Name of the pattern</label>
+                        <input type="text" placeholder="Name" class="gf-form-input width-18" ng-model="pattern.name" bs-tooltip="'Name for the pattern (Just for reference)'">
+                    </div>
+                </div>
                 <div class="gr-form-inline">
                     <div class="gf-form">
                         <label class="gf-form-label width-13">Pattern</label>
@@ -142,6 +148,12 @@
         <div class="editor-row">
             <div class="section gf-form-group">
                 <h5 class="section-heading">Pattern</h5>
+                <div class="gr-form-inline">
+                    <div class="gf-form">
+                        <label class="gf-form-label width-13">Name of the pattern</label>
+                        <label class="gf-form-label width-18">Default Pattern</label>
+                    </div>
+                </div>
                 <div class="gr-form-inline">
                     <div class="gf-form">
                         <label class="gf-form-label width-13">Pattern</label>

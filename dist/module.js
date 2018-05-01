@@ -46,6 +46,7 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                 };
                 GrafanaBoomTableCtrl.prototype.addPattern = function () {
                     var newPattern = {
+                        name: "New Pattern",
                         pattern: "^server.*cpu$",
                         delimiter: ".",
                         valueName: "avg",
