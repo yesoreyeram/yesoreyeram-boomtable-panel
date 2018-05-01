@@ -121,9 +121,21 @@
             </div>
         </div>
         <div class="editor-row">
-            <button class="btn btn-danger btn-small" ng-if="pattern.pattern !== undefined" ng-click="ctrl.removePattern($index)">
-                <i class="fa fa-trash"></i> Remove this pattern
-            </button>
+            <div class="gr-form-inline">
+                <div class="gf-form">
+                    <label class="gf-form-label width-13">Disable Pattern</label>
+                    <input type="checkbox" class="width-4" ng-model="pattern.disabled" ng-change="ctrl.render()">
+                </div>
+            </div>
+            <div class="gr-form-inline">
+                <div class="gf-form">
+                    <label class="gf-form-label width-13">Remove Pattern</label>
+                    <button class="btn btn-danger btn-small" ng-if="pattern.pattern !== undefined" ng-click="ctrl.removePattern($index)">
+                        <i class="fa fa-trash"></i> Remove this pattern
+                    </button>
+                </div>
+            </div>
+           
         </div>
     </div>
     <div class="edit-tab-content" ng-if="ctrl.panel.activePatternIndex === -1">

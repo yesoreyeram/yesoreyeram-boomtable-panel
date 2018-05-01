@@ -195,7 +195,7 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                         this.dataComputed = this.dataReceived.map(this.seriesHandler.bind(this));
                         // Assign pattern
                         this.dataComputed = this.dataComputed.map(function (series) {
-                            series.pattern = lodash_1.default.find(_this.panel.patterns, function (p) {
+                            series.pattern = lodash_1.default.find(_this.panel.patterns.filter(function (p) { return p.disabled !== true; }), function (p) {
                                 return series.alias.match(p.pattern);
                             });
                             if (series.pattern === undefined) {

@@ -191,7 +191,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       this.dataComputed = this.dataReceived.map(this.seriesHandler.bind(this));
       // Assign pattern
       this.dataComputed = this.dataComputed.map(series => {
-        series.pattern = _.find(this.panel.patterns, function (p) {
+        series.pattern = _.find(this.panel.patterns.filter(p=>{ return p.disabled !== true}), function (p) {
           return series.alias.match(p.pattern);
         });
         if (series.pattern === undefined) {
