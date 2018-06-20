@@ -312,8 +312,27 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                                 });
                                 output.push(o);
                             });
-                            this.panel.cols = lodash_1.default.uniq(cols_found);
-                            this.panel.groupedData = output;
+                            //region Output table construction
+                            var boomtable_output_body_headers = this.elem.find("#boomtable_output_body_headers");
+                            var boomtable_output_body_headers_output = "";
+                            boomtable_output_body_headers_output += "<tr>";
+                            boomtable_output_body_headers_output += "<th style=\"padding:4px;text-align:center\">" + this.panel.default_title_for_rows + "</th>";
+                            lodash_1.default.each(lodash_1.default.uniq(cols_found), function (c) {
+                                boomtable_output_body_headers_output += "<th style=\"padding:4px;text-align:center\">" + c + "</th>";
+                            });
+                            boomtable_output_body_headers_output += "</tr>";
+                            boomtable_output_body_headers.html(boomtable_output_body_headers_output);
+                            var boomtable_output_body = this.elem.find('#boomtable_output_body');
+                            var boomtable_output_body_output = "";
+                            lodash_1.default.each(output, function (o) {
+                                boomtable_output_body_output += "<tr>";
+                                boomtable_output_body_output += "<td style=\"padding:4px;\">" + o.row + "</td>";
+                                lodash_1.default.each(o.cols, function (c) {
+                                    boomtable_output_body_output += "<td style=\"padding:4px;background-color:" + c.bgColor + "\">" + c.displayValue + "</td>";
+                                });
+                                boomtable_output_body_output += "</tr>";
+                            });
+                            boomtable_output_body.html(boomtable_output_body_output);
                         }
                         else {
                             var duplicateKeys = lodash_1.default.uniq(keys_found.filter(function (v) {
@@ -324,8 +343,20 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                             err.message = "Duplicate key values : <br/>" + duplicateKeys.join("<br/> ");
                             this.panel.error = err;
                         }
-                        // Assigning computed data to output panel
-                        this.panel.data = this.dataComputed;
+                        //region Debug table body construction
+                        var boomtable_output_body_debug = this.elem.find('#boomtable_output_body_debug');
+                        var boomtable_output_body_debug_output = "";
+                        lodash_1.default.each(this.dataComputed, function (d) {
+                            boomtable_output_body_debug_output += "<tr>";
+                            boomtable_output_body_debug_output += "<td style=\"padding:4px;\" width=\"40%\">" + d.alias + "</td>";
+                            boomtable_output_body_debug_output += "<td style=\"padding:4px;\">" + (d.pattern.pattern || "Default") + "</td>";
+                            boomtable_output_body_debug_output += "<td style=\"padding:4px;background-color:" + d.bgColor + "\">" + d.displayValue + "</td>";
+                            boomtable_output_body_debug_output += "<td style=\"padding:4px;\">" + d.row_name + "</td>";
+                            boomtable_output_body_debug_output += "<td style=\"padding:4px;\">" + d.col_name + "</td>";
+                            boomtable_output_body_debug_output += "<td style=\"padding:4px;\">" + d.thresholds + "</td>";
+                            boomtable_output_body_debug_output += "</tr>";
+                        });
+                        boomtable_output_body_debug.html(boomtable_output_body_debug_output);
                     }
                     var rootElem = this.elem.find('.table-panel-scroll');
                     var maxheightofpanel = this.panel.debug_mode ? this.ctrl.height - 71 : this.ctrl.height - 31;

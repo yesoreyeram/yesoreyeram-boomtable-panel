@@ -6,19 +6,13 @@
         <h4 class="text-warning">{{ctrl.panel.error.name}}</h4>
         <p ng-bind-html="ctrl.panel.error.message"></p>
     </div>
-    <div data-ng-if="!ctrl.panel.error && ctrl.panel.groupedData">
+    <div data-ng-if="!ctrl.panel.error">
         <div class="table-panel-scroll" style="overflow:auto;">
             <table class="table-panel-table">
-                <thead>
-                    <tr>
-                        <th style="padding:4px;text-align:center">{{ctrl.panel.default_title_for_rows}}</th>
-                        <th style="padding:4px;text-align:center" data-ng-repeat="col in ctrl.panel.cols">{{col}}</th>
-                    </tr>
+                <thead id="boomtable_output_body_headers">
                 </thead>
-                <tr data-ng-repeat="data in ctrl.panel.groupedData">
-                    <td style="padding:4px;">{{data.row}}</td>
-                    <td style="padding:4px;background-color:{{col.bgColor}};" data-ng-repeat="col in data.cols">{{col.displayValue}}</td>
-                </tr>
+                <tbody id="boomtable_output_body">
+                </tbody>
             </table>
             <div data-ng-if="ctrl.panel.debug_mode === true" class="debug">
                 <h5 class="text-warning">WARNING: Panel running in debug mode </h5>
@@ -33,15 +27,7 @@
                                 <th style="padding:4px;text-align:center">Thresholds</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr data-ng-repeat="data in ctrl.panel.data">
-                                <td style="padding:4px;" width="40%">{{data.alias}}</td>
-                                <td style="padding:4px;">{{data.pattern.pattern || "Default"}}</td>
-                                <td style="padding:4px;background-color:{{data.bgColor}}">{{data.displayValue}}</td>
-                                <td style="padding:4px;">{{data.row_name}}</td>
-                                <td style="padding:4px;">{{data.col_name}}</td>
-                                <td style="padding:4px;">{{data.thresholds}}</td>
-                            </tr>
+                        <tbody id="boomtable_output_body_debug">
                         </tbody>
                     </table>
             </div>

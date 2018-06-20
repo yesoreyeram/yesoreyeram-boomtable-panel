@@ -184,6 +184,12 @@ Sample value transformation: (Assume your metrics results, 95 and it is percenta
 
 # ChangeLog
 
+**Version 0.3.0**
+
+* Options to name the pattern, disable the pattern, Reverse the bg colors and transform values in pattern
+* Removed output data from panel model
+* Bug fixes
+
 **Version 0.2.0**
 
 * Build script changed from babel to typescript
