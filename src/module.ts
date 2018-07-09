@@ -61,6 +61,20 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.activePatternIndex = this.panel.patterns.length - 1;
     this.render();
   }
+  movePattern(direction,index){
+    let tempElement = this.panel.patterns[index];
+    if(direction==="UP"){
+      this.panel.patterns[index] = this.panel.patterns[index-1];
+      this.panel.patterns[index-1] = tempElement;
+      this.panel.activePatternIndex = index - 1;
+    }
+    if(direction==="DOWN"){
+      this.panel.patterns[index] = this.panel.patterns[index+1];
+      this.panel.patterns[index+1] = tempElement;
+      this.panel.activePatternIndex = index + 1;
+    }
+    this.render();
+  }
   removePattern(index) {
     this.panel.patterns.splice(index, 1);
     this.panel.activePatternIndex = (this.panel.patterns && this.panel.patterns.length > 0) ? (this.panel.patterns.length - 1) : -1;
