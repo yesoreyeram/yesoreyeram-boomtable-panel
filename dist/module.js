@@ -366,14 +366,7 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                         var boomtable_output_body_debug = this.elem.find('#boomtable_output_body_debug');
                         var boomtable_output_body_debug_output = "";
                         lodash_1.default.each(this.dataComputed, function (d) {
-                            boomtable_output_body_debug_output += "<tr>";
-                            boomtable_output_body_debug_output += "<td style=\"padding:4px;\" width=\"40%\">" + d.alias + "</td>";
-                            boomtable_output_body_debug_output += "<td style=\"padding:4px;\">" + (d.pattern.pattern || "Default") + "</td>";
-                            boomtable_output_body_debug_output += "<td style=\"padding:4px;background-color:" + d.bgColor + "\">" + d.displayValue + "</td>";
-                            boomtable_output_body_debug_output += "<td style=\"padding:4px;\">" + d.row_name + "</td>";
-                            boomtable_output_body_debug_output += "<td style=\"padding:4px;\">" + d.col_name + "</td>";
-                            boomtable_output_body_debug_output += "<td style=\"padding:4px;\">" + d.thresholds + "</td>";
-                            boomtable_output_body_debug_output += "</tr>";
+                            boomtable_output_body_debug_output += "\n        <tr>\n          <td style=\"padding:4px;\" width=\"40%\">" + d.alias + "</td>\n          <td style=\"padding:4px;\">" + (d.pattern.pattern || "Default") + "</td>\n          <td style=\"padding:4px;background-color:" + d.bgColor + "\">" + d.displayValue + "</td>\n          <td style=\"padding:4px;\">" + d.row_name + "</td>\n          <td style=\"padding:4px;\">" + d.col_name + "</td>\n          <td style=\"padding:4px;\">" + d.thresholds + "</td>\n        </tr>\n        ";
                         });
                         boomtable_output_body_debug.html(boomtable_output_body_debug_output);
                     }
