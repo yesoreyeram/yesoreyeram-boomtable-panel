@@ -1,7 +1,7 @@
 <div class="edit-tab-with-sidemenu">
     <aside class="edit-sidemenu-aside">
         <ul class="edit-sidemenu">
-            <li ng-repeat="pattern in ctrl.panel.patterns" ng-class="{active: ctrl.panel.activePatternIndex === $index}">
+            <li ng-repeat="pattern in ctrl.panel.patterns track by $index" ng-class="{active: ctrl.panel.activePatternIndex === $index}">
                 <a ng-click="ctrl.panel.activePatternIndex = $index">{{ctrl.limitText(pattern.name || pattern.pattern || 'Default',12)}}</a>
             </li>
             <li ng-class="{active: ctrl.panel.activePatternIndex === -1}">
@@ -14,7 +14,7 @@
             </li>
         </ul>
     </aside>
-    <div class="edit-tab-content" ng-repeat="pattern in ctrl.panel.patterns" ng-if="ctrl.panel.activePatternIndex === $index">
+    <div class="edit-tab-content" ng-repeat="pattern in ctrl.panel.patterns track by $index" ng-if="ctrl.panel.activePatternIndex === $index">
         <div class="editor-row">
             <div class="section gf-form-group">
                 <h5 class="section-heading">Pattern</h5>
@@ -138,6 +138,14 @@
                     <label class="gf-form-label width-13">Remove Pattern</label>
                     <button class="btn btn-danger btn-small" ng-if="pattern.pattern !== undefined" ng-click="ctrl.removePattern($index)">
                         <i class="fa fa-trash"></i> Remove this pattern
+                    </button>
+                </div>
+            </div>
+            <div class="gr-form-inline">
+                <div class="gf-form">
+                    <label class="gf-form-label width-13">Clone Pattern</label>
+                    <button class="btn btn-success btn-small" ng-if="pattern.pattern !== undefined" ng-click="ctrl.clonePattern($index)">
+                        <i class="fa fa-trash"></i> Clone this pattern
                     </button>
                 </div>
             </div>
