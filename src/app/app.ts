@@ -34,6 +34,7 @@ const config: any = {
             null_value: "No data"
         },
         activePatternIndex: -1,
+        row_col_wrapper:"_",
         default_title_for_rows: "Metric"
     },
     list_of_stylesheets: {

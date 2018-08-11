@@ -45,8 +45,8 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       pattern: "^server.*cpu$",
       delimiter: ".",
       valueName: "avg",
-      row_name: "_0_",
-      col_name: "_1_",
+      row_name: this.panel.row_col_wrapper + "0"+ this.panel.row_col_wrapper,
+      col_name: this.panel.row_col_wrapper + "1"+ this.panel.row_col_wrapper,
       thresholds: "70,90",
       enable_bgColor: false,
       bgColors: "green|orange|red",
@@ -246,8 +246,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       // Assign Row Name
       this.dataComputed = this.dataComputed.map(series => {
         series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
-          return r.replace(new RegExp("_" + i + "_", "g"), it)
-        }, series.pattern.row_name.replace(new RegExp("_series_", "g"), series.alias) || config.panelDefaults.defaultPattern.row_name.replace(new RegExp("_series_", "g"), series.alias));
+          return r.replace(new RegExp(this.panel.row_col_wrapper + i + this.panel.row_col_wrapper, "g"), it)
+        }, series.pattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper , "g"), series.alias) || config.panelDefaults.defaultPattern.row_name.replace(new RegExp(this.panel.row_col_wrapper +"series"+this.panel.row_col_wrapper, "g"), series.alias));
         if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
           series.row_name = series.alias;
         }
@@ -256,7 +256,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       // Assign Col Name
       this.dataComputed = this.dataComputed.map(series => {
         series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
-          return r.replace(new RegExp("_" + i + "_", "g"), it)
+          return r.replace(new RegExp(this.panel.row_col_wrapper+ i + this.panel.row_col_wrapper, "g"), it)
         }, series.pattern.col_name || config.panelDefaults.defaultPattern.col_name);
         if (series.alias.split(series.pattern.delimiter || ".").length === 1 || series.row_name === series.alias) {
           series.col_name = series.pattern.col_name || "Value";

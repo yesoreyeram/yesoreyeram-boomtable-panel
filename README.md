@@ -103,7 +103,7 @@ patterns and matching metrics
 Row and Column name guidelines
 ------------------------------
 
-Row and Col names are derived from metrics name and value. If x is wrapped by _, then that will be replaced by actual column in graphite metric seperated by delimiter. Refer below examples and screenshots to get more idea. Or use debug mode to try.
+Row and Col names are derived from series name. If n is wrapped by "_", then that will be replaced by n-th column in graphite metric (seperated by delimiter). Refer below examples and screenshots to get more idea. Or use debug mode to try.
 
 Sample graphite series
 
@@ -113,9 +113,14 @@ Pattern & Output
 
     _4_                         --> cpu
     _4_ _5_                     --> cpu usage
+    _4_ 2 _5_                   --> cpu 2 usage
     _4_ use                     --> cpu use
     Production _4_ usage        --> Production cpu usage
+    _series_                    --> prod.server.my-app-01.sys.cpu.usage
     _1_ _1_                     --> server server
+    _4_ __5_                    --> cpu _usage
+
+**Note** : If you prefer to change the wrapper from "_" to somthing like "~" or "__", you can do it through the option "Row / Column indentification wrapper" in options tab.
 
 
 Thresholds 

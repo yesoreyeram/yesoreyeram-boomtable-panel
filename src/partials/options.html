@@ -2,7 +2,7 @@
 <div class="gf-form">
     <div class="gr-form-inline">
         <div class="gf-form">
-            <label class="gf-form-label width-13">Debug</label>
+            <label class="gf-form-label width-20">Debug</label>
             <input type="checkbox" class="width-4" ng-model="ctrl.panel.debug_mode" ng-blur="ctrl.render()" ng-change="ctrl.render()">
         </div>
     </div>
@@ -10,7 +10,7 @@
 <div class="gf-form">    
     <div class="gr-form-inline">
         <div class="gf-form">
-            <label class="gf-form-label width-13">Default Title for rows</label>
+            <label class="gf-form-label width-20">Default Title for rows</label>
             <input type="text" placeholder="Metric" class="gf-form-input width-18" ng-model="ctrl.panel.default_title_for_rows" bs-tooltip="'Panel rows title'"
                 ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
         </div>
@@ -19,8 +19,17 @@
 <div class="gf-form">    
     <div class="gr-form-inline">
         <div class="gf-form">
-            <label class="gf-form-label width-13">Default Title for columns</label>
+            <label class="gf-form-label width-20">Default Title for columns</label>
             <input type="text" placeholder="Value" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.col_name" bs-tooltip="'Panel cols title'"
+                ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+        </div>
+    </div>
+</div>
+<div class="gf-form">    
+    <div class="gr-form-inline">
+        <div class="gf-form">
+            <label class="gf-form-label width-20">Row / Column indentification wrapper</label>
+            <input type="text" placeholder="Value" class="gf-form-input width-18" ng-model="ctrl.panel.row_col_wrapper" bs-tooltip="'Default is _'"
                 ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
         </div>
     </div>
