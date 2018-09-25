@@ -1,0 +1,118 @@
+<div class="boom-table edit-tab-with-sidemenu">
+    <aside class="edit-sidemenu-aside">
+        <ul class="edit-sidemenu">
+            <li ng-repeat="pattern in ctrl.panel.patterns track by $index" ng-class="{active: ctrl.panel.activePatternIndex === $index}">
+                <a ng-click="ctrl.panel.activePatternIndex = $index">{{ctrl.limitText(pattern.name || pattern.pattern || 'Default',12)}}</a>
+            </li>
+            <li ng-class="{active: ctrl.panel.activePatternIndex === -1}">
+                <a ng-click="ctrl.panel.activePatternIndex = -1">Default</a>
+            </li>
+            <li>
+                <a class="pointer" ng-click="ctrl.addPattern()">
+                    <i class="fa fa-plus"></i>&nbsp;Add
+                </a>
+            </li>
+        </ul>
+    </aside>
+    <div class="edit-tab-content" ng-repeat="pattern in ctrl.panel.patterns track by $index" ng-if="ctrl.panel.activePatternIndex === $index">
+        <div class="editor-row">
+            <div class="section gf-form-group">
+                <h5 class="section-heading">Pattern</h5>
+                <div class="gr-form-inline">
+                    <div class="gf-form">
+                        <label class="gf-form-label width-18">Name of the pattern</label>
+                        <input type="text" placeholder="Name" class="gf-form-input width-18" ng-model="pattern.name" bs-tooltip="'Name for the pattern (Just for reference)'">
+                    </div>
+                </div>
+                <div class="gr-form-inline">
+                    <div class="gf-form">
+                        <label class="gf-form-label width-18">Default Thresholds</label>
+                        <input type="text" placeholder="Thresholds" class="gf-form-input width-18" ng-model="pattern.thresholds" bs-tooltip="'Comma seperated thresholds'"
+                            ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                    </div>
+                </div>
+                <br/>
+                <h5 class="section-heading">Time based Thresholds</h5>
+                <br/>
+                <div class="gr-form-inline">
+                    <div class="gf-form">
+                        <label class="gf-form-label width-18">Enable Time based thresholds?</label>
+                        <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_time_based_thresholds" ng-blur="ctrl.render()"
+                            ng-change="ctrl.render()">
+                    </div>
+                </div>
+                <div id="time_based_thresholds_default" ng-if="pattern.enable_time_based_thresholds === true">
+                    <br/>
+                    <div>Note: If multiple matches found last will win; If no match found default threshold will be applicable</div>
+                    <br/>
+                    <div class="gr-form-inline" ng-repeat="time_based_pattern in pattern.time_based_thresholds track by $index">
+                        <input type="text" class="inline-form-control" placeholder="Name" ng-model="time_based_pattern.name" ng-blur="ctrl.render()"
+                            data-ng-change="ctrl.render();"> &nbsp;From :
+                        <input type="text" class="inline-form-control" placeholder="From" ng-model="time_based_pattern.from" ng-blur="ctrl.render()"
+                            data-ng-change="ctrl.render();"> To :
+                        <input type="text" class="inline-form-control" placeholder="To" ng-model="time_based_pattern.to" ng-blur="ctrl.render()"
+                            data-ng-change="ctrl.render();"> On :
+                        <input type="text" class="inline-form-control" placeholder="Enabled Days" ng-model="time_based_pattern.enabledDays" ng-blur="ctrl.render()"
+                            data-ng-change="ctrl.render();"> Thredhold :
+                        <input type="text" class="inline-form-control" placeholder="Threshold" ng-model="time_based_pattern.threshold" ng-blur="ctrl.render()"
+                            data-ng-change="ctrl.render();">
+                        <button type="button" class="btn btn-danger btn-small" ng-click="ctrl.remove_time_based_thresholds( $parent.$index, $index)">X</button>
+                        <br/>
+                    </div>
+                    <button type="button" class="btn btn-success btn-medium" ng-click="ctrl.add_time_based_thresholds($index)">Add Time based threshold for this pattern</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="edit-tab-content" ng-if="ctrl.panel.activePatternIndex === -1">
+        <div class="editor-row">
+            <div class="section gf-form-group">
+                <h5 class="section-heading">Pattern</h5>
+                <div class="gr-form-inline">
+                    <div class="gf-form">
+                        <label class="gf-form-label width-15">Name of the pattern</label>
+                        <label class="gf-form-label width-18">Default Pattern</label>
+                    </div>
+                </div>
+                <div class="gr-form-inline">
+                    <div class="gf-form">
+                        <label class="gf-form-label width-15">Default Threshold</label>
+                        <input type="text" placeholder="Thresholds" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.thresholds"
+                            bs-tooltip="'Comma seperated thresholds'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                    </div>
+                </div>
+                <br/>
+                <h5 class="section-heading">Time based Thresholds</h5>
+                <br/>
+                <div class="gr-form-inline">
+                    <div class="gf-form">
+                        <label class="gf-form-label width-15">Enable Time based thresholds?</label>
+                        <input type="checkbox" class="gf-form-input width-4" ng-model="ctrl.panel.defaultPattern.enable_time_based_thresholds" ng-blur="ctrl.render()"
+                            ng-change="ctrl.render()">
+                    </div>
+                </div>
+                <div id="time_based_thresholds_default" ng-if="ctrl.panel.defaultPattern.enable_time_based_thresholds === true">
+                    <br/>
+                    <div>Note: If multiple matches found last will win; If no match found default threshold will be applicable</div>
+                    <br/>
+                    <div class="gr-form-inline" ng-repeat="time_based_pattern in ctrl.panel.defaultPattern.time_based_thresholds track by $index">
+                        <input type="text" class="inline-form-control" placeholder="Name" ng-model="time_based_pattern.name" ng-blur="ctrl.render()"
+                            data-ng-change="ctrl.render();"> &nbsp;From :
+                        <input type="text" class="inline-form-control" placeholder="From" ng-model="time_based_pattern.from" ng-blur="ctrl.render()"
+                            data-ng-change="ctrl.render();"> To :
+                        <input type="text" class="inline-form-control" placeholder="To" ng-model="time_based_pattern.to" ng-blur="ctrl.render()"
+                            data-ng-change="ctrl.render();"> On :
+                        <input type="text" class="inline-form-control" placeholder="Enabled Days" ng-model="time_based_pattern.enabledDays" ng-blur="ctrl.render()"
+                            data-ng-change="ctrl.render();"> Thredhold :
+                        <input type="text" class="inline-form-control" placeholder="Threshold" ng-model="time_based_pattern.threshold" ng-blur="ctrl.render()"
+                            data-ng-change="ctrl.render();">
+                        <button type="button" class="btn btn-danger btn-small" ng-click="ctrl.remove_time_based_thresholds('default', $index)">X</button>
+                        <br/>
+                    </div>
+                    <button type="button" class="btn btn-success btn-medium" ng-click="ctrl.add_time_based_thresholds('default')">Add Time based threshold for this pattern</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -33,6 +33,8 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
                         row_name: "_series_",
                         col_name: "Value",
                         thresholds: "70,90",
+                        time_based_thresholds: [],
+                        enable_time_based_thresholds: false,
                         enable_bgColor: false,
                         bgColors: "green|orange|red",
                         enable_transform: false,
@@ -57,6 +59,10 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
                     }, {
                         name: "Options",
                         template: "/partials/options.html",
+                        position: 4
+                    }, {
+                        name: "Thresholds",
+                        template: "/partials/thresholds.html",
                         position: 3
                     }],
                 valueNameOptions: [{

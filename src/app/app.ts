@@ -24,6 +24,8 @@ const config: any = {
             row_name: "_series_",
             col_name: "Value",
             thresholds: "70,90",
+            time_based_thresholds:[],
+            enable_time_based_thresholds: false,
             enable_bgColor: false,
             bgColors: "green|orange|red",
             enable_transform: false,
@@ -48,6 +50,10 @@ const config: any = {
     }, {
         name: "Options",
         template: "/partials/options.html",
+        position: 4
+    }, {
+        name: "Thresholds",
+        template: "/partials/thresholds.html",
         position: 3
     }],
     valueNameOptions: [{

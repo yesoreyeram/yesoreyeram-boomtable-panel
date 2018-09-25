@@ -53,6 +53,8 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                         row_name: this.panel.row_col_wrapper + "0" + this.panel.row_col_wrapper,
                         col_name: this.panel.row_col_wrapper + "1" + this.panel.row_col_wrapper,
                         thresholds: "70,90",
+                        time_based_thresholds: [],
+                        enable_time_based_thresholds: false,
                         enable_bgColor: false,
                         bgColors: "green|orange|red",
                         enable_transform: false,
@@ -89,6 +91,32 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                     var copiedPattern = Object.assign({}, this.panel.patterns[index]);
                     this.panel.patterns.push(copiedPattern);
                     this.render();
+                };
+                GrafanaBoomTableCtrl.prototype.add_time_based_thresholds = function (index) {
+                    var new_time_based_threshold = {
+                        name: "Early morning of everyday",
+                        from: "0000",
+                        to: "0530",
+                        enabledDays: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
+                        threshold: "70,90"
+                    };
+                    if (index === 'default') {
+                        this.panel.defaultPattern.time_based_thresholds = this.panel.defaultPattern.time_based_thresholds || [];
+                        this.panel.defaultPattern.time_based_thresholds.push(new_time_based_threshold);
+                    }
+                    else {
+                        this.panel.patterns[index].time_based_thresholds = this.panel.patterns[index].time_based_thresholds || [];
+                        this.panel.patterns[index].time_based_thresholds.push(new_time_based_threshold);
+                    }
+                    this.render();
+                };
+                GrafanaBoomTableCtrl.prototype.remove_time_based_thresholds = function (patternIndex, index) {
+                    if (patternIndex === 'default') {
+                        this.panel.defaultPattern.time_based_thresholds.splice(index, 1);
+                    }
+                    else {
+                        this.panel.patterns[patternIndex].time_based_thresholds.splice(index, 1);
+                    }
                 };
                 GrafanaBoomTableCtrl.prototype.inverseBGColors = function (index) {
                     this.panel.patterns[index].bgColors = this.panel.patterns[index].bgColors.split("|").reverse().join("|");
@@ -276,6 +304,20 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                         // Assign Thresholds
                         this.dataComputed = this.dataComputed.map(function (series) {
                             series.thresholds = (series.pattern.thresholds || app_1.config.panelDefaults.defaultPattern.thresholds).split(",").map(function (d) { return +d; });
+                            if (series.pattern.enable_time_based_thresholds) {
+                                var metricrecivedTimeStamp = new Date();
+                                var metricrecivedTimeStamp_innumber = metricrecivedTimeStamp.getHours() * 100 + metricrecivedTimeStamp.getMinutes();
+                                var weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+                                lodash_1.default.each(series.pattern.time_based_thresholds, function (tbtx) {
+                                    if (tbtx && tbtx.from && tbtx.to && tbtx.enabledDays &&
+                                        (metricrecivedTimeStamp_innumber >= +(tbtx.from)) &&
+                                        (metricrecivedTimeStamp_innumber <= +(tbtx.to)) &&
+                                        (tbtx.enabledDays.toLowerCase().indexOf(weekdays[metricrecivedTimeStamp.getDay()]) > -1) &&
+                                        tbtx.threshold) {
+                                        series.thresholds = (tbtx.threshold + "").split(",").map(function (d) { return +d; });
+                                    }
+                                });
+                            }
                             return series;
                         });
                         // Assign BG Colors

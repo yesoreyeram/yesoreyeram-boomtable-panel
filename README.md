@@ -14,6 +14,7 @@ Features :
 * Individual thresholds for cells based on pattern
 * Multi level thresholds (N number of thresholds)
 * Individual aggregation method for cell based on pattern
+* Time based thresholds
 * Individual cell values can be transformed to helpful texts, based on pattern.
 * Transformed texts can also contain actual metrics
 * Units can be set at cell level based on pattern
@@ -132,6 +133,29 @@ Example:
 
     10,20
     70,90,95
+
+Time based thresholds
+---------------------
+
+Thresholds can be overriden, based on day and time of the browser.
+
+Multiple time based threshold rules can be set for any given pattern. If multiple rule matches, last rule wins. If no rule matches, default thresholds will be applicable. Example given below. 
+
+Following notations should be followed when added time based threshold rule
+
+Name : Can be any representation in string but not more than 60 characters.
+From : in HHMM format examples: 0000 2400 1330 1250
+To   : in HHMM format examples: 0000 2400 1330 1250
+On   : Days seperated by comma. Order doesnt matter. Examples; "Sat,Sun", "Mon,Sun,Tue"
+Threshold : Same format as default threshold
+
+![Time based thresholds](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/time-based-thresholds.png)
+
+**WARNING**: If your browser and grafana servers are differnt timezone, browser time will be considered. 
+
+**TIPS** : If your threshold time rage ranges between two day, (example: 2300 of saturday to 0230 of sunday), then split the rule into two each for saturdary and sunday.
+
+**NOTE** : If you specify n number threshold levels in default pattern (ex: 20,30),then time based thresholds should also follow same number of levels.
 
 Background color based on thresholds
 ------------------------------------
