@@ -3,7 +3,7 @@
   "name": "Boom Table",
   "id": "yesoreyeram-boomtable-panel",
   "info": {
-    "description": "Boom table panel for Graphite",
+    "description": "Boom table panel for Graphite, InfluxDB",
     "author": {
       "name": "Sriramajeyam Sugumaran",
       "url": "https://www.google.com/search?q=Sriramajeyam+Sugumaran"
