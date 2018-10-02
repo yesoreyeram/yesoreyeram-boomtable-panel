@@ -14,7 +14,9 @@
       "panel",
       "table",
       "graphite",
-      "multi column"
+      "influxdb",
+      "multi column",
+      "time based thresholds"
     ],
     "links": [
       {
@@ -22,7 +24,7 @@
         "url": "https://github.com/yesoreyeram/yesoreyeram-boomtable-panel"
       }
     ],
-    "version": "0.4.0"
+    "version": "0.4.1"
   },
   "dependencies": {
     "grafanaVersion": "4.x.x",

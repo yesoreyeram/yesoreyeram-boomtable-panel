@@ -3,14 +3,14 @@
 
 [![CircleCI](https://circleci.com/gh/yesoreyeram/yesoreyeram-boomtable-panel.svg?style=svg)](https://circleci.com/gh/yesoreyeram/yesoreyeram-boomtable-panel)
 
-Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for Graphite.
+Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for Graphite, InfluDB.
 
 ![Boom Table - Sample Panel](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panel.png)
 
 Features :
 ----------
 
-* Multi column support for graphite
+* Multi column support for graphite, InfluxDB
 * Individual thresholds for cells based on pattern
 * Multi level thresholds (N number of thresholds)
 * Individual aggregation method for cell based on pattern
@@ -18,8 +18,8 @@ Features :
 * Individual cell values can be transformed to helpful texts, based on pattern.
 * Transformed texts can also contain actual metrics
 * Units can be set at cell level based on pattern
-* Row/Column name based on multiple graphite columns
-* Debug UI for patterns
+* Row/Column name based on multiple graphite/InfluxDB columns
+* Debug UI to test patterns
 
 Features Planned / To Do :
 ------------------------
@@ -30,6 +30,7 @@ Supported / Tested Data Sources :
 --------------------------------
 
 * Graphite
+* InfluxDB
 
 Tested Grafana versions :
 -------------------------
@@ -63,14 +64,13 @@ Version 5 screenshots
 
 # Setup
 
-**TLDR** : Use debug mode unless you have time to read the below leeeengthy notes.
 
 Pattern Guidelines
 ------------------
 
 Pattern are regular expressions / name of the metrics. If there are multiple matching patterns, first match will be considered. To see the matching patterns, enable debug mode in Options panel.
 
-Sample graphite series
+Sample graphite series / Influx metrics
 
     prod.server.my-app-01.sys.cpu.usage
     prod.server.my-app-01.sys.mem.usage
@@ -104,9 +104,9 @@ patterns and matching metrics
 Row and Column name guidelines
 ------------------------------
 
-Row and Col names are derived from series name. If n is wrapped by "_", then that will be replaced by n-th column in graphite metric (seperated by delimiter). Refer below examples and screenshots to get more idea. Or use debug mode to try.
+Row and Col names are derived from series name. If n is wrapped by "_", then that will be replaced by n-th column in graphite/influxdb metric (seperated by delimiter). Refer below examples and screenshots to get more idea. Or use debug mode to try.
 
-Sample graphite series
+Sample graphite series / Influx Metrics
 
     prod.server.my-app-01.sys.cpu.usage
 
@@ -215,20 +215,31 @@ Sample value transformation: (Assume your metrics results, 95 and it is percenta
     HOT (_value_ > threshold of 80%)     -->     HOT (95% > threshold of 80%)
     Contact helpdesk        -->     Contact helpdesk
 
+InfluxDB Guidelines 
+--------------------
+
+Though this plugin was initially designed to support graphite, It is also capable of handling timeseries database like influxDB. In order to achieve this, you need to alias your timeseries/InfluxDB metrics to some proper delimited format. Following screenshot explains plugin usage with influxdb where the metrics are aliased with dot delimiter.
+
+![InfluxDB Usage](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/influx-usage.png)
+
 # ChangeLog
 
-**Version 0.3.0**
+**Version 0.4.x**
+
+* Time based thresholds
+
+**Version 0.3.x**
 
 * Options to name the pattern, disable the pattern, Reverse the bg colors and transform values in pattern
 * Removed output data from panel model
 * Bug fixes
 
-**Version 0.2.0**
+**Version 0.2.x**
 
 * Build script changed from babel to typescript
 * Assign series alias as row to the default pattern 
 * Bug fixes
 
-**Version 0.1.0**
+**Version 0.1.x**
 
 * First working version

@@ -1,7 +1,7 @@
 {
   "name": "yesoreyeram-boomtable-panel",
-  "version": "0.4.0",
-  "description": "Boom Table Panel for Graphite",
+  "version": "0.4.1",
+  "description": "Boom Table Panel for Grafana",
   "main": "dist/module.js",
   "scripts": {
     "test": "echo \"Warning: no test specified\" && exit 0"
@@ -16,7 +16,9 @@
     "panel",
     "table",
     "graphite",
-    "multi column"
+    "influxdb",
+    "multi column",
+    "time based thresholds"
   ],
   "author": "Sriramajeyam Sugumaran",
   "license": "ISC",
