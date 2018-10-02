@@ -1,7 +1,7 @@
 {
   "name": "yesoreyeram-boomtable-panel",
-  "version": "0.4.1",
-  "description": "Boom Table Panel for Grafana",
+  "version": "0.4.2",
+  "description": "Boom table panel for Graphite, InfluxDB, Prometheus",
   "main": "dist/module.js",
   "scripts": {
     "test": "echo \"Warning: no test specified\" && exit 0"
@@ -17,6 +17,7 @@
     "table",
     "graphite",
     "influxdb",
+    "prometheus",
     "multi column",
     "time based thresholds"
   ],

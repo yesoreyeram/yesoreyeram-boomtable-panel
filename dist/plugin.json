@@ -3,7 +3,7 @@
   "name": "Boom Table",
   "id": "yesoreyeram-boomtable-panel",
   "info": {
-    "description": "Boom table panel for Graphite, InfluxDB",
+    "description": "Boom table panel for Graphite, InfluxDB, Prometheus",
     "author": {
       "name": "Sriramajeyam Sugumaran",
       "url": "https://www.google.com/search?q=Sriramajeyam+Sugumaran"
@@ -15,6 +15,7 @@
       "table",
       "graphite",
       "influxdb",
+      "prometheus",
       "multi column",
       "time based thresholds"
     ],
@@ -24,7 +25,7 @@
         "url": "https://github.com/yesoreyeram/yesoreyeram-boomtable-panel"
       }
     ],
-    "version": "0.4.1"
+    "version": "0.4.2"
   },
   "dependencies": {
     "grafanaVersion": "4.x.x",
