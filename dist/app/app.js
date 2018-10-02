@@ -61,7 +61,7 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
                         template: "/partials/options.html",
                         position: 4
                     }, {
-                        name: "Thresholds",
+                        name: "Time based thresholds",
                         template: "/partials/thresholds.html",
                         position: 3
                     }],

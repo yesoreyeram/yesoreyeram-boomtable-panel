@@ -143,11 +143,15 @@ Multiple time based threshold rules can be set for any given pattern. If multipl
 
 Following notations should be followed when added time based threshold rule
 
-Name : Can be any representation in string but not more than 60 characters.
-From : in HHMM format examples: 0000 2400 1330 1250
-To   : in HHMM format examples: 0000 2400 1330 1250
-On   : Days seperated by comma. Order doesnt matter. Examples; "Sat,Sun", "Mon,Sun,Tue"
-Threshold : Same format as default threshold
+**Name** : Can be any representation in string but not more than 60 characters.
+
+**From** : in HHMM format examples: 0000 2400 1330 1250
+
+**To**   : in HHMM format examples: 0000 2400 1330 1250
+
+**On**   : Days seperated by comma. Order doesnt matter. Examples; "Sat,Sun", "Mon,Sun,Tue"
+
+**Threshold** : Same format as default threshold
 
 ![Time based thresholds](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/time-based-thresholds.png)
 

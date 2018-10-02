@@ -9,3 +9,9 @@
     margin: 10px 20px 10px 0px;
     padding:5px;
 }
+.boom-table .btn-small {
+    margin-left: 20px;
+}
+.boom-table .btn-small .fa{
+    margin-right: 5px;
+}

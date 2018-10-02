@@ -52,7 +52,7 @@ const config: any = {
         template: "/partials/options.html",
         position: 4
     }, {
-        name: "Thresholds",
+        name: "Time based thresholds",
         template: "/partials/thresholds.html",
         position: 3
     }],
