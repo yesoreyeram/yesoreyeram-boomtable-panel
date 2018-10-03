@@ -19,6 +19,7 @@ Features :
 * Transformed texts can also contain actual metrics
 * Units can be set at cell level based on pattern
 * Row/Column name based on multiple graphite/InfluxDB/Prometheus columns
+* Filter metrics
 * Debug UI to test patterns
 
 Features Planned / To Do :
@@ -216,6 +217,15 @@ Sample value transformation: (Assume your metrics results, 95 and it is percenta
     HOT (_value_ > threshold of 80%)     -->     HOT (95% > threshold of 80%)
     Contact helpdesk        -->     Contact helpdesk
 
+Filter
+------
+
+If your output have more rows and if you require to hide certain rows based on their output value, you can use the filter option to hide those rows.
+
+![Filter rows based on value](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/filters.png)
+
+
+
 Prometheus Guidelines
 ---------------------
 
@@ -235,6 +245,7 @@ Though this plugin was initially designed to support graphite, It is also capabl
 **Version 0.4.x**
 
 * Time based thresholds
+* Filter option to hide rows based on value
 
 **Version 0.3.x**
 

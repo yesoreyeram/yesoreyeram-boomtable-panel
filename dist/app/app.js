@@ -42,7 +42,11 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
                         decimals: 2,
                         format: "none",
                         null_color: "darkred",
-                        null_value: "No data"
+                        null_value: "No data",
+                        filter: {
+                            value_below: "",
+                            value_above: ""
+                        }
                     },
                     activePatternIndex: -1,
                     row_col_wrapper: "_",
@@ -59,6 +63,10 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
                     }, {
                         name: "Options",
                         template: "/partials/options.html",
+                        position: 5
+                    }, {
+                        name: "Filters",
+                        template: "/partials/filters.html",
                         position: 4
                     }, {
                         name: "Time based thresholds",

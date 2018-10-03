@@ -33,7 +33,11 @@ const config: any = {
             decimals: 2,
             format: "none",
             null_color: "darkred",
-            null_value: "No data"
+            null_value: "No data",
+            filter : {
+                value_below : "",
+                value_above : ""
+            }
         },
         activePatternIndex: -1,
         row_col_wrapper:"_",
@@ -50,6 +54,10 @@ const config: any = {
     }, {
         name: "Options",
         template: "/partials/options.html",
+        position: 5
+    }, {
+        name: "Filters",
+        template: "/partials/filters.html",
         position: 4
     }, {
         name: "Time based thresholds",

@@ -57,7 +57,11 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       decimals: 2,
       format: "none",
       null_color: "darkred",
-      null_value: "No data"
+      null_value: "No data",
+      filter : {
+          value_below : "",
+          value_above : "",
+      }
     };
     this.panel.patterns.push(newPattern);
     this.panel.activePatternIndex = this.panel.patterns.length - 1;
@@ -271,6 +275,27 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         }
         return series;
       });
+      // Filter Values
+      this.dataComputed = this.dataComputed.filter(series =>{
+        if(!series.pattern.filter){
+          series.pattern.filter = {};
+          series.pattern.filter.value_below = "";
+          series.pattern.filter.value_above = "";
+        }
+        console.log(series.pattern.filter, series.value, +(series.pattern.filter.value_below), +(series.pattern.filter.value_above)); 
+        if(series.pattern && series.pattern.filter && (series.pattern.filter.value_below !== "" || series.pattern.filter.value_above !== "" )) {
+          if(series.pattern.filter.value_below !== "" && series.value < +(series.pattern.filter.value_below) ){
+            return false
+          }
+          if(series.pattern.filter.value_above !== "" && series.value > +(series.pattern.filter.value_above)){
+            return false
+          }
+          return true
+        }
+        else {
+          return true
+        };
+      })
       // Assign Row Name
       this.dataComputed = this.dataComputed.map(series => {
         series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
