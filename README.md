@@ -3,14 +3,14 @@
 
 [![CircleCI](https://circleci.com/gh/yesoreyeram/yesoreyeram-boomtable-panel.svg?style=svg)](https://circleci.com/gh/yesoreyeram/yesoreyeram-boomtable-panel)
 
-Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for Graphite, InfluDB, Prometheus.
+Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for Graphite, InfluDB, Prometheus, Azure Monitor.
 
 ![Boom Table - Sample Panel](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panel.png)
 
 Features :
 ----------
 
-* Multi column support for graphite, InfluxDB, Prometheus
+* Multi column support for graphite, InfluxDB, Prometheus & Azure Monitor
 * Individual thresholds for cells based on pattern
 * Multi level thresholds (N number of thresholds)
 * Individual aggregation method for cell based on pattern
@@ -22,17 +22,13 @@ Features :
 * Filter metrics
 * Debug UI to test patterns
 
-Features Planned / To Do :
-------------------------
-* Sorting
-* Pagination
-
 Supported / Tested Data Sources :
 --------------------------------
 
 * Graphite
 * InfluxDB
 * Prometheus
+* Azure Monitor
 
 Tested Grafana versions :
 -------------------------
@@ -239,6 +235,13 @@ InfluxDB Guidelines
 Though this plugin was initially designed to support graphite, It is also capable of handling timeseries database like influxDB. In order to achieve this, you need to **alias** your timeseries/InfluxDB metrics to some proper delimited format. Following screenshot explains plugin usage with influxdb where the metrics are aliased with dot delimiter.This can be any delimiter like space, dot, etc.
 
 ![InfluxDB Usage](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/influx-usage.png)
+
+Azure Monitor Usage
+-------------------
+
+Same as other time series data sources. You need to properly format your legend to extract the row and column name.
+
+![Azure Monitor Usage](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/azure-monitor-usage.png)
 
 # ChangeLog
 
