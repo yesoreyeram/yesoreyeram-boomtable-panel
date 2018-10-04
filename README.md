@@ -153,7 +153,7 @@ Following notations should be followed when added time based threshold rule
 
 ![Time based thresholds](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/time-based-thresholds.png)
 
-**WARNING**: If your browser and grafana servers are differnt timezone, browser time will be considered. 
+**WARNING**: "From" and "To" fields will be compared against timestamp of last data received from server. If the last data point is not availble, then browser time will be considered.
 
 **TIPS** : If your threshold time rage ranges between two day, (example: 2300 of saturday to 0230 of sunday), then split the rule into two each for saturdary and sunday.
 
