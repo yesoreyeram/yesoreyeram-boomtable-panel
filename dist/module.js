@@ -245,6 +245,16 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                         this.panel.error = undefined;
                         // Binding the grafana computations to the metrics received
                         this.dataComputed = this.dataReceived.map(this.seriesHandler.bind(this));
+                        // Get Server Time Stamp of the Series for time based thresholds.
+                        this.dataComputed = this.dataComputed.map(function (series) {
+                            series.current_servertimestamp = new Date();
+                            if (series && series.datapoints && series.datapoints.length > 0) {
+                                if (lodash_1.default.last(series.datapoints).length === 2) {
+                                    series.current_servertimestamp = new Date(lodash_1.default.last(series.datapoints)[1]);
+                                }
+                            }
+                            return series;
+                        });
                         // Assign pattern
                         this.dataComputed = this.dataComputed.map(function (series) {
                             series.pattern = lodash_1.default.find(_this.panel.patterns.filter(function (p) { return p.disabled !== true; }), function (p) {
@@ -330,7 +340,7 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                         this.dataComputed = this.dataComputed.map(function (series) {
                             series.thresholds = (series.pattern.thresholds || app_1.config.panelDefaults.defaultPattern.thresholds).split(",").map(function (d) { return +d; });
                             if (series.pattern.enable_time_based_thresholds) {
-                                var metricrecivedTimeStamp = new Date();
+                                var metricrecivedTimeStamp = series.current_servertimestamp || new Date();
                                 var metricrecivedTimeStamp_innumber = metricrecivedTimeStamp.getHours() * 100 + metricrecivedTimeStamp.getMinutes();
                                 var weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
                                 lodash_1.default.each(series.pattern.time_based_thresholds, function (tbtx) {

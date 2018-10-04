@@ -241,6 +241,16 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       this.panel.error = undefined;
       // Binding the grafana computations to the metrics received
       this.dataComputed = this.dataReceived.map(this.seriesHandler.bind(this));
+      // Get Server Time Stamp of the Series for time based thresholds.
+      this.dataComputed = this.dataComputed.map(series => {
+        series.current_servertimestamp = new Date();
+        if(series && series.datapoints && series.datapoints.length > 0){
+          if(_.last(series.datapoints).length === 2){
+            series.current_servertimestamp = new Date(_.last(series.datapoints)[1]);
+          }
+        }
+        return series;
+      });
       // Assign pattern
       this.dataComputed = this.dataComputed.map(series => {
         series.pattern = _.find(this.panel.patterns.filter(p=>{ return p.disabled !== true}), function (p) {
@@ -324,7 +334,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       this.dataComputed = this.dataComputed.map(series => {
         series.thresholds = (series.pattern.thresholds || config.panelDefaults.defaultPattern.thresholds).split(",").map(d => +d);
         if(series.pattern.enable_time_based_thresholds){
-          let metricrecivedTimeStamp = new Date();
+          let metricrecivedTimeStamp = series.current_servertimestamp || new Date();
           let metricrecivedTimeStamp_innumber = metricrecivedTimeStamp.getHours()*100 + metricrecivedTimeStamp.getMinutes();
           let weekdays = ["sun","mon","tue","wed","thu","fri","sat"];          
           _.each(series.pattern.time_based_thresholds,(tbtx)=>{
