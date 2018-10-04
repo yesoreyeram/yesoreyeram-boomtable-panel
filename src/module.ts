@@ -282,7 +282,6 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           series.pattern.filter.value_below = "";
           series.pattern.filter.value_above = "";
         }
-        console.log(series.pattern.filter, series.value, +(series.pattern.filter.value_below), +(series.pattern.filter.value_above)); 
         if(series.pattern && series.pattern.filter && (series.pattern.filter.value_below !== "" || series.pattern.filter.value_above !== "" )) {
           if(series.pattern.filter.value_below !== "" && series.value < +(series.pattern.filter.value_below) ){
             return false
