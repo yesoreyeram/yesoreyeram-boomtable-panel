@@ -29,6 +29,7 @@ Supported / Tested Data Sources :
 * InfluxDB
 * Prometheus
 * Azure Monitor
+* AWS CloudWatch
 
 Tested Grafana versions :
 -------------------------
