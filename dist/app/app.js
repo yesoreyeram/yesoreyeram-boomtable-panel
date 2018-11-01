@@ -21,6 +21,8 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
             config = {
                 plugin_id: plugin_id,
                 debug_mode: false,
+                hide_first_column: false,
+                hide_headers: false,
                 error: undefined,
                 groupedData: undefined,
                 panelDefaults: {

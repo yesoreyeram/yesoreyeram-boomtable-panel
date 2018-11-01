@@ -141,7 +141,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     return c;
   }
-  transformValue(thresholds, transform_values, value, displayValue) {
+  transformValue(thresholds, transform_values, value, displayValue, row_name, col_name ) {
     var t = value;
     if (thresholds && transform_values && typeof value === "number" && thresholds.length + 1 <= transform_values.length) {
       transform_values = _.dropRight(transform_values, transform_values.length - thresholds.length - 1);
@@ -150,10 +150,10 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       }
       for (var i = thresholds.length; i > 0; i--) {
         if (value >= thresholds[i - 1]) {
-          return transform_values[i].replace(new RegExp("_value_", "g"), displayValue);
+          return transform_values[i].replace(new RegExp("_value_", "g"), displayValue).replace(new RegExp("_row_name_", "g"), row_name).replace(new RegExp("_col_name_", "g"), col_name);
         }
       }
-      return _.first(transform_values).replace(new RegExp("_value_", "g"), displayValue);
+      return _.first(transform_values).replace(new RegExp("_value_", "g"), displayValue).replace(new RegExp("_row_name_", "g"), row_name).replace(new RegExp("_col_name_", "g"), col_name);
     }
     return t;
   }
@@ -364,7 +364,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       this.dataComputed = this.dataComputed.map(series => {
         series.enable_transform = series.pattern.enable_transform;
         series.transform_values = (series.pattern.transform_values || config.panelDefaults.defaultPattern.transform_values).split("|");
-        series.displayValue = series.enable_transform === true ? this.transformValue(series.thresholds, series.transform_values, series.value, series.displayValue) : series.displayValue;
+        series.displayValue = series.enable_transform === true ? this.transformValue(series.thresholds, series.transform_values, series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
         if (series.displayValue === (series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null")) {
           series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value;
         }
@@ -404,19 +404,25 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         })
         //region Output table construction
         var boomtable_output_body_headers = this.elem.find("#boomtable_output_body_headers");
-        let boomtable_output_body_headers_output = ``;
-        boomtable_output_body_headers_output += "<tr>";        
-        boomtable_output_body_headers_output += `<th style="padding:4px;text-align:center">${this.panel.default_title_for_rows}</th>`;
-        _.each(_.uniq(cols_found), c=>{
-          boomtable_output_body_headers_output += `<th style="padding:4px;text-align:center">${c}</th>`;
-        })
-        boomtable_output_body_headers_output += "</tr>";
+        let boomtable_output_body_headers_output = `<br/>`;
+        if(this.panel.hide_headers !== true){
+          boomtable_output_body_headers_output += "<tr>";
+          if(this.panel.hide_first_column !== true){
+            boomtable_output_body_headers_output += `<th style="padding:4px;text-align:center">${this.panel.default_title_for_rows}</th>`;
+          }
+          _.each(_.uniq(cols_found), c=>{
+            boomtable_output_body_headers_output += `<th style="padding:4px;text-align:center">${c}</th>`;
+          })
+          boomtable_output_body_headers_output += "</tr>";
+        }
         boomtable_output_body_headers.html(boomtable_output_body_headers_output);
         var boomtable_output_body = this.elem.find('#boomtable_output_body');
         let boomtable_output_body_output = ``;
         _.each(output,o=>{
           boomtable_output_body_output += "<tr>"
-          boomtable_output_body_output += `<td style="padding:4px;">${o.row}</td>`;
+          if(this.panel.hide_first_column !== true){
+            boomtable_output_body_output += `<td style="padding:4px;">${o.row}</td>`;
+          }         
           _.each(o.cols, c=>{
             boomtable_output_body_output += `<td style="padding:4px;background-color:${c.bgColor}">${c.displayValue}</td>`;
           })

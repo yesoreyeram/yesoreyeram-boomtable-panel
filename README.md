@@ -196,7 +196,13 @@ Example of matching patterns:
 Value transformation based on thresholds
 ----------------------------------------
 
-Logic is same as background color. But the value to be displayed can be altered here. Display value will be replaced with the value provided. Values are seperated by pipe. if the value is wrapped with _, then it will represent the actual value
+Logic is same as background color. But the value to be displayed can be altered here. Display value will be replaced with the value provided. Values are seperated by pipe. if the value is wrapped with _, then it will represent the actual value. 
+
+`_value_` will be replaced by actual value
+
+`_row_name_` will be replaced by row name. This will be useful when you hide the first column.
+
+`_col_name_` will be replaced by row name. This will be useful when you hide the table header.
 
 Example transformation patterns :
 
@@ -204,6 +210,9 @@ Example transformation patterns :
     GOOD|BETTER|BAD
     GOOD (_value_)|_value_|_value
     Time to party|Ill|RIP
+    _col_name_ : _value_| _col_name_ : _value_| _col_name_ : _value_
+    _row_name_ : _value_| _row_name_ : _value_| _row_name_ : _value_
+    _row_name_ _col_name_ : _value_| _row_name_ _col_name_ : _value_| _row_name_ _col_name_ : _value_
 
 
 Sample value transformation: (Assume your metrics results, 95 and it is percentage data type)
@@ -221,6 +230,13 @@ If your output have more rows and if you require to hide certain rows based on t
 
 ![Filter rows based on value](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/filters.png)
 
+
+Repeater / Multi stat Example
+-----------------
+
+You can use the boom table as multi stat panel. Refer the details given in issue [#40](https://github.com/yesoreyeram/yesoreyeram-boomtable-panel/issues/40)
+
+![Multi stat panel / Repeater ](https://user-images.githubusercontent.com/153843/47859058-4fbf8180-dde5-11e8-8b27-2ef94919d1f8.png)
 
 
 Prometheus Guidelines
@@ -250,6 +266,7 @@ Same as other time series data sources. You need to properly format your legend 
 
 * Time based thresholds
 * Filter option to hide rows based on value
+* Option to hide the first column and table header
 
 **Version 0.3.x**
 

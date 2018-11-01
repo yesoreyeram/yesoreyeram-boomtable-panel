@@ -12,6 +12,8 @@ const plugin_id = "yesoreyeram-boomtable-panel";
 const config: any = {
     plugin_id: plugin_id,
     debug_mode: false,
+    hide_first_column : false,
+    hide_headers : false,
     error: undefined,
     groupedData: undefined,
     panelDefaults: {
