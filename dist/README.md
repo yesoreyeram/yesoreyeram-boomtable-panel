@@ -7,6 +7,8 @@ Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for G
 
 ![Boom Table - Sample Panel](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panel.png)
 
+![Boom Table - Panel with Font Awesome icons](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panels-fa.png)
+
 Features :
 ----------
 
@@ -231,12 +233,12 @@ If your output have more rows and if you require to hide certain rows based on t
 ![Filter rows based on value](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/filters.png)
 
 
-Repeater / Multi stat Example
+Repeater / Multistat Example
 -----------------
 
 You can use the boom table as multi stat panel. Refer the details given in issue [#40](https://github.com/yesoreyeram/yesoreyeram-boomtable-panel/issues/40)
 
-![Multi stat panel / Repeater ](https://user-images.githubusercontent.com/153843/47859058-4fbf8180-dde5-11e8-8b27-2ef94919d1f8.png)
+![Multistat panel / Repeater ](https://user-images.githubusercontent.com/153843/47859058-4fbf8180-dde5-11e8-8b27-2ef94919d1f8.png)
 
 
 Using Font Awesome icons in row /column / metric fields
