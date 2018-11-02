@@ -19,6 +19,7 @@ Features :
 * Time based thresholds
 * Individual cell values can be transformed to helpful texts, based on pattern.
 * Transformed texts can also contain actual metrics
+* Icons in metrics
 * Units can be set at cell level based on pattern
 * Row/Column name based on multiple graphite/InfluxDB/Prometheus columns
 * Filter metrics
