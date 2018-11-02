@@ -239,6 +239,36 @@ You can use the boom table as multi stat panel. Refer the details given in issue
 ![Multi stat panel / Repeater ](https://user-images.githubusercontent.com/153843/47859058-4fbf8180-dde5-11e8-8b27-2ef94919d1f8.png)
 
 
+Using Font Awesome icons in row /column / metric fields
+-------------------------------------------------------
+
+If your row name / col name / transform metrics contains strings that starts with `_fa-` and ends with `_`, then they will be replaced with corresponding font awesome icons grafana supported. Example usage given below.
+
+` _fa-arrow-up_ `           ->  UP ARROW icon in default color
+
+` _fa-arrow-up,green_ `     ->  UP ARROW icon in green color
+
+` _fa-arrow-down,red,5_ `   ->  DOWN ARROW icon in red color repeated 5 times
+
+` _fa-apple,,5_ `           ->  APPLE icon in default color repeated 5 times
+
+**Example implementations of icons in metrics:** (Unlimited possibilites like heatmap)
+
+![Font Awesome Icons support](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/font-awesome-examples.png)
+
+* Battery level indicator
+    * Thresholds : `10,75`
+    * Transform Values : `_fa-battery-empty,red_ _value_|_fa-battery-quarter,yellow_ _value_|_fa-battery-full,green_ _value_`
+* Bar chart indicator
+    * Thresholds : `10,20,30,40,50,60,70,80,90`
+    * Transform Values : `_fa-square,green,1_ _fa-square,gray,9_|_fa-square,green,2_ _fa-square,gray,8_|_fa-square,green,3_ _fa-square,gray,7_|_fa-square,green,4_ _fa-square,gray,6_|_fa-square,yellow,5_ _fa-square,gray,5_|_fa-square,yellow,6_ _fa-square,gray,4_|_fa-square,yellow,7_ _fa-square,gray,3_|_fa-square,red,8_ _fa-square,gray,2_|_fa-square,red,9_ _fa-square,gray,1_|_fa-square,red,10_ _fa-square,gray,0_`
+* Payment Gateway Status Indicator
+    * Similar threhold setup. (Note : In the example shown in the above picture each series represented by their own patterns.)
+    * Hide first column and headers
+* Heatmap
+    * Similar threshold setup
+    * First column and headers are hidden
+
 Prometheus Guidelines
 ---------------------
 
@@ -266,7 +296,8 @@ Same as other time series data sources. You need to properly format your legend 
 
 * Time based thresholds
 * Filter option to hide rows based on value
-* Option to hide the first column and table header
+* Option to hide the first column and table header 
+* Font Awesome icons support (From 0.4.6)
 
 **Version 0.3.x**
 

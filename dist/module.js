@@ -162,6 +162,31 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                     }
                     return t;
                 };
+                GrafanaBoomTableCtrl.prototype.replaceFontAwesomeIcons = function (value) {
+                    return (value + "")
+                        .split(" ")
+                        .map(function (a) {
+                        if (a.startsWith("_fa-") && a.endsWith("_")) {
+                            var icon = a.replace(/\_/g, "").split(",")[0];
+                            var color = a.indexOf(",") > -1 ? " style=\"color:" + app_1.utils.normalizeColor(a.replace(/\_/g, "").split(",")[1]) + "\" " : "";
+                            var repeatCount = a.split(",").length > 2 ? +(a.replace(/\_/g, "").split(",")[2]) : 1;
+                            a = ("<i class=\"fa " + icon + "\" " + color + "></i> ").repeat(repeatCount);
+                        }
+                        return a;
+                    })
+                        .join(" ");
+                };
+                GrafanaBoomTableCtrl.prototype.getActualNameWithoutFA = function (value) {
+                    return (value + "")
+                        .split(" ")
+                        .map(function (a) {
+                        if (a.startsWith("_fa-") && a.endsWith("_")) {
+                            a = "";
+                        }
+                        return a;
+                    })
+                        .join(" ");
+                };
                 GrafanaBoomTableCtrl.prototype.getDecimalsForValue = function (value, _decimals) {
                     if (lodash_1.default.isNumber(+_decimals)) {
                         var o = {
@@ -378,6 +403,19 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                             }
                             return series;
                         });
+                        // Font awesome icons
+                        this.dataComputed = this.dataComputed.map(function (series) {
+                            series.actual_displayvalue = series.displayValue;
+                            series.actual_row_name = series.row_name;
+                            series.actual_col_name = series.col_name;
+                            if (series.displayValue.indexOf("_fa-") > -1)
+                                series.displayValue = _this.replaceFontAwesomeIcons(series.displayValue);
+                            if (series.row_name.indexOf("_fa-") > -1)
+                                series.row_name = _this.replaceFontAwesomeIcons(series.row_name);
+                            if (series.col_name.indexOf("_fa-") > -1)
+                                series.col_name = _this.replaceFontAwesomeIcons(series.col_name);
+                            return series;
+                        });
                         // Grouping
                         var rows_found = app_1.utils.getFields(this.dataComputed, "row_name");
                         var cols_found = app_1.utils.getFields(this.dataComputed, "col_name");
@@ -402,6 +440,8 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                                     o.cols.push({
                                         "name": col_name,
                                         "value": matched_value.value,
+                                        "actual_col_name": matched_value.actual_col_name,
+                                        "actual_row_name": matched_value.actual_row_name,
                                         "displayValue": matched_value.displayValue || matched_value.value,
                                         "bgColor": matched_value.bgColor || "transparent"
                                     });
@@ -430,7 +470,7 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                                     boomtable_output_body_output += "<td style=\"padding:4px;\">" + o.row + "</td>";
                                 }
                                 lodash_1.default.each(o.cols, function (c) {
-                                    boomtable_output_body_output += "<td style=\"padding:4px;background-color:" + c.bgColor + "\">" + c.displayValue + "</td>";
+                                    boomtable_output_body_output += "<td \n              style=\"padding:4px;background-color:" + c.bgColor + "\" \n              title=\"" + ("Row Name : " + _this.getActualNameWithoutFA(c.actual_row_name) + "\nCol Name : " + _this.getActualNameWithoutFA(c.actual_col_name) + "\nValue : " + c.value) + "\"\n            >" + c.displayValue + "</td>";
                                 });
                                 boomtable_output_body_output += "</tr>";
                             });

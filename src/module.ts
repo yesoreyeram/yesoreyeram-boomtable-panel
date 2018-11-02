@@ -157,6 +157,31 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     return t;
   }
+  replaceFontAwesomeIcons(value){
+    return (value+"")
+    .split(" ")
+    .map(a => { 
+      if(a.startsWith("_fa-") && a.endsWith("_")){
+        let icon  = a.replace(/\_/g,"").split(",")[0];
+        let color = a.indexOf(",") > -1 ? ` style="color:${ utils.normalizeColor(a.replace(/\_/g,"").split(",")[1])}" ` : "";
+        let repeatCount = a.split(",").length > 2 ?  +(a.replace(/\_/g,"").split(",")[2]) : 1;
+        a = `<i class="fa ${icon}" ${color}></i> `.repeat(repeatCount);
+      }
+      return a;
+    })
+    .join(" ");
+  }
+  getActualNameWithoutFA(value){
+    return (value+"")
+    .split(" ")    
+    .map(a => { 
+      if(a.startsWith("_fa-") && a.endsWith("_")){
+        a = ``;
+      }
+      return a;
+    })
+    .join(" ");
+  }
   getDecimalsForValue(value, _decimals) {
     if (_.isNumber(+_decimals)) {
       var o: Object = {
@@ -373,6 +398,16 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         }
         return series;
       });
+      // Font awesome icons
+      this.dataComputed = this.dataComputed.map(series => {
+        series.actual_displayvalue = series.displayValue
+        series.actual_row_name = series.row_name
+        series.actual_col_name = series.col_name 
+        if(series.displayValue.indexOf("_fa-")>-1) series.displayValue  = this.replaceFontAwesomeIcons(series.displayValue)
+        if(series.row_name.indexOf("_fa-")>-1)     series.row_name      = this.replaceFontAwesomeIcons(series.row_name)
+        if(series.col_name.indexOf("_fa-")>-1)     series.col_name      = this.replaceFontAwesomeIcons(series.col_name)
+        return series;
+      });
       // Grouping
       const rows_found = utils.getFields(this.dataComputed, "row_name");
       const cols_found = utils.getFields(this.dataComputed, "col_name");
@@ -396,6 +431,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
             o.cols.push({
               "name": col_name,
               "value": matched_value.value,
+              "actual_col_name":matched_value.actual_col_name,
+              "actual_row_name":matched_value.actual_row_name,
               "displayValue": matched_value.displayValue || matched_value.value,
               "bgColor": matched_value.bgColor || "transparent"
             });
@@ -424,7 +461,10 @@ GrafanaBoomTableCtrl.prototype.render = function () {
             boomtable_output_body_output += `<td style="padding:4px;">${o.row}</td>`;
           }         
           _.each(o.cols, c=>{
-            boomtable_output_body_output += `<td style="padding:4px;background-color:${c.bgColor}">${c.displayValue}</td>`;
+            boomtable_output_body_output += `<td 
+              style="padding:4px;background-color:${c.bgColor}" 
+              title="${ "Row Name : "+this.getActualNameWithoutFA(c.actual_row_name) + "\nCol Name : "+ this.getActualNameWithoutFA(c.actual_col_name) + "\nValue : "+ c.value}"
+            >${c.displayValue}</td>`;
           })
           boomtable_output_body_output += "</tr>"
         })
