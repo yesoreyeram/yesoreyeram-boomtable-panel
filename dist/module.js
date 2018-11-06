@@ -163,6 +163,8 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                     return t;
                 };
                 GrafanaBoomTableCtrl.prototype.replaceFontAwesomeIcons = function (value) {
+                    if (!value)
+                        return value;
                     return (value + "")
                         .split(" ")
                         .map(function (a) {
@@ -408,11 +410,11 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                             series.actual_displayvalue = series.displayValue;
                             series.actual_row_name = series.row_name;
                             series.actual_col_name = series.col_name;
-                            if (series.displayValue.indexOf("_fa-") > -1)
+                            if (series.displayValue && series.displayValue.indexOf("_fa-") > -1)
                                 series.displayValue = _this.replaceFontAwesomeIcons(series.displayValue);
-                            if (series.row_name.indexOf("_fa-") > -1)
+                            if (series.row_name && series.row_name.indexOf("_fa-") > -1)
                                 series.row_name = _this.replaceFontAwesomeIcons(series.row_name);
-                            if (series.col_name.indexOf("_fa-") > -1)
+                            if (series.col_name && series.col_name.indexOf("_fa-") > -1)
                                 series.col_name = _this.replaceFontAwesomeIcons(series.col_name);
                             return series;
                         });

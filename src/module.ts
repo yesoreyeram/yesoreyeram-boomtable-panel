@@ -158,6 +158,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     return t;
   }
   replaceFontAwesomeIcons(value){
+    if(!value) return value;
     return (value+"")
     .split(" ")
     .map(a => { 
@@ -402,10 +403,10 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       this.dataComputed = this.dataComputed.map(series => {
         series.actual_displayvalue = series.displayValue
         series.actual_row_name = series.row_name
-        series.actual_col_name = series.col_name 
-        if(series.displayValue.indexOf("_fa-")>-1) series.displayValue  = this.replaceFontAwesomeIcons(series.displayValue)
-        if(series.row_name.indexOf("_fa-")>-1)     series.row_name      = this.replaceFontAwesomeIcons(series.row_name)
-        if(series.col_name.indexOf("_fa-")>-1)     series.col_name      = this.replaceFontAwesomeIcons(series.col_name)
+        series.actual_col_name = series.col_name
+        if(series.displayValue && series.displayValue.indexOf("_fa-")>-1)     series.displayValue      = this.replaceFontAwesomeIcons(series.displayValue)
+        if(series.row_name && series.row_name.indexOf("_fa-")>-1)             series.row_name      = this.replaceFontAwesomeIcons(series.row_name)
+        if(series.col_name && series.col_name.indexOf("_fa-")>-1)             series.col_name      = this.replaceFontAwesomeIcons(series.col_name)
         return series;
       });
       // Grouping
