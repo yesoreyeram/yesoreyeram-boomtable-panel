@@ -36,6 +36,8 @@ const config: any = {
             format: "none",
             null_color: "darkred",
             null_value: "No data",
+            enable_clickable_cells : false,
+            clickable_cells_link : "",
             filter : {
                 value_below : "",
                 value_above : ""

@@ -58,6 +58,8 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       format: "none",
       null_color: "darkred",
       null_value: "No data",
+      enable_clickable_cells : false,
+      clickable_cells_link : "",
       filter : {
           value_below : "",
           value_above : "",
@@ -407,6 +409,15 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         if(series.displayValue && series.displayValue.indexOf("_fa-")>-1)     series.displayValue      = this.replaceFontAwesomeIcons(series.displayValue)
         if(series.row_name && series.row_name.indexOf("_fa-")>-1)             series.row_name      = this.replaceFontAwesomeIcons(series.row_name)
         if(series.col_name && series.col_name.indexOf("_fa-")>-1)             series.col_name      = this.replaceFontAwesomeIcons(series.col_name)
+        return series;
+      });
+      this.dataComputed = this.dataComputed.map(series => {
+        if(series.pattern.enable_clickable_cells){
+          let targetLink = series.pattern.clickable_cells_link || "#";
+          targetLink = targetLink.replace(new RegExp("_row_name_", "g"), this.getActualNameWithoutFA(series.actual_row_name).trim());
+          targetLink = targetLink.replace(new RegExp("_col_name_", "g"), this.getActualNameWithoutFA(series.actual_col_name).trim());
+          series.displayValue = `<a href="${targetLink}" target="_blank">${series.displayValue}</a>`
+        }
         return series;
       });
       // Grouping
