@@ -205,7 +205,7 @@ Logic is same as background color. But the value to be displayed can be altered 
 
 `_row_name_` will be replaced by row name. This will be useful when you hide the first column.
 
-`_col_name_` will be replaced by row name. This will be useful when you hide the table header.
+`_col_name_` will be replaced by col name. This will be useful when you hide the table header.
 
 Example transformation patterns :
 
@@ -225,6 +225,20 @@ Sample value transformation: (Assume your metrics results, 95 and it is percenta
     GOOD (_value_)          -->     GOOD (95%)
     HOT (_value_ > threshold of 80%)     -->     HOT (95% > threshold of 80%)
     Contact helpdesk        -->     Contact helpdesk
+
+Table Cell links
+----------------
+
+Table cells can be clickable and open links in new tabs.
+
+If the URL contains `_row_name_`, it will be replaced by row name.
+
+If the URL contains `_col_name_`, it will be replaced by col name.
+
+Note : If the row_name / col_name contains font awesome keywords like `_fa-circle_`, they will be ignored.
+
+
+Example : `https://mysite.com/_row_name_/_col_name_/?foo=bar`
 
 Filter
 ------
@@ -301,6 +315,7 @@ Same as other time series data sources. You need to properly format your legend 
 * Filter option to hide rows based on value
 * Option to hide the first column and table header 
 * Font Awesome icons support (From 0.4.6)
+* Clickable cells (From 0.4.7)
 
 **Version 0.3.x**
 

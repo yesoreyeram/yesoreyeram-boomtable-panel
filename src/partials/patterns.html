@@ -128,6 +128,19 @@
                                 ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                         </div>
                     </div>
+                    <div class="gr-form-inline">
+                        <div class="gf-form">
+                            <label class="gf-form-label width-13">Enable Cell links</label>
+                            <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_clickable_cells" ng-blur="ctrl.render()" ng-change="ctrl.render()">
+                        </div>
+                    </div>
+                    <div class="gr-form-inline" data-ng-if="pattern.enable_clickable_cells">
+                        <div class="gf-form">
+                            <label class="gf-form-label width-13">Cells target URL</label>
+                            <input type="text" placeholder="#" class="gf-form-input width-18" ng-model="pattern.clickable_cells_link" bs-tooltip="'Cell target URL'"
+                                ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="editor-row">

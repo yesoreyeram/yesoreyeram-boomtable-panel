@@ -45,6 +45,8 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
                         format: "none",
                         null_color: "darkred",
                         null_value: "No data",
+                        enable_clickable_cells: false,
+                        clickable_cells_link: "",
                         filter: {
                             value_below: "",
                             value_above: ""
