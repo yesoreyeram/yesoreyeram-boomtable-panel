@@ -25,54 +25,54 @@
                 <div class="section gf-form-group">
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Name of the pattern</label>
+                            <label class="gf-form-label width-20">Name of the pattern</label>
                             <input type="text" placeholder="Name" class="gf-form-input width-18" ng-model="pattern.name" bs-tooltip="'Name for the pattern (Just for reference)'">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Pattern</label>
+                            <label class="gf-form-label width-20">Pattern</label>
                             <input type="text" placeholder="Regex" class="gf-form-input width-18" ng-model="pattern.pattern" bs-tooltip="'Specify regex using /my.*regex/ syntax'"
                                 ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Delimiter</label>
+                            <label class="gf-form-label width-20">Delimiter</label>
                             <input type="text" placeholder="Delimiter" class="gf-form-input width-4" ng-model="pattern.delimiter" bs-tooltip="'Delimiter to seperate metrics row and col'"
                                 ng-blur="ctrl.render()">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Stat</label>
+                            <label class="gf-form-label width-20">Stat</label>
                             <select class="gf-form-input width-18" ng-model="pattern.valueName" ng-options="f.value as f.text for f in ctrl.valueNameOptions"
                                 ng-change="ctrl.render()"></select>
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Row Name</label>
+                            <label class="gf-form-label width-20">Row Name</label>
                             <input type="text" placeholder="Row Name" class="gf-form-input width-18" ng-model="pattern.row_name" bs-tooltip="'Index of row'"
                                 ng-blur="ctrl.render()">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Col Name</label>
+                            <label class="gf-form-label width-20">Col Name</label>
                             <input type="text" placeholder="Col Name" class="gf-form-input width-18" ng-model="pattern.col_name" bs-tooltip="'Index of col'"
                                 ng-blur="ctrl.render()">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Decimals</label>
+                            <label class="gf-form-label width-20">Decimals</label>
                             <input type="text" placeholder="2" class="gf-form-input width-4" ng-model="pattern.decimals" bs-tooltip="'Decimals'" ng-blur="ctrl.render()">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Format</label>
+                            <label class="gf-form-label width-20">Format</label>
                             <div class="gf-form-dropdown-typeahead width-18" ng-model="pattern.format" dropdown-typeahead2="ctrl.unitFormats" dropdown-typeahead-on-select="ctrl.setUnitFormat($subItem,$index)"></div>
                         </div>
                     </div>
@@ -80,104 +80,134 @@
                 <div class="section gf-form-group">
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Thresholds</label>
+                            <label class="gf-form-label width-20">Thresholds</label>
                             <input type="text" placeholder="Thresholds" class="gf-form-input width-18" ng-model="pattern.thresholds" bs-tooltip="'Comma seperated thresholds'"
                                 ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Enable BG Color?</label>
+                            <label class="gf-form-label width-20">Enable BG Color based on thresholds?</label>
                             <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_bgColor" ng-blur="ctrl.render()" ng-change="ctrl.render()">
                         </div>
                     </div>
                     <div class="gr-form-inline" data-ng-if="pattern.enable_bgColor">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">BG Colors</label>
+                            <label class="gf-form-label width-20">BG Colors for thresholds</label>
                             <input type="text" placeholder="green|orange|red" class="gf-form-input width-18" ng-model="pattern.bgColors" bs-tooltip="'BG Colors seperated by | (pipe)'"
                                 ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
-                            <button type="button" class="btn btn-primary btn-small" ng-click="ctrl.inverseBGColors($index)">Inverse</button>
+                            <button type="button" class="btn btn-primary btn-small" ng-click="ctrl.inverseBGColors($index)" title="Inverse" >Inverse</button>
+                        </div>
+                    </div>                    
+                    <div class="gr-form-inline">
+                        <div class="gf-form">
+                            <label class="gf-form-label width-20">Enable BG Color overrides for specific values?</label>
+                            <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_bgColor_overrides" ng-blur="ctrl.render()" ng-change="ctrl.render()">
+                        </div>
+                    </div>
+                    <div class="gr-form-inline" data-ng-if="pattern.enable_bgColor_overrides">
+                        <div class="gf-form">
+                            <label class="gf-form-label width-20">BG Color Overrides</label>
+                            <input type="text" placeholder="0->red|1->green" class="gf-form-input width-18" ng-model="pattern.bgColors_overrides" bs-tooltip="'Example : 0->red|1->green '"
+                                ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Transform value?</label>
+                            <label class="gf-form-label width-20">Transform value based on thresholds?</label>
                             <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_transform" ng-blur="ctrl.render()" ng-change="ctrl.render()">
                         </div>
                     </div>
                     <div class="gr-form-inline" data-ng-if="pattern.enable_transform">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Transform Values</label>
+                            <label class="gf-form-label width-20">Transform Values for thresholds</label>
                             <input type="text" placeholder="_value_|_value_|_value_" class="gf-form-input width-18" ng-model="pattern.transform_values"
                                 bs-tooltip="'value to be printed _value_ represent actual value; seperate by pipe symbol'" ng-blur="ctrl.render()"
                                 data-ng-change="ctrl.render();">
-                            <button type="button" class="btn btn-primary btn-small" ng-click="ctrl.inverseTransformValues($index)">Inverse</button>
+                            <button type="button" class="btn btn-primary btn-small" ng-click="ctrl.inverseTransformValues($index)" title="Inverse">Inverse</button>
+                        </div>
+                    </div>                    
+                    <div class="gr-form-inline">
+                        <div class="gf-form">
+                            <label class="gf-form-label width-20">Enable value transform overrides for specific values?</label>
+                            <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_transform_overrides" ng-blur="ctrl.render()" ng-change="ctrl.render()">
+                        </div>
+                    </div>
+                    <div class="gr-form-inline" data-ng-if="pattern.enable_transform_overrides">
+                        <div class="gf-form">
+                            <label class="gf-form-label width-20">Value transform Overrides</label>
+                            <input type="text" placeholder="0->down|1->up" class="gf-form-input width-18" ng-model="pattern.transform_values_overrides" bs-tooltip="'Example : 0->down|1->up '"
+                                ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Null Color</label>
+                            <label class="gf-form-label width-20">Null Color</label>
                             <input type="text" placeholder="darkred" class="gf-form-input width-18" ng-model="pattern.null_color" bs-tooltip="'Color for null data'"
                                 ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Null Value</label>
+                            <label class="gf-form-label width-20">Null Value</label>
                             <input type="text" placeholder="No data" class="gf-form-input width-18" ng-model="pattern.null_value" bs-tooltip="'Value to display for null'"
-                                ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
-                        </div>
-                    </div>
-                    <div class="gr-form-inline">
-                        <div class="gf-form">
-                            <label class="gf-form-label width-13">Enable Cell links</label>
-                            <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_clickable_cells" ng-blur="ctrl.render()" ng-change="ctrl.render()">
-                        </div>
-                    </div>
-                    <div class="gr-form-inline" data-ng-if="pattern.enable_clickable_cells">
-                        <div class="gf-form">
-                            <label class="gf-form-label width-13">Cells target URL</label>
-                            <input type="text" placeholder="#" class="gf-form-input width-18" ng-model="pattern.clickable_cells_link" bs-tooltip="'Cell target URL'"
                                 ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                         </div>
                     </div>
                 </div>
             </div>
             <div class="editor-row">
-                <div class="gr-form-inline">
-                    <div class="gf-form">
-                        <label class="gf-form-label width-13">Disable Pattern</label>
-                        <input type="checkbox" class="width-4" ng-model="pattern.disabled" ng-change="ctrl.render()">
+                    <div class="section gf-form-group">                        
+                        <div class="gr-form-inline">
+                                <div class="gf-form">
+                                    <label class="gf-form-label width-20">Enable Cell links</label>
+                                    <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_clickable_cells" ng-blur="ctrl.render()" ng-change="ctrl.render()">
+                                </div>
+                            </div>
+                            <div class="gr-form-inline" data-ng-if="pattern.enable_clickable_cells">
+                                <div class="gf-form">
+                                    <label class="gf-form-label width-20">Cells target URL</label>
+                                    <input type="text" placeholder="#" class="gf-form-input width-18" ng-model="pattern.clickable_cells_link" bs-tooltip="'Cell target URL'"
+                                        ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                                </div>
+                            </div>
                     </div>
-                </div>
-                <div class="gr-form-inline">
-                    <div class="gf-form">
-                        <label class="gf-form-label width-13">Remove Pattern</label>
-                        <button class="btn btn-danger btn-small" ng-if="pattern.pattern !== undefined" ng-click="ctrl.removePattern($index)">
-                            <i class="fa fa-trash"></i> Remove this pattern
-                        </button>
+                    <div class="section gf-form-group">
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Disable Pattern</label>
+                                <input type="checkbox" class="width-4" ng-model="pattern.disabled" ng-change="ctrl.render()">
+                            </div>
+                        </div>
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Remove Pattern</label>
+                                <button class="btn btn-danger btn-small" ng-if="pattern.pattern !== undefined" ng-click="ctrl.removePattern($index)">
+                                    <i class="fa fa-trash"></i> Remove this pattern
+                                </button>
+                            </div>
+                        </div>
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Clone Pattern</label>
+                                <button class="btn btn-success btn-small" ng-if="pattern.pattern !== undefined" ng-click="ctrl.clonePattern($index)">
+                                    <i class="fa fa-trash"></i> Clone this pattern
+                                </button>
+                            </div>
+                        </div>
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Order Pattern</label>
+                                <button class="btn btn-success btn-small" ng-if="pattern.pattern !== undefined && $index !== 0" ng-click="ctrl.movePattern('UP',$index)">
+                                    <i class="fa fa-arrow-up"></i>Move the pattern UP
+                                </button>
+                                <button class="btn btn-success btn-small" ng-if="pattern.pattern !== undefined && $index !== ctrl.panel.patterns.length-1"
+                                    ng-click="ctrl.movePattern('DOWN',$index)">
+                                    <i class="fa fa-arrow-down"></i>Move the pattern DOWN
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="gr-form-inline">
-                    <div class="gf-form">
-                        <label class="gf-form-label width-13">Clone Pattern</label>
-                        <button class="btn btn-success btn-small" ng-if="pattern.pattern !== undefined" ng-click="ctrl.clonePattern($index)">
-                            <i class="fa fa-trash"></i> Clone this pattern
-                        </button>
-                    </div>
-                </div>
-                <div class="gr-form-inline">
-                    <div class="gf-form">
-                        <label class="gf-form-label width-13">Order Pattern</label>
-                        <button class="btn btn-success btn-small" ng-if="pattern.pattern !== undefined && $index !== 0" ng-click="ctrl.movePattern('UP',$index)">
-                            <i class="fa fa-arrow-up"></i>Move the pattern UP
-                        </button>
-                        <button class="btn btn-success btn-small" ng-if="pattern.pattern !== undefined && $index !== ctrl.panel.patterns.length-1"
-                            ng-click="ctrl.movePattern('DOWN',$index)">
-                            <i class="fa fa-arrow-down"></i>Move the pattern DOWN
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="edit-tab-content" ng-if="ctrl.panel.activePatternIndex === -1">
@@ -185,54 +215,54 @@
                 <div class="section gf-form-group">
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Name of the pattern</label>
+                            <label class="gf-form-label width-20">Name of the pattern</label>
                             <label class="gf-form-label width-18">Default Pattern</label>
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Pattern</label>
+                            <label class="gf-form-label width-20">Pattern</label>
                             <label class="gf-form-label width-18">*</label>
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Delimiter</label>
+                            <label class="gf-form-label width-20">Delimiter</label>
                             <input type="text" placeholder="Delimiter" class="gf-form-input width-4" ng-model="ctrl.panel.defaultPattern.delimiter" bs-tooltip="'Delimiter to seperate metrics row and col'"
                                 ng-blur="ctrl.render()">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Stat</label>
+                            <label class="gf-form-label width-20">Stat</label>
                             <select class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.valueName" ng-options="f.value as f.text for f in ctrl.valueNameOptions"
                                 ng-change="ctrl.render()"></select>
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Row Name</label>
+                            <label class="gf-form-label width-20">Row Name</label>
                             <input type="text" placeholder="Row Index" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.row_name" bs-tooltip="'Example : represent coloumn 2 as _2_'"
                                 ng-blur="ctrl.render()">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Col Name</label>
+                            <label class="gf-form-label width-20">Col Name</label>
                             <input type="text" placeholder="Col Index" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.col_name" bs-tooltip="'Example : represent coloumn 2 as _2_'"
                                 ng-blur="ctrl.render()">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Decimals</label>
+                            <label class="gf-form-label width-20">Decimals</label>
                             <input type="text" placeholder="2" class="gf-form-input width-4" ng-model="ctrl.panel.defaultPattern.decimals" bs-tooltip="'Decimals'"
                                 ng-blur="ctrl.render()">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Format</label>
+                            <label class="gf-form-label width-20">Format</label>
                             <div class="gf-form-dropdown-typeahead width-18" ng-model="ctrl.panel.defaultPattern.format" dropdown-typeahead2="ctrl.unitFormats"
                                 dropdown-typeahead-on-select="ctrl.setUnitFormat($subItem,-1)"></div>
                         </div>
@@ -241,55 +271,101 @@
                 <div class="section gf-form-group">
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Threshold</label>
+                            <label class="gf-form-label width-20">Threshold</label>
                             <input type="text" placeholder="Thresholds" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.thresholds"
                                 bs-tooltip="'Comma seperated thresholds'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Enable BG Color?</label>
+                            <label class="gf-form-label width-20">Enable BG Color based on thresholds?</label>
                             <input type="checkbox" class="gf-form-input width-4" ng-model="ctrl.panel.defaultPattern.enable_bgColor" ng-blur="ctrl.render()"
                                 ng-change="ctrl.render()">
                         </div>
                     </div>
                     <div class="gr-form-inline" data-ng-if="ctrl.panel.defaultPattern.enable_bgColor">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">BG Colors</label>
+                            <label class="gf-form-label width-20">BG Colors for thresholds</label>
                             <input type="text" placeholder="green|orange|red" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.bgColors"
                                 bs-tooltip="'BG Colors seperated by | (pipe)'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                            <button type="button" class="btn btn-primary btn-small" ng-click="ctrl.inverseBGColors(-1)" title="Inverse" >Inverse</button>
                         </div>
                     </div>
                     <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Enable BG Color overrides for specific values?</label>
+                                <input type="checkbox" class="gf-form-input width-4" ng-model="ctrl.panel.defaultPattern.enable_bgColor_overrides" ng-blur="ctrl.render()" ng-change="ctrl.render()">
+                            </div>
+                        </div>
+                        <div class="gr-form-inline" data-ng-if="ctrl.panel.defaultPattern.enable_bgColor_overrides">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">BG Color Overrides</label>
+                                <input type="text" placeholder="0->red|1->green" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.bgColors_overrides" bs-tooltip="'Example : 0->red|1->green '"
+                                    ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                            </div>
+                        </div>
+                    <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Transform value?</label>
+                            <label class="gf-form-label width-20">Transform value based on thresholds?</label>
                             <input type="checkbox" class="gf-form-input width-4" ng-model="ctrl.panel.defaultPattern.enable_transform" ng-blur="ctrl.render()"
                                 ng-change="ctrl.render()">
                         </div>
                     </div>
                     <div class="gr-form-inline" data-ng-if="ctrl.panel.defaultPattern.enable_transform">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Transform Values</label>
+                            <label class="gf-form-label width-20">Transform Values for thresholds</label>
                             <input type="text" placeholder="_value_|_value_|_value_" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.transform_values"
                                 bs-tooltip="'value to be printed _value_ represent actual value; seperate by pipe symbol'" ng-blur="ctrl.render()"
                                 data-ng-change="ctrl.render();">
+                            <button type="button" class="btn btn-primary btn-small" ng-click="ctrl.inverseTransformValues(-1)" title="Inverse">Inverse</button>
                         </div>
-                    </div>
+                    </div>                                      
+                    <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Enable value transform overrides for specific values?</label>
+                                <input type="checkbox" class="gf-form-input width-4" ng-model="ctrl.panel.defaultPattern.enable_transform_overrides" ng-blur="ctrl.render()" ng-change="ctrl.render()">
+                            </div>
+                        </div>
+                        <div class="gr-form-inline" data-ng-if="ctrl.panel.defaultPattern.enable_transform_overrides">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Value transform Overrides</label>
+                                <input type="text" placeholder="0->down|1->up" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.transform_values_overrides" bs-tooltip="'Example : 0->down|1->up '"
+                                    ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                            </div>
+                        </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Null Color</label>
+                            <label class="gf-form-label width-20">Null Color</label>
                             <input type="text" placeholder="darkred" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.null_color" bs-tooltip="'Color for null data'"
                                 ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-13">Null Value</label>
+                            <label class="gf-form-label width-20">Null Value</label>
                             <input type="text" placeholder="No data" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.null_value" bs-tooltip="'Value to display for null'"
                                 ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="editor-row">
+                    <div class="section gf-form-group">                        
+                        <div class="gr-form-inline">
+                                <div class="gf-form">
+                                    <label class="gf-form-label width-20">Enable Cell links</label>
+                                    <input type="checkbox" class="gf-form-input width-4" ng-model="ctrl.panel.defaultPattern.enable_clickable_cells" ng-blur="ctrl.render()" ng-change="ctrl.render()">
+                                </div>
+                            </div>
+                            <div class="gr-form-inline" data-ng-if="ctrl.panel.defaultPattern.enable_clickable_cells">
+                                <div class="gf-form">
+                                    <label class="gf-form-label width-20">Cells target URL</label>
+                                    <input type="text" placeholder="#" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.clickable_cells_link" bs-tooltip="'Cell target URL'"
+                                        ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                                </div>
+                            </div>
+                    </div>
+
             </div>
         </div>
     </div>

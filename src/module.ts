@@ -52,8 +52,12 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       enable_time_based_thresholds: false,
       enable_bgColor: false,
       bgColors: "green|orange|red",
+      enable_bgColor_overrides : false,
+      bgColors_overrides: "0->green|2->red|1->yellow",
       enable_transform: false,
       transform_values: "_value_|_value_|_value_",
+      enable_transform_overrides : false,
+      transform_values_overrides: "0->down|1->up",
       decimals: 2,
       format: "none",
       null_color: "darkred",
@@ -120,11 +124,22 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
   }
   inverseBGColors(index){
-    this.panel.patterns[index].bgColors = this.panel.patterns[index].bgColors.split("|").reverse().join("|");
+    if(index === -1){
+      this.panel.defaultPattern.bgColors = this.panel.defaultPattern.bgColors.split("|").reverse().join("|");
+    }
+    else{
+      this.panel.patterns[index].bgColors = this.panel.patterns[index].bgColors.split("|").reverse().join("|");
+    }
     this.render();
   }
   inverseTransformValues(index){
-    this.panel.patterns[index].transform_values = this.panel.patterns[index].transform_values.split("|").reverse().join("|");
+    if(index===-1){
+      this.panel.defaultPattern.transform_values = this.panel.defaultPattern.transform_values.split("|").reverse().join("|");
+    }
+    else {
+      this.panel.patterns[index].transform_values = this.panel.patterns[index].transform_values.split("|").reverse().join("|");
+    }
+
     this.render();
   }
   computeBgColor(thresholds, bgColors, value) {
@@ -388,6 +403,18 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         }
         return series;
       });
+      // BG Colors overrides 
+      this.dataComputed = this.dataComputed.map(series =>{
+        series.enable_bgColor_overrides = series.pattern.enable_bgColor_overrides;
+        series.bgColors_overrides = series.pattern.bgColors_overrides || "";
+        if(series.enable_bgColor_overrides && series.bgColors_overrides !== ""){
+          let _bgColors_overrides = series.bgColors_overrides.split("|").filter(con=>con.indexOf("->")).map(con=> con.split("->")).filter(con=> +(con[0]) === series.value ).map(con=> con[1])
+          if(_bgColors_overrides.length > 0 && _bgColors_overrides[0] !== ""){
+            series.bgColor =  utils.normalizeColor((""+_bgColors_overrides[0]).trim());
+          }
+        }
+        return series;
+      })
       // Value Transform
       this.dataComputed = this.dataComputed.map(series => {
         series.enable_transform = series.pattern.enable_transform;
@@ -401,6 +428,18 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         }
         return series;
       });
+      // Value Transform Overrides
+      this.dataComputed = this.dataComputed.map(series =>{
+        series.enable_transform_overrides = series.pattern.enable_transform_overrides;
+        series.transform_values_overrides = series.pattern.transform_values_overrides || "";
+        if(series.enable_transform_overrides && series.transform_values_overrides !== ""){
+          let _transform_values_overrides = series.transform_values_overrides.split("|").filter(con=>con.indexOf("->")).map(con=> con.split("->")).filter(con=> +(con[0]) === series.value ).map(con=> con[1])
+          if(_transform_values_overrides.length > 0 && _transform_values_overrides[0] !== ""){
+            series.displayValue =  (""+_transform_values_overrides[0]).trim().replace(new RegExp("_value_", "g"), series.displayValue).replace(new RegExp("_row_name_", "g"), series.row_name).replace(new RegExp("_col_name_", "g"),series.col_name);
+          }
+        }
+        return series;
+      })
       // Font awesome icons
       this.dataComputed = this.dataComputed.map(series => {
         series.actual_displayvalue = series.displayValue
@@ -411,11 +450,13 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         if(series.col_name && series.col_name.indexOf("_fa-")>-1)             series.col_name      = this.replaceFontAwesomeIcons(series.col_name)
         return series;
       });
+      // Cell Links
       this.dataComputed = this.dataComputed.map(series => {
         if(series.pattern.enable_clickable_cells){
           let targetLink = series.pattern.clickable_cells_link || "#";
           targetLink = targetLink.replace(new RegExp("_row_name_", "g"), this.getActualNameWithoutFA(series.actual_row_name).trim());
           targetLink = targetLink.replace(new RegExp("_col_name_", "g"), this.getActualNameWithoutFA(series.actual_col_name).trim());
+          targetLink = targetLink.replace(new RegExp("_value_", "g"), this.getActualNameWithoutFA(series.value).trim());
           series.displayValue = `<a href="${targetLink}" target="_blank">${series.displayValue}</a>`
         }
         return series;

@@ -195,6 +195,17 @@ Example of matching patterns:
         value       : 85    output  : orange
         value       : 65    output  : red
 
+Background color overrides
+--------------------------
+
+Background colors can be overriden for specific values by using the pattern option `Enable BG Color overrides for specific value?`. Override values should be specified in the `BG Color Overrides` in the following format. If multiple matches found, first one will win.
+
+    0->Red
+    13->Red|8->Green
+
+Value and colors are seperated by `->`. Multiple combination of values can be given seperated by `|`. 
+
+If background colors based on thresholds also specified along with this, this will be override the threshold based pattern.
 
 Value transformation based on thresholds
 ----------------------------------------
@@ -225,6 +236,19 @@ Sample value transformation: (Assume your metrics results, 95 and it is percenta
     GOOD (_value_)          -->     GOOD (95%)
     HOT (_value_ > threshold of 80%)     -->     HOT (95% > threshold of 80%)
     Contact helpdesk        -->     Contact helpdesk
+
+
+Transform value overrides
+--------------------------
+
+Transform values can be overriden for specific values by using the pattern option `Enable value transform overrides?`. Override values should be specified in the `Value transform Overrides` in the following format. If multiple matches found, first one will win.
+
+    13->Evil
+    12->good|37.50->_fa-circle_|99->Oh no...
+
+Value and transform values are seperated by `->`. Multiple combination of values can be given seperated by `|`. 
+
+If transform values based on thresholds also specified along with this, this will be override the threshold based pattern.
 
 Table Cell links
 ----------------
@@ -308,6 +332,12 @@ Same as other time series data sources. You need to properly format your legend 
 ![Azure Monitor Usage](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/azure-monitor-usage.png)
 
 # ChangeLog
+
+**Version 0.5.x**
+
+* BG Color & Transform value overrides
+* Bug fixes
+
 
 **Version 0.4.x**
 
