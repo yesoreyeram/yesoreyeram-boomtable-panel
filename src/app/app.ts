@@ -55,18 +55,15 @@ const config: any = {
         name: "Patterns",
         template: "/partials/patterns.html",
         position: 2
+    },
+    {
+        name: "Time based thresholds & Filters",
+        template: "/partials/patterns-advanced-options.html",
+        position: 3
     }, {
         name: "Options",
         template: "/partials/options.html",
-        position: 5
-    }, {
-        name: "Filters",
-        template: "/partials/filters.html",
         position: 4
-    }, {
-        name: "Time based thresholds",
-        template: "/partials/thresholds.html",
-        position: 3
     }],
     valueNameOptions: [{
         value: "min",
