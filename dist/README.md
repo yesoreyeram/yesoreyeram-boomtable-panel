@@ -9,6 +9,8 @@ Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for G
 
 ![Boom Table - Panel with Font Awesome icons](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panels-fa.png)
 
+![Image transform](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/img-transform-example.png)
+
 Features :
 ----------
 
@@ -310,6 +312,23 @@ If your row name / col name / transform metrics contains strings that starts wit
     * Similar threshold setup
     * First column and headers are hidden
 
+Using images as transform values
+--------------------------------
+
+If your row name / col name / transform metrics contains strings that starts with `_img-` and ends with `_`, then they will be replaced with images. Example usage given below.
+
+` _img-https://example.com/happy.gif_ `               ->  happy.gif with 20px width, 20px height
+
+` _img-https://example.com/happy.gif,30px_ `          ->  happy.gif with 30px width, 20px height
+
+` _img-https://example.com/happy.gif,30px,40px_ `     ->  happy.gif with 30px width, 40px height
+
+` _img-https://example.com/happy.gif,30px,40px,3_ `   ->  happy.gif with 30px width, 40px height repeated 3 times
+
+![Image transform](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/img-transform-example.png)
+
+Note : When using images from other domains, please take care of CORS policy, legal and copyright polices.
+
 Prometheus Guidelines
 ---------------------
 
@@ -336,6 +355,7 @@ Same as other time series data sources. You need to properly format your legend 
 **Version 0.5.x**
 
 * BG Color & Transform value overrides
+* Images as values based on thresholds (From 0.5.1)
 * Bug fixes
 
 

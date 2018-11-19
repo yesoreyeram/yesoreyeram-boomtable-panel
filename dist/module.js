@@ -194,11 +194,32 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                     })
                         .join(" ");
                 };
-                GrafanaBoomTableCtrl.prototype.getActualNameWithoutFA = function (value) {
+                GrafanaBoomTableCtrl.prototype.replaceWithImages = function (value) {
+                    if (!value)
+                        return value;
+                    return (value + "")
+                        .split(" ")
+                        .map(function (a) {
+                        if (a.startsWith("_img-") && a.endsWith("_")) {
+                            a = a.slice(0, -1);
+                            var imgUrl = a.replace("_img-", "").split(",")[0];
+                            var imgWidth = a.split(",").length > 1 ? a.replace("_img-", "").split(",")[1] : "20px";
+                            var imgHeight = a.split(",").length > 2 ? a.replace("_img-", "").split(",")[2] : "20px";
+                            var repeatCount = a.split(",").length > 3 ? +(a.replace("_img-", "").split(",")[3]) : 1;
+                            a = ("<img width=\"" + imgWidth + "\" height=\"" + imgHeight + "\" src=\"" + imgUrl + "\"/>").repeat(repeatCount);
+                        }
+                        return a;
+                    })
+                        .join(" ");
+                };
+                GrafanaBoomTableCtrl.prototype.getActualNameWithoutTransformSign = function (value) {
                     return (value + "")
                         .split(" ")
                         .map(function (a) {
                         if (a.startsWith("_fa-") && a.endsWith("_")) {
+                            a = "";
+                        }
+                        if (a.startsWith("_img-") && a.endsWith("_")) {
                             a = "";
                         }
                         return a;
@@ -458,13 +479,23 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                                 series.col_name = _this.replaceFontAwesomeIcons(series.col_name);
                             return series;
                         });
+                        // Image transforms
+                        this.dataComputed = this.dataComputed.map(function (series) {
+                            if (series.displayValue && series.displayValue.indexOf("_img-") > -1)
+                                series.displayValue = _this.replaceWithImages(series.displayValue);
+                            if (series.row_name && series.row_name.indexOf("_img-") > -1)
+                                series.row_name = _this.replaceWithImages(series.row_name);
+                            if (series.col_name && series.col_name.indexOf("_img-") > -1)
+                                series.col_name = _this.replaceWithImages(series.col_name);
+                            return series;
+                        });
                         // Cell Links
                         this.dataComputed = this.dataComputed.map(function (series) {
                             if (series.pattern.enable_clickable_cells) {
                                 var targetLink = series.pattern.clickable_cells_link || "#";
-                                targetLink = targetLink.replace(new RegExp("_row_name_", "g"), _this.getActualNameWithoutFA(series.actual_row_name).trim());
-                                targetLink = targetLink.replace(new RegExp("_col_name_", "g"), _this.getActualNameWithoutFA(series.actual_col_name).trim());
-                                targetLink = targetLink.replace(new RegExp("_value_", "g"), _this.getActualNameWithoutFA(series.value).trim());
+                                targetLink = targetLink.replace(new RegExp("_row_name_", "g"), _this.getActualNameWithoutTransformSign(series.actual_row_name).trim());
+                                targetLink = targetLink.replace(new RegExp("_col_name_", "g"), _this.getActualNameWithoutTransformSign(series.actual_col_name).trim());
+                                targetLink = targetLink.replace(new RegExp("_value_", "g"), _this.getActualNameWithoutTransformSign(series.value).trim());
                                 series.displayValue = "<a href=\"" + targetLink + "\" target=\"_blank\">" + series.displayValue + "</a>";
                             }
                             return series;
@@ -523,7 +554,7 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                                     boomtable_output_body_output += "<td style=\"padding:4px;\">" + o.row + "</td>";
                                 }
                                 lodash_1.default.each(o.cols, function (c) {
-                                    boomtable_output_body_output += "<td \n              style=\"padding:4px;background-color:" + c.bgColor + "\" \n              title=\"" + ("Row Name : " + _this.getActualNameWithoutFA(c.actual_row_name) + "\nCol Name : " + _this.getActualNameWithoutFA(c.actual_col_name) + "\nValue : " + c.value) + "\"\n            >" + c.displayValue + "</td>";
+                                    boomtable_output_body_output += "<td \n              style=\"padding:4px;background-color:" + c.bgColor + "\" \n              title=\"" + ("Row Name : " + _this.getActualNameWithoutTransformSign(c.actual_row_name) + "\nCol Name : " + _this.getActualNameWithoutTransformSign(c.actual_col_name) + "\nValue : " + c.value) + "\"\n            >" + c.displayValue + "</td>";
                                 });
                                 boomtable_output_body_output += "</tr>";
                             });
