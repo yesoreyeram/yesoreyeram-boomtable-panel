@@ -293,6 +293,7 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                 if (this.dataReceived) {
                     // Copying the data received
                     this.dataComputed = this.dataReceived;
+                    var advanced_options = app_1.utils.ini2json(this.panel.advanced_options_configuration);
                     this.panel.default_title_for_rows = this.panel.default_title_for_rows || app_1.config.default_title_for_rows;
                     var metricsReceived = app_1.utils.getFields(this.dataComputed, "target");
                     if (metricsReceived.length !== lodash_1.default.uniq(metricsReceived).length) {
@@ -500,6 +501,8 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                             }
                             return series;
                         });
+                        // Display overrides
+                        var text_align_table_header = ["left", "right", "center"].indexOf(advanced_options["TEXT_ALIGN_TABLE_HEADER"]) > -1 ? advanced_options["TEXT_ALIGN_TABLE_HEADER"].toLowerCase() : "center";
                         // Grouping
                         var rows_found = app_1.utils.getFields(this.dataComputed, "row_name");
                         var cols_found = app_1.utils.getFields(this.dataComputed, "col_name");
@@ -538,10 +541,10 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                             if (this.panel.hide_headers !== true) {
                                 boomtable_output_body_headers_output += "<tr>";
                                 if (this.panel.hide_first_column !== true) {
-                                    boomtable_output_body_headers_output += "<th style=\"padding:4px;text-align:center\">" + this.panel.default_title_for_rows + "</th>";
+                                    boomtable_output_body_headers_output += "<th style=\"padding:4px;text-align:" + text_align_table_header + "\">" + this.panel.default_title_for_rows + "</th>";
                                 }
                                 lodash_1.default.each(lodash_1.default.uniq(cols_found), function (c) {
-                                    boomtable_output_body_headers_output += "<th style=\"padding:4px;text-align:center\">" + c + "</th>";
+                                    boomtable_output_body_headers_output += "<th style=\"padding:4px;text-align:" + text_align_table_header + "\">" + c + "</th>";
                                 });
                                 boomtable_output_body_headers_output += "</tr>";
                             }
