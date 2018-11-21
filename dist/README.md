@@ -329,6 +329,24 @@ If your row name / col name / transform metrics contains strings that starts wit
 
 Note : When using images from other domains, please take care of CORS policy, legal and copyright polices.
 
+
+Advanced Options
+----------------
+
+From v0.5.2, You will see `Advanced Options` in the the Options tab. You can use this section to override some behaviour. Configuration key and value are seperated by `=`. Each key will be in new line.
+
+Example :
+
+    TEXT_ALIGN_TABLE_HEADER = left
+    ANOTHER_KEY = Another value
+
+Supported Key and Values are given below
+
+| Config Name | Description | Accepted Values | Default Value | Supported from version |
+|-------------|-------------|-----------------|---------------|------------------------|
+| TEXT_ALIGN_TABLE_HEADER | Align the table headers | `left`, `right`, `center` | `center` | 0.5.2 |
+
+
 Prometheus Guidelines
 ---------------------
 
@@ -352,33 +370,23 @@ Same as other time series data sources. You need to properly format your legend 
 
 # ChangeLog
 
-**Version 0.5.x**
+| Version | Changes |
+| --------|-----------|
+| 0.5.2   | Advanced options implementation |
+| 0.5.1   | Images as values based on thresholds |
+| 0.5.0   | Background Color & Transform value overrides |
+|         | Bug fixes #43 #44 #45 |
+| 0.4.7   | Links in cells i.e., Clickable cells |
+| 0.4.6   | Font Awesome icons as values base on thresholds |
+| 0.4.x   | Time based thresholds |
+|         | Filter option to hide rows based on value |
+|         | Option to hide the first column and table header |
+| 0.3.x   | Options to name the pattern, disable the pattern |
+|         | Reverse the background colors and transform values in pattern |
+|         | Removed output data from panel model |
+|         | Bug fixes |
+| 0.2.x   | Build script changed from babel to typescript |
+|         | Assign series alias as row to the default pattern |
+|         | Bug fixes |
+| 0.1.0   | First working Version |
 
-* BG Color & Transform value overrides
-* Images as values based on thresholds (From 0.5.1)
-* Bug fixes
-
-
-**Version 0.4.x**
-
-* Time based thresholds
-* Filter option to hide rows based on value
-* Option to hide the first column and table header 
-* Font Awesome icons support (From 0.4.6)
-* Clickable cells (From 0.4.7)
-
-**Version 0.3.x**
-
-* Options to name the pattern, disable the pattern, Reverse the bg colors and transform values in pattern
-* Removed output data from panel model
-* Bug fixes
-
-**Version 0.2.x**
-
-* Build script changed from babel to typescript
-* Assign series alias as row to the default pattern 
-* Bug fixes
-
-**Version 0.1.x**
-
-* First working version

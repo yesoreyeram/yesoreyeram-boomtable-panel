@@ -329,6 +329,24 @@ If your row name / col name / transform metrics contains strings that starts wit
 
 Note : When using images from other domains, please take care of CORS policy, legal and copyright polices.
 
+
+Advanced Options
+----------------
+
+From v0.5.2, You will see `Advanced Options` in the the Options tab. You can use this section to override some behaviour. Configuration key and value are seperated by `=`. Each key will be in new line.
+
+Example :
+
+    TEXT_ALIGN_TABLE_HEADER = left
+    ANOTHER_KEY = Another value
+
+Supported Key and Values are given below
+
+| Config Name | Description | Accepted Values | Default Value | Supported from version |
+|-------------|-------------|-----------------|---------------|------------------------|
+| TEXT_ALIGN_TABLE_HEADER | Align the table headers | `left`, `right`, `center` | `center` | 0.5.2 |
+
+
 Prometheus Guidelines
 ---------------------
 
@@ -354,6 +372,7 @@ Same as other time series data sources. You need to properly format your legend 
 
 | Version | Changes |
 | --------|-----------|
+| 0.5.2   | Advanced options implementation |
 | 0.5.1   | Images as values based on thresholds |
 | 0.5.0   | Background Color & Transform value overrides |
 |         | Bug fixes #43 #44 #45 |

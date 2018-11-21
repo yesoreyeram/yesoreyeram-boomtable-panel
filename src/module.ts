@@ -289,6 +289,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
   if (this.dataReceived) {
     // Copying the data received
     this.dataComputed = this.dataReceived;
+    let advanced_options = utils.ini2json(this.panel.advanced_options_configuration);
     this.panel.default_title_for_rows = this.panel.default_title_for_rows || config.default_title_for_rows;
     const metricsReceived = utils.getFields(this.dataComputed, "target");
     if (metricsReceived.length !== _.uniq(metricsReceived).length) {
@@ -488,6 +489,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         }
         return series;
       });
+      // Display overrides
+      let text_align_table_header = ["left","right","center"].indexOf(advanced_options["TEXT_ALIGN_TABLE_HEADER"]) > -1 ? advanced_options["TEXT_ALIGN_TABLE_HEADER"].toLowerCase() : "center";
       // Grouping
       const rows_found = utils.getFields(this.dataComputed, "row_name");
       const cols_found = utils.getFields(this.dataComputed, "col_name");
@@ -525,10 +528,10 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         if(this.panel.hide_headers !== true){
           boomtable_output_body_headers_output += "<tr>";
           if(this.panel.hide_first_column !== true){
-            boomtable_output_body_headers_output += `<th style="padding:4px;text-align:center">${this.panel.default_title_for_rows}</th>`;
+            boomtable_output_body_headers_output += `<th style="padding:4px;text-align:${text_align_table_header}">${this.panel.default_title_for_rows}</th>`;
           }
           _.each(_.uniq(cols_found), c=>{
-            boomtable_output_body_headers_output += `<th style="padding:4px;text-align:center">${c}</th>`;
+            boomtable_output_body_headers_output += `<th style="padding:4px;text-align:${text_align_table_header}">${c}</th>`;
           })
           boomtable_output_body_headers_output += "</tr>";
         }
