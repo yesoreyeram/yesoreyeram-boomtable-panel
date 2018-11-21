@@ -25,7 +25,7 @@
         "url": "https://github.com/yesoreyeram/yesoreyeram-boomtable-panel"
       }
     ],
-    "version": "0.5.1"
+    "version": "0.5.2"
   },
   "dependencies": {
     "grafanaVersion": "4.x.x",
