@@ -28,10 +28,9 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
                 }
                 GrafanaBoomTableCtrl.prototype.onInitEditMode = function () {
-                    var _this = this;
-                    lodash_1.default.each(app_1.config.editorTabs, function (editor) {
-                        _this.addEditorTab(editor.name, "public/plugins/" + app_1.config.plugin_id + editor.template, editor.position);
-                    });
+                    this.addEditorTab("Patterns", "public/plugins/" + app_1.config.plugin_id + "/partials/patterns.html", 2);
+                    this.addEditorTab("Time based thresholds & Filters", "public/plugins/" + app_1.config.plugin_id + "/partials/patterns-advanced-options.html", 3);
+                    this.addEditorTab("Options", "public/plugins/" + app_1.config.plugin_id + "/partials/options.html", 4);
                 };
                 GrafanaBoomTableCtrl.prototype.onDataReceived = function (data) {
                     this.dataReceived = data;

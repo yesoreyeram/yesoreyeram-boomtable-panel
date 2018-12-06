@@ -67,20 +67,6 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
                     dark: "plugins/" + plugin_id + "/css/default.dark.css",
                     light: "plugins/" + plugin_id + "/css/default.light.css"
                 },
-                editorTabs: [{
-                        name: "Patterns",
-                        template: "/partials/patterns.html",
-                        position: 2
-                    },
-                    {
-                        name: "Time based thresholds & Filters",
-                        template: "/partials/patterns-advanced-options.html",
-                        position: 3
-                    }, {
-                        name: "Options",
-                        template: "/partials/options.html",
-                        position: 4
-                    }],
                 valueNameOptions: [{
                         value: "min",
                         text: "Min"
