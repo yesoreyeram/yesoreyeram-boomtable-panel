@@ -7,7 +7,11 @@ import {
   config
 } from "./app/app"
 import _ from "lodash";
-loadPluginCss(config.list_of_stylesheets);
+
+loadPluginCss({
+  dark: `plugins/${config.plugin_id}/css/default.dark.css`,
+  light: `plugins/${config.plugin_id}/css/default.light.css`
+});
 
 class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   static templateUrl: string = "partials/module.html";

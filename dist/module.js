@@ -15,7 +15,10 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                 lodash_1 = lodash_1_1;
             }],
         execute: function() {
-            app_1.loadPluginCss(app_1.config.list_of_stylesheets);
+            app_1.loadPluginCss({
+                dark: "plugins/" + app_1.config.plugin_id + "/css/default.dark.css",
+                light: "plugins/" + app_1.config.plugin_id + "/css/default.light.css"
+            });
             GrafanaBoomTableCtrl = (function (_super) {
                 __extends(GrafanaBoomTableCtrl, _super);
                 function GrafanaBoomTableCtrl($scope, $injector, $sce) {

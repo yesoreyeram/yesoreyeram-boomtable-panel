@@ -52,10 +52,6 @@ const config: any = {
         row_col_wrapper: "_",
         default_title_for_rows: "Metric"
     },
-    list_of_stylesheets: {
-        dark: "plugins/" + plugin_id + "/css/default.dark.css",
-        light: "plugins/" + plugin_id + "/css/default.light.css"
-    },
     valueNameOptions: [{
         value: "min",
         text: "Min"

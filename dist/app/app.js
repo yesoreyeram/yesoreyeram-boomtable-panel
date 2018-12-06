@@ -63,10 +63,6 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
                     row_col_wrapper: "_",
                     default_title_for_rows: "Metric"
                 },
-                list_of_stylesheets: {
-                    dark: "plugins/" + plugin_id + "/css/default.dark.css",
-                    light: "plugins/" + plugin_id + "/css/default.light.css"
-                },
                 valueNameOptions: [{
                         value: "min",
                         text: "Min"
