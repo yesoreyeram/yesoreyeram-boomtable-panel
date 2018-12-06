@@ -78,56 +78,24 @@ const config: any = {
     }
     ],
 };
-config.optionOverrides.push({
-    text: "text alignment header",
-    propertyName: "TEXT_ALIGN_TABLE_HEADER",
-    index: 0,
-    defaultValue : "left",
-    values: ["left", "right", "center"],
-    submenu: _.map(["left", "right", "center"], value => {
-        return { text: String(value), value: value };
-    })
-});
-config.optionOverrides.push({
-    text: "text alignment first column",
-    propertyName: "TEXT_ALIGN_FIRST_COLUMN",
-    index: 1,
-    defaultValue : "left",
-    values: ["left", "right", "center"],
-    submenu: _.map(["left", "right", "center"], value => {
-        return { text: String(value), value: value };
-    })
-});
-config.optionOverrides.push({
-    text: "text alignment table cells",
-    propertyName: "TEXT_ALIGN_TABLE_CELLS",
-    index: 2,
-    defaultValue : "left",
-    values: ["left", "right", "center"],
-    submenu: _.map(["left", "right", "center"], value => {
-        return { text: String(value), value: value };
-    })
-});
-config.optionOverrides.push({
-    text: "hide headers",
-    propertyName: "HIDE_HEADERS",
-    index: 3,
-    defaultValue : "false",
-    values: ["true", "false"],
-    submenu: _.map(["true", "false"], value => {
-        return { text: String(value), value: value };
-    })
-});
-config.optionOverrides.push({
-    text: "hide first column",
-    propertyName: "HIDE_FIRST_COLUMN",
-    index: 3,
-    defaultValue : "false",
-    values: ["true", "false"],
-    submenu: _.map(["true", "false"], value => {
-        return { text: String(value), value: value };
-    })
-});
+[
+    ["Text alignment header","TEXT_ALIGN_TABLE_HEADER",["left", "right", "center"],"left"],
+    ["Text alignment first column","TEXT_ALIGN_FIRST_COLUMN",["left", "right", "center"],"left"],
+    ["Text alignment table cells","TEXT_ALIGN_TABLE_CELLS",["left", "right", "center"],"left"],
+    ["Hide Headers","HIDE_HEADERS",["false", "true"],"false"],
+    ["Hide first column","HIDE_FIRST_COLUMN",["false", "true"],"false"],
+].forEach((o,i)=>{
+    config.optionOverrides.push({
+        text: o[0],
+        propertyName: o[1],
+        index: i,
+        defaultValue : o[3],
+        values: o[2],
+        submenu: _.map(o[2], value => {
+            return { text: String(value), value: value };
+        })
+    });
+})
 export {
     kbn,
     loadPluginCss,

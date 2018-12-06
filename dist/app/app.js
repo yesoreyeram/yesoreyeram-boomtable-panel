@@ -89,55 +89,23 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
                     }
                 ],
             };
-            config.optionOverrides.push({
-                text: "text alignment header",
-                propertyName: "TEXT_ALIGN_TABLE_HEADER",
-                index: 0,
-                defaultValue: "left",
-                values: ["left", "right", "center"],
-                submenu: lodash_1.default.map(["left", "right", "center"], function (value) {
-                    return { text: String(value), value: value };
-                })
-            });
-            config.optionOverrides.push({
-                text: "text alignment first column",
-                propertyName: "TEXT_ALIGN_FIRST_COLUMN",
-                index: 1,
-                defaultValue: "left",
-                values: ["left", "right", "center"],
-                submenu: lodash_1.default.map(["left", "right", "center"], function (value) {
-                    return { text: String(value), value: value };
-                })
-            });
-            config.optionOverrides.push({
-                text: "text alignment table cells",
-                propertyName: "TEXT_ALIGN_TABLE_CELLS",
-                index: 2,
-                defaultValue: "left",
-                values: ["left", "right", "center"],
-                submenu: lodash_1.default.map(["left", "right", "center"], function (value) {
-                    return { text: String(value), value: value };
-                })
-            });
-            config.optionOverrides.push({
-                text: "hide headers",
-                propertyName: "HIDE_HEADERS",
-                index: 3,
-                defaultValue: "false",
-                values: ["true", "false"],
-                submenu: lodash_1.default.map(["true", "false"], function (value) {
-                    return { text: String(value), value: value };
-                })
-            });
-            config.optionOverrides.push({
-                text: "hide first column",
-                propertyName: "HIDE_FIRST_COLUMN",
-                index: 3,
-                defaultValue: "false",
-                values: ["true", "false"],
-                submenu: lodash_1.default.map(["true", "false"], function (value) {
-                    return { text: String(value), value: value };
-                })
+            [
+                ["Text alignment header", "TEXT_ALIGN_TABLE_HEADER", ["left", "right", "center"], "left"],
+                ["Text alignment first column", "TEXT_ALIGN_FIRST_COLUMN", ["left", "right", "center"], "left"],
+                ["Text alignment table cells", "TEXT_ALIGN_TABLE_CELLS", ["left", "right", "center"], "left"],
+                ["Hide Headers", "HIDE_HEADERS", ["false", "true"], "false"],
+                ["Hide first column", "HIDE_FIRST_COLUMN", ["false", "true"], "false"],
+            ].forEach(function (o, i) {
+                config.optionOverrides.push({
+                    text: o[0],
+                    propertyName: o[1],
+                    index: i,
+                    defaultValue: o[3],
+                    values: o[2],
+                    submenu: lodash_1.default.map(o[2], function (value) {
+                        return { text: String(value), value: value };
+                    })
+                });
             });
             exports_1("kbn", kbn_1.default);
             exports_1("loadPluginCss", sdk_1.loadPluginCss);
