@@ -1,6 +1,6 @@
 ///<reference path="../../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
-System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2", "./utils"], function(exports_1) {
-    var kbn_1, sdk_1, time_series2_1, utils;
+System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2", "lodash", "./utils"], function(exports_1) {
+    var kbn_1, sdk_1, time_series2_1, lodash_1, utils;
     var plugin_id, config;
     return {
         setters:[
@@ -13,6 +13,9 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
             function (time_series2_1_1) {
                 time_series2_1 = time_series2_1_1;
             },
+            function (lodash_1_1) {
+                lodash_1 = lodash_1_1;
+            },
             function (utils_1) {
                 utils = utils_1;
             }],
@@ -21,12 +24,12 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
             config = {
                 plugin_id: plugin_id,
                 debug_mode: false,
-                hide_first_column: false,
-                hide_headers: false,
                 error: undefined,
                 groupedData: undefined,
+                optionOverrides: [],
                 panelDefaults: {
                     plugin_title: "Boom Table",
+                    currentOptionOverrides: [],
                     nullPointMode: "connected",
                     patterns: [],
                     defaultPattern: {
@@ -100,6 +103,56 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
                     }
                 ],
             };
+            config.optionOverrides.push({
+                text: "text alignment header",
+                propertyName: "TEXT_ALIGN_TABLE_HEADER",
+                index: 0,
+                defaultValue: "left",
+                values: ["left", "right", "center"],
+                submenu: lodash_1.default.map(["left", "right", "center"], function (value) {
+                    return { text: String(value), value: value };
+                })
+            });
+            config.optionOverrides.push({
+                text: "text alignment first column",
+                propertyName: "TEXT_ALIGN_FIRST_COLUMN",
+                index: 1,
+                defaultValue: "left",
+                values: ["left", "right", "center"],
+                submenu: lodash_1.default.map(["left", "right", "center"], function (value) {
+                    return { text: String(value), value: value };
+                })
+            });
+            config.optionOverrides.push({
+                text: "text alignment table cells",
+                propertyName: "TEXT_ALIGN_TABLE_CELLS",
+                index: 2,
+                defaultValue: "left",
+                values: ["left", "right", "center"],
+                submenu: lodash_1.default.map(["left", "right", "center"], function (value) {
+                    return { text: String(value), value: value };
+                })
+            });
+            config.optionOverrides.push({
+                text: "hide headers",
+                propertyName: "HIDE_HEADERS",
+                index: 3,
+                defaultValue: "false",
+                values: ["true", "false"],
+                submenu: lodash_1.default.map(["true", "false"], function (value) {
+                    return { text: String(value), value: value };
+                })
+            });
+            config.optionOverrides.push({
+                text: "hide first column",
+                propertyName: "HIDE_FIRST_COLUMN",
+                index: 3,
+                defaultValue: "false",
+                values: ["true", "false"],
+                submenu: lodash_1.default.map(["true", "false"], function (value) {
+                    return { text: String(value), value: value };
+                })
+            });
             exports_1("kbn", kbn_1.default);
             exports_1("loadPluginCss", sdk_1.loadPluginCss);
             exports_1("MetricsPanelCtrl", sdk_1.MetricsPanelCtrl);

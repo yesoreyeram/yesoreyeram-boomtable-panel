@@ -1,7 +1,7 @@
 <div class="boom-table">
     <div class="editor-row">
         <div class="section gf-form-group">
-            <h4>Options</h4>
+            <h4>Options</h4><br/>
             <div class="gf-form">
                 <div class="gr-form-inline">
                     <div class="gf-form">
@@ -38,35 +38,22 @@
                     </div>
                 </div>
             </div>
-            <div class="gf-form">
-                <div class="gr-form-inline">
-                    <div class="gf-form">
-                        <label class="gf-form-label width-20">Hide First Column</label>
-                        <input type="checkbox" class="width-4" ng-model="ctrl.panel.hide_first_column" ng-blur="ctrl.render()"
-                            ng-change="ctrl.render()">
-                    </div>
-                </div>
-            </div>
-            <div class="gf-form">
-                <div class="gr-form-inline">
-                    <div class="gf-form">
-                        <label class="gf-form-label width-20">Hide Headers</label>
-                        <input type="checkbox" class="width-4" ng-model="ctrl.panel.hide_headers" ng-blur="ctrl.render()"
-                            ng-change="ctrl.render()">
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="section gf-form-group">
-            <h4>Advanced Options</h4>
-            <div class="gf-form">
-                <div class="gr-form-inline">
-                    <div class="gf-form">
-                        <textarea class="gf-form-input width-25" rows="10" ng-model="ctrl.panel.advanced_options_configuration"
-                            ng-blur="ctrl.render()"></textarea>
+            <h4>Advanced Options</h4><br/>
+            <div class="gf-form" ng-repeat="option in ctrl.panel.currentOptionOverrides">
+                    <label class="gf-form-label width-15">{{option.text}}</label>
+                    <div>
+                        <label class="gf-form-label width-10">{{option.value}}</label>
                     </div>
+                    <button type="button" class="btn btn-primary btn-small" ng-click="ctrl.removeOptionOverride(option.propertyName)"
+                        title="Remove">X</button>
                 </div>
-            </div>
+                <br />
+                <div class="gf-form">
+                    <span class="dropdown" dropdown-typeahead="ctrl.optionOverrides" dropdown-typeahead-on-select="ctrl.setOptionOverride($item.propertyName, $subItem.value, $item.text)">
+                    </span>
+                </div>
         </div>
     </div>
 </div>

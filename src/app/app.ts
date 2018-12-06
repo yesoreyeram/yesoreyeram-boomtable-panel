@@ -6,18 +6,19 @@ import {
     MetricsPanelCtrl
 } from "app/plugins/sdk";
 import TimeSeries from "app/core/time_series2";
+import _ from "lodash";
 import * as utils from "./utils";
 
 const plugin_id = "yesoreyeram-boomtable-panel";
 const config: any = {
     plugin_id: plugin_id,
     debug_mode: false,
-    hide_first_column : false,
-    hide_headers : false,
     error: undefined,
     groupedData: undefined,
+    optionOverrides:[],
     panelDefaults: {
         plugin_title: "Boom Table",
+        currentOptionOverrides:[],
         nullPointMode: "connected",
         patterns: [],
         defaultPattern: {
@@ -91,7 +92,56 @@ const config: any = {
     }
     ],
 };
-
+config.optionOverrides.push({
+    text: "text alignment header",
+    propertyName: "TEXT_ALIGN_TABLE_HEADER",
+    index: 0,
+    defaultValue : "left",
+    values: ["left", "right", "center"],
+    submenu: _.map(["left", "right", "center"], value => {
+        return { text: String(value), value: value };
+    })
+});
+config.optionOverrides.push({
+    text: "text alignment first column",
+    propertyName: "TEXT_ALIGN_FIRST_COLUMN",
+    index: 1,
+    defaultValue : "left",
+    values: ["left", "right", "center"],
+    submenu: _.map(["left", "right", "center"], value => {
+        return { text: String(value), value: value };
+    })
+});
+config.optionOverrides.push({
+    text: "text alignment table cells",
+    propertyName: "TEXT_ALIGN_TABLE_CELLS",
+    index: 2,
+    defaultValue : "left",
+    values: ["left", "right", "center"],
+    submenu: _.map(["left", "right", "center"], value => {
+        return { text: String(value), value: value };
+    })
+});
+config.optionOverrides.push({
+    text: "hide headers",
+    propertyName: "HIDE_HEADERS",
+    index: 3,
+    defaultValue : "false",
+    values: ["true", "false"],
+    submenu: _.map(["true", "false"], value => {
+        return { text: String(value), value: value };
+    })
+});
+config.optionOverrides.push({
+    text: "hide first column",
+    propertyName: "HIDE_FIRST_COLUMN",
+    index: 3,
+    defaultValue : "false",
+    values: ["true", "false"],
+    submenu: _.map(["true", "false"], value => {
+        return { text: String(value), value: value };
+    })
+});
 export {
     kbn,
     loadPluginCss,

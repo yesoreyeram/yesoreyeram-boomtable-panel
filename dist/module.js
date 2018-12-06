@@ -22,6 +22,7 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                     _super.call(this, $scope, $injector);
                     this.unitFormats = app_1.kbn.getUnitFormats();
                     this.valueNameOptions = app_1.config.valueNameOptions;
+                    this.optionOverrides = app_1.config.optionOverrides;
                     lodash_1.default.defaults(this.panel, app_1.config.panelDefaults);
                     this.events.on("data-received", this.onDataReceived.bind(this));
                     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
@@ -285,6 +286,52 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                     this.ctrl = ctrl;
                     this.elem = elem;
                 };
+                GrafanaBoomTableCtrl.prototype.getOptionOverride = function (propertyName) {
+                    var option = lodash_1.default.find(this.panel.currentOptionOverrides, function (o) { return o.propertyName === propertyName; });
+                    var default_option = lodash_1.default.find(app_1.config.optionOverrides, function (o) { return o.propertyName === propertyName; });
+                    if (option) {
+                        return option.value;
+                    }
+                    else
+                        return default_option.defaultValue;
+                };
+                GrafanaBoomTableCtrl.prototype.setOptionOverride = function (propertyName, value, text) {
+                    var newOverrides = [];
+                    if (lodash_1.default.filter(this.panel.currentOptionOverrides, function (o) { return o.propertyName === propertyName; }).length === 0) {
+                        newOverrides.push({
+                            propertyName: propertyName,
+                            value: value,
+                            text: text
+                        });
+                    }
+                    if (this.panel.currentOptionOverrides.length > 0) {
+                        lodash_1.default.each(this.panel.currentOptionOverrides, function (o) {
+                            if (o.propertyName === propertyName) {
+                                newOverrides.push({
+                                    propertyName: propertyName,
+                                    value: value,
+                                    text: text
+                                });
+                            }
+                            else
+                                newOverrides.push(o);
+                        });
+                    }
+                    this.panel.currentOptionOverrides = newOverrides;
+                    this.render();
+                };
+                GrafanaBoomTableCtrl.prototype.removeOptionOverride = function (option) {
+                    var newOverrides = [];
+                    if (this.panel.currentOptionOverrides.length > 0) {
+                        lodash_1.default.each(this.panel.currentOptionOverrides, function (o) {
+                            if (o.propertyName !== option) {
+                                newOverrides.push(o);
+                            }
+                        });
+                    }
+                    this.panel.currentOptionOverrides = newOverrides;
+                    this.render();
+                };
                 GrafanaBoomTableCtrl.templateUrl = "partials/module.html";
                 return GrafanaBoomTableCtrl;
             })(app_1.MetricsPanelCtrl);
@@ -293,7 +340,6 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                 if (this.dataReceived) {
                     // Copying the data received
                     this.dataComputed = this.dataReceived;
-                    var advanced_options = app_1.utils.ini2json(this.panel.advanced_options_configuration);
                     this.panel.default_title_for_rows = this.panel.default_title_for_rows || app_1.config.default_title_for_rows;
                     var metricsReceived = app_1.utils.getFields(this.dataComputed, "target");
                     if (metricsReceived.length !== lodash_1.default.uniq(metricsReceived).length) {
@@ -502,7 +548,11 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                             return series;
                         });
                         // Display overrides
-                        var text_align_table_header = ["left", "right", "center"].indexOf(advanced_options["TEXT_ALIGN_TABLE_HEADER"]) > -1 ? advanced_options["TEXT_ALIGN_TABLE_HEADER"].toLowerCase() : "center";
+                        var text_align_table_header = this.getOptionOverride("TEXT_ALIGN_TABLE_HEADER");
+                        var text_align_first_column = this.getOptionOverride("TEXT_ALIGN_FIRST_COLUMN");
+                        var text_align_table_cells = this.getOptionOverride("TEXT_ALIGN_TABLE_CELLS");
+                        var hide_headers = this.getOptionOverride("HIDE_HEADERS") === "true";
+                        var hide_first_column = this.getOptionOverride("HIDE_FIRST_COLUMN") === "true";
                         // Grouping
                         var rows_found = app_1.utils.getFields(this.dataComputed, "row_name");
                         var cols_found = app_1.utils.getFields(this.dataComputed, "col_name");
@@ -538,9 +588,9 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                             //region Output table construction
                             var boomtable_output_body_headers = this.elem.find("#boomtable_output_body_headers");
                             var boomtable_output_body_headers_output = "<br/>";
-                            if (this.panel.hide_headers !== true) {
+                            if (hide_headers !== true) {
                                 boomtable_output_body_headers_output += "<tr>";
-                                if (this.panel.hide_first_column !== true) {
+                                if (hide_first_column !== true) {
                                     boomtable_output_body_headers_output += "<th style=\"padding:4px;text-align:" + text_align_table_header + "\">" + this.panel.default_title_for_rows + "</th>";
                                 }
                                 lodash_1.default.each(lodash_1.default.uniq(cols_found), function (c) {
@@ -553,11 +603,11 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                             var boomtable_output_body_output = "";
                             lodash_1.default.each(output, function (o) {
                                 boomtable_output_body_output += "<tr>";
-                                if (_this.panel.hide_first_column !== true) {
-                                    boomtable_output_body_output += "<td style=\"padding:4px;\">" + o.row + "</td>";
+                                if (hide_first_column !== true) {
+                                    boomtable_output_body_output += "<td style=\"padding:4px;text-align:" + text_align_first_column + "\">" + o.row + "</td>";
                                 }
                                 lodash_1.default.each(o.cols, function (c) {
-                                    boomtable_output_body_output += "<td \n              style=\"padding:4px;background-color:" + c.bgColor + "\" \n              title=\"" + ("Row Name : " + _this.getActualNameWithoutTransformSign(c.actual_row_name) + "\nCol Name : " + _this.getActualNameWithoutTransformSign(c.actual_col_name) + "\nValue : " + c.value) + "\"\n            >" + c.displayValue + "</td>";
+                                    boomtable_output_body_output += "<td \n              style=\"padding:4px;background-color:" + c.bgColor + ";text-align:" + text_align_table_cells + "\" \n              title=\"" + ("Row Name : " + _this.getActualNameWithoutTransformSign(c.actual_row_name) + "\nCol Name : " + _this.getActualNameWithoutTransformSign(c.actual_col_name) + "\nValue : " + c.value) + "\"\n            >" + c.displayValue + "</td>";
                                 });
                                 boomtable_output_body_output += "</tr>";
                             });

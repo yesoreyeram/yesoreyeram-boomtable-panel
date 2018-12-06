@@ -16,6 +16,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   dataReceived: any;
   ctrl:any;
   elem:any;
+  optionOverrides = config.optionOverrides;
   constructor($scope, $injector, $sce) {
     super($scope, $injector);
     _.defaults(this.panel, config.panelDefaults);
@@ -283,13 +284,56 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.ctrl = ctrl;
     this.elem = elem;
   }
+  getOptionOverride(propertyName){
+    let option = _.find(this.panel.currentOptionOverrides,o=> o.propertyName === propertyName);
+    let default_option = _.find(config.optionOverrides,o=> o.propertyName === propertyName);
+    if(option){
+       return option.value
+    }
+    else return default_option.defaultValue;
+  }
+  setOptionOverride(propertyName,value,text){
+    let newOverrides = [];
+    if(_.filter(this.panel.currentOptionOverrides,o=> o.propertyName === propertyName).length === 0 ){
+      newOverrides.push({
+        propertyName,
+        value,
+        text
+      })
+    }  
+    if(this.panel.currentOptionOverrides.length>0){
+      _.each(this.panel.currentOptionOverrides,o=>{
+        if(o.propertyName===propertyName){
+          newOverrides.push({
+            propertyName,
+            value,
+            text
+          })
+        }
+        else newOverrides.push(o);
+      })
+    }
+    this.panel.currentOptionOverrides = newOverrides;
+    this.render();
+  }
+  removeOptionOverride(option){
+    let newOverrides = [];
+    if(this.panel.currentOptionOverrides.length>0){
+      _.each(this.panel.currentOptionOverrides,o=>{
+        if(o.propertyName!==option){
+          newOverrides.push(o)
+        }
+      })
+    }
+    this.panel.currentOptionOverrides = newOverrides;
+    this.render();
+  }
 }
 
 GrafanaBoomTableCtrl.prototype.render = function () {
   if (this.dataReceived) {
     // Copying the data received
     this.dataComputed = this.dataReceived;
-    let advanced_options = utils.ini2json(this.panel.advanced_options_configuration);
     this.panel.default_title_for_rows = this.panel.default_title_for_rows || config.default_title_for_rows;
     const metricsReceived = utils.getFields(this.dataComputed, "target");
     if (metricsReceived.length !== _.uniq(metricsReceived).length) {
@@ -490,7 +534,11 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // Display overrides
-      let text_align_table_header = ["left","right","center"].indexOf(advanced_options["TEXT_ALIGN_TABLE_HEADER"]) > -1 ? advanced_options["TEXT_ALIGN_TABLE_HEADER"].toLowerCase() : "center";
+      let text_align_table_header = this.getOptionOverride("TEXT_ALIGN_TABLE_HEADER");
+      let text_align_first_column = this.getOptionOverride("TEXT_ALIGN_FIRST_COLUMN");
+      let text_align_table_cells  = this.getOptionOverride("TEXT_ALIGN_TABLE_CELLS");
+      let hide_headers            = this.getOptionOverride("HIDE_HEADERS") === "true";
+      let hide_first_column       = this.getOptionOverride("HIDE_FIRST_COLUMN") === "true";
       // Grouping
       const rows_found = utils.getFields(this.dataComputed, "row_name");
       const cols_found = utils.getFields(this.dataComputed, "col_name");
@@ -525,9 +573,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         //region Output table construction
         var boomtable_output_body_headers = this.elem.find("#boomtable_output_body_headers");
         let boomtable_output_body_headers_output = `<br/>`;
-        if(this.panel.hide_headers !== true){
+        if(hide_headers !== true){
           boomtable_output_body_headers_output += "<tr>";
-          if(this.panel.hide_first_column !== true){
+          if(hide_first_column !== true){
             boomtable_output_body_headers_output += `<th style="padding:4px;text-align:${text_align_table_header}">${this.panel.default_title_for_rows}</th>`;
           }
           _.each(_.uniq(cols_found), c=>{
@@ -540,12 +588,12 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         let boomtable_output_body_output = ``;
         _.each(output,o=>{
           boomtable_output_body_output += "<tr>"
-          if(this.panel.hide_first_column !== true){
-            boomtable_output_body_output += `<td style="padding:4px;">${o.row}</td>`;
+          if(hide_first_column !== true){
+            boomtable_output_body_output += `<td style="padding:4px;text-align:${text_align_first_column}">${o.row}</td>`;
           }         
           _.each(o.cols, c=>{
             boomtable_output_body_output += `<td 
-              style="padding:4px;background-color:${c.bgColor}" 
+              style="padding:4px;background-color:${c.bgColor};text-align:${text_align_table_cells}" 
               title="${ "Row Name : "+this.getActualNameWithoutTransformSign(c.actual_row_name) + "\nCol Name : "+ this.getActualNameWithoutTransformSign(c.actual_col_name) + "\nValue : "+ c.value}"
             >${c.displayValue}</td>`;
           })

@@ -3,13 +3,14 @@
 
 [![CircleCI](https://circleci.com/gh/yesoreyeram/yesoreyeram-boomtable-panel.svg?style=svg)](https://circleci.com/gh/yesoreyeram/yesoreyeram-boomtable-panel)
 
+[![Build Status](https://yesoreyeram.visualstudio.com/yesoreyeram-boomtable-panel/_apis/build/status/yesoreyeram-boomtable-panel)](https://yesoreyeram.visualstudio.com/yesoreyeram-boomtable-panel/_build/latest?definitionId=1)
+
 Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for Graphite, InfluDB, Prometheus, Azure Monitor.
 
 ![Boom Table - Sample Panel](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panel.png)
 
 ![Boom Table - Panel with Font Awesome icons](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panels-fa.png)
 
-![Image transform](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/img-transform-example.png)
 
 Features :
 ----------
@@ -330,23 +331,6 @@ If your row name / col name / transform metrics contains strings that starts wit
 Note : When using images from other domains, please take care of CORS policy, legal and copyright polices.
 
 
-Advanced Options
-----------------
-
-From v0.5.2, You will see `Advanced Options` in the the Options tab. You can use this section to override some behaviour. Configuration key and value are seperated by `=`. Each key will be in new line.
-
-Example :
-
-    TEXT_ALIGN_TABLE_HEADER = left
-    ANOTHER_KEY = Another value
-
-Supported Key and Values are given below
-
-| Config Name | Description | Accepted Values | Default Value | Supported from version |
-|-------------|-------------|-----------------|---------------|------------------------|
-| TEXT_ALIGN_TABLE_HEADER | Align the table headers | `left`, `right`, `center` | `center` | 0.5.2 |
-
-
 Prometheus Guidelines
 ---------------------
 
@@ -370,9 +354,10 @@ Same as other time series data sources. You need to properly format your legend 
 
 # ChangeLog
 
-| Version | Changes |
+| Version | Changes   |
 | --------|-----------|
-| 0.5.2   | Advanced options implementation |
+| 0.5.3   | Advanced options implementation |
+|         | BREAKING : Hide first column, Hide header options are moved to advanced options |
 | 0.5.1   | Images as values based on thresholds |
 | 0.5.0   | Background Color & Transform value overrides |
 |         | Bug fixes #43 #44 #45 |
@@ -389,4 +374,5 @@ Same as other time series data sources. You need to properly format your legend 
 |         | Assign series alias as row to the default pattern |
 |         | Bug fixes |
 | 0.1.0   | First working Version |
+
 
