@@ -14,8 +14,8 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   unitFormats: any = kbn.getUnitFormats();
   valueNameOptions: Object = config.valueNameOptions;
   dataReceived: any;
-  ctrl:any;
-  elem:any;
+  ctrl: any;
+  elem: any;
   optionOverrides = config.optionOverrides;
   constructor($scope, $injector, $sce) {
     super($scope, $injector);
@@ -24,9 +24,9 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
   }
   onInitEditMode() {
-    this.addEditorTab("Patterns",`public/plugins/${config.plugin_id}/partials/patterns.html`,2);
-    this.addEditorTab("Time based thresholds & Filters",`public/plugins/${config.plugin_id}/partials/patterns-advanced-options.html`,3);
-    this.addEditorTab("Options",`public/plugins/${config.plugin_id}/partials/options.html`,4);
+    this.addEditorTab("Patterns", `public/plugins/${config.plugin_id}/partials/patterns.html`, 2);
+    this.addEditorTab("Time based thresholds & Filters", `public/plugins/${config.plugin_id}/partials/patterns-advanced-options.html`, 3);
+    this.addEditorTab("Options", `public/plugins/${config.plugin_id}/partials/options.html`, 4);
   }
   onDataReceived(data) {
     this.dataReceived = data;
@@ -42,48 +42,48 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   }
   addPattern() {
     var newPattern = {
-      name: "New Pattern", 
+      name: "New Pattern",
       pattern: "^server.*cpu$",
       delimiter: ".",
       valueName: "avg",
-      row_name: this.panel.row_col_wrapper + "0"+ this.panel.row_col_wrapper,
-      col_name: this.panel.row_col_wrapper + "1"+ this.panel.row_col_wrapper,
+      row_name: this.panel.row_col_wrapper + "0" + this.panel.row_col_wrapper,
+      col_name: this.panel.row_col_wrapper + "1" + this.panel.row_col_wrapper,
       thresholds: "70,90",
-      time_based_thresholds:[],
+      time_based_thresholds: [],
       enable_time_based_thresholds: false,
       enable_bgColor: false,
       bgColors: "green|orange|red",
-      enable_bgColor_overrides : false,
+      enable_bgColor_overrides: false,
       bgColors_overrides: "0->green|2->red|1->yellow",
       enable_transform: false,
       transform_values: "_value_|_value_|_value_",
-      enable_transform_overrides : false,
+      enable_transform_overrides: false,
       transform_values_overrides: "0->down|1->up",
       decimals: 2,
       format: "none",
       null_color: "darkred",
       null_value: "No data",
-      enable_clickable_cells : false,
-      clickable_cells_link : "",
-      filter : {
-          value_below : "",
-          value_above : "",
+      enable_clickable_cells: false,
+      clickable_cells_link: "",
+      filter: {
+        value_below: "",
+        value_above: "",
       }
     };
     this.panel.patterns.push(newPattern);
     this.panel.activePatternIndex = this.panel.patterns.length - 1;
     this.render();
   }
-  movePattern(direction,index){
+  movePattern(direction, index) {
     let tempElement = this.panel.patterns[index];
-    if(direction==="UP"){
-      this.panel.patterns[index] = this.panel.patterns[index-1];
-      this.panel.patterns[index-1] = tempElement;
+    if (direction === "UP") {
+      this.panel.patterns[index] = this.panel.patterns[index - 1];
+      this.panel.patterns[index - 1] = tempElement;
       this.panel.activePatternIndex = index - 1;
     }
-    if(direction==="DOWN"){
-      this.panel.patterns[index] = this.panel.patterns[index+1];
-      this.panel.patterns[index+1] = tempElement;
+    if (direction === "DOWN") {
+      this.panel.patterns[index] = this.panel.patterns[index + 1];
+      this.panel.patterns[index + 1] = tempElement;
       this.panel.activePatternIndex = index + 1;
     }
     this.render();
@@ -93,48 +93,48 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.activePatternIndex = (this.panel.patterns && this.panel.patterns.length > 0) ? (this.panel.patterns.length - 1) : -1;
     this.render();
   }
-  clonePattern(index){
-    let copiedPattern = Object.assign( {} , this.panel.patterns[index] );
+  clonePattern(index) {
+    let copiedPattern = Object.assign({}, this.panel.patterns[index]);
     this.panel.patterns.push(copiedPattern);
     this.render();
   }
-  add_time_based_thresholds(index){
+  add_time_based_thresholds(index) {
     var new_time_based_threshold = {
       name: "Early morning of everyday",
       from: "0000",
-      to:"0530",
-      enabledDays:"Sun,Mon,Tue,Wed,Thu,Fri,Sat",
-      threshold:"70,90"
+      to: "0530",
+      enabledDays: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
+      threshold: "70,90"
     }
-    if(index==='default'){
+    if (index === 'default') {
       this.panel.defaultPattern.time_based_thresholds = this.panel.defaultPattern.time_based_thresholds || [];
       this.panel.defaultPattern.time_based_thresholds.push(new_time_based_threshold);
     }
-    else{
+    else {
       this.panel.patterns[index].time_based_thresholds = this.panel.patterns[index].time_based_thresholds || [];
       this.panel.patterns[index].time_based_thresholds.push(new_time_based_threshold);
     }
     this.render();
   }
-  remove_time_based_thresholds(patternIndex,index){
-    if(patternIndex === 'default'){
-      this.panel.defaultPattern.time_based_thresholds.splice(index,1);
+  remove_time_based_thresholds(patternIndex, index) {
+    if (patternIndex === 'default') {
+      this.panel.defaultPattern.time_based_thresholds.splice(index, 1);
     }
-    else{
+    else {
       this.panel.patterns[patternIndex].time_based_thresholds.splice(index, 1);
     }
   }
-  inverseBGColors(index){
-    if(index === -1){
+  inverseBGColors(index) {
+    if (index === -1) {
       this.panel.defaultPattern.bgColors = this.panel.defaultPattern.bgColors.split("|").reverse().join("|");
     }
-    else{
+    else {
       this.panel.patterns[index].bgColors = this.panel.patterns[index].bgColors.split("|").reverse().join("|");
     }
     this.render();
   }
-  inverseTransformValues(index){
-    if(index===-1){
+  inverseTransformValues(index) {
+    if (index === -1) {
       this.panel.defaultPattern.transform_values = this.panel.defaultPattern.transform_values.split("|").reverse().join("|");
     }
     else {
@@ -159,7 +159,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     return c;
   }
-  transformValue(thresholds, transform_values, value, displayValue, row_name, col_name ) {
+  transformValue(thresholds, transform_values, value, displayValue, row_name, col_name) {
     var t = value;
     if (thresholds && transform_values && typeof value === "number" && thresholds.length + 1 <= transform_values.length) {
       transform_values = _.dropRight(transform_values, transform_values.length - thresholds.length - 1);
@@ -175,51 +175,51 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     return t;
   }
-  replaceFontAwesomeIcons(value){
-    if(!value) return value;
-    return (value+"")
-    .split(" ")
-    .map(a => { 
-      if(a.startsWith("_fa-") && a.endsWith("_")){
-        let icon  = a.replace(/\_/g,"").split(",")[0];
-        let color = a.indexOf(",") > -1 ? ` style="color:${ utils.normalizeColor(a.replace(/\_/g,"").split(",")[1])}" ` : "";
-        let repeatCount = a.split(",").length > 2 ?  +(a.replace(/\_/g,"").split(",")[2]) : 1;
-        a = `<i class="fa ${icon}" ${color}></i> `.repeat(repeatCount);
-      }
-      return a;
-    })
-    .join(" ");
+  replaceFontAwesomeIcons(value) {
+    if (!value) return value;
+    return (value + "")
+      .split(" ")
+      .map(a => {
+        if (a.startsWith("_fa-") && a.endsWith("_")) {
+          let icon = a.replace(/\_/g, "").split(",")[0];
+          let color = a.indexOf(",") > -1 ? ` style="color:${utils.normalizeColor(a.replace(/\_/g, "").split(",")[1])}" ` : "";
+          let repeatCount = a.split(",").length > 2 ? +(a.replace(/\_/g, "").split(",")[2]) : 1;
+          a = `<i class="fa ${icon}" ${color}></i> `.repeat(repeatCount);
+        }
+        return a;
+      })
+      .join(" ");
   }
-  replaceWithImages(value){
-    if(!value) return value;
-    return (value+"")
-    .split(" ")
-    .map(a => { 
-      if(a.startsWith("_img-") && a.endsWith("_")){
-        a = a.slice(0, -1);
-        let imgUrl  = a.replace("_img-","").split(",")[0];
-        let imgWidth  = a.split(",").length > 1 ?  a.replace("_img-","").split(",")[1] : "20px";
-        let imgHeight = a.split(",").length > 2 ?  a.replace("_img-","").split(",")[2] : "20px";
-        let repeatCount = a.split(",").length > 3 ?  +(a.replace("_img-","").split(",")[3]) : 1;
-        a = `<img width="${imgWidth}" height="${imgHeight}" src="${imgUrl}"/>`.repeat(repeatCount);
-      }
-      return a;
-    })
-    .join(" ");
+  replaceWithImages(value) {
+    if (!value) return value;
+    return (value + "")
+      .split(" ")
+      .map(a => {
+        if (a.startsWith("_img-") && a.endsWith("_")) {
+          a = a.slice(0, -1);
+          let imgUrl = a.replace("_img-", "").split(",")[0];
+          let imgWidth = a.split(",").length > 1 ? a.replace("_img-", "").split(",")[1] : "20px";
+          let imgHeight = a.split(",").length > 2 ? a.replace("_img-", "").split(",")[2] : "20px";
+          let repeatCount = a.split(",").length > 3 ? +(a.replace("_img-", "").split(",")[3]) : 1;
+          a = `<img width="${imgWidth}" height="${imgHeight}" src="${imgUrl}"/>`.repeat(repeatCount);
+        }
+        return a;
+      })
+      .join(" ");
   }
-  getActualNameWithoutTransformSign(value){
-    return (value+"")
-    .split(" ")    
-    .map(a => { 
-      if(a.startsWith("_fa-") && a.endsWith("_")){
-        a = ``;
-      }
-      if(a.startsWith("_img-") && a.endsWith("_")){
-        a = ``;
-      }
-      return a;
-    })
-    .join(" ");
+  getActualNameWithoutTransformSign(value) {
+    return (value + "")
+      .split(" ")
+      .map(a => {
+        if (a.startsWith("_fa-") && a.endsWith("_")) {
+          a = ``;
+        }
+        if (a.startsWith("_img-") && a.endsWith("_")) {
+          a = ``;
+        }
+        return a;
+      })
+      .join(" ");
   }
   getDecimalsForValue(value, _decimals) {
     if (_.isNumber(+_decimals)) {
@@ -280,30 +280,30 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     return text;
   }
-  link (scope, elem, attrs, ctrl) {
+  link(scope, elem, attrs, ctrl) {
     this.ctrl = ctrl;
     this.elem = elem;
   }
-  getOptionOverride(propertyName){
-    let option = _.find(this.panel.currentOptionOverrides,o=> o.propertyName === propertyName);
-    let default_option = _.find(config.optionOverrides,o=> o.propertyName === propertyName);
-    if(option){
-       return option.value
+  getOptionOverride(propertyName) {
+    let option = _.find(this.panel.currentOptionOverrides, o => o.propertyName === propertyName);
+    let default_option = _.find(config.optionOverrides, o => o.propertyName === propertyName);
+    if (option) {
+      return option.value
     }
     else return default_option.defaultValue;
   }
-  setOptionOverride(propertyName,value,text){
+  setOptionOverride(propertyName, value, text) {
     let newOverrides = [];
-    if(_.filter(this.panel.currentOptionOverrides,o=> o.propertyName === propertyName).length === 0 ){
+    if (_.filter(this.panel.currentOptionOverrides, o => o.propertyName === propertyName).length === 0) {
       newOverrides.push({
         propertyName,
         value,
         text
       })
-    }  
-    if(this.panel.currentOptionOverrides.length>0){
-      _.each(this.panel.currentOptionOverrides,o=>{
-        if(o.propertyName===propertyName){
+    }
+    if (this.panel.currentOptionOverrides.length > 0) {
+      _.each(this.panel.currentOptionOverrides, o => {
+        if (o.propertyName === propertyName) {
           newOverrides.push({
             propertyName,
             value,
@@ -316,11 +316,11 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.currentOptionOverrides = newOverrides;
     this.render();
   }
-  removeOptionOverride(option){
+  removeOptionOverride(option) {
     let newOverrides = [];
-    if(this.panel.currentOptionOverrides.length>0){
-      _.each(this.panel.currentOptionOverrides,o=>{
-        if(o.propertyName!==option){
+    if (this.panel.currentOptionOverrides.length > 0) {
+      _.each(this.panel.currentOptionOverrides, o => {
+        if (o.propertyName !== option) {
           newOverrides.push(o)
         }
       })
@@ -352,8 +352,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       // Get Server Time Stamp of the Series for time based thresholds.
       this.dataComputed = this.dataComputed.map(series => {
         series.current_servertimestamp = new Date();
-        if(series && series.datapoints && series.datapoints.length > 0){
-          if(_.last(series.datapoints).length === 2){
+        if (series && series.datapoints && series.datapoints.length > 0) {
+          if (_.last(series.datapoints).length === 2) {
             series.current_servertimestamp = new Date(_.last(series.datapoints)[1]);
           }
         }
@@ -361,7 +361,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       });
       // Assign pattern
       this.dataComputed = this.dataComputed.map(series => {
-        series.pattern = _.find(this.panel.patterns.filter(p=>{ return p.disabled !== true}), function (p) {
+        series.pattern = _.find(this.panel.patterns.filter(p => { return p.disabled !== true }), function (p) {
           return series.alias.match(p.pattern);
         });
         if (series.pattern === undefined) {
@@ -380,7 +380,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           series.value = series.stats[series.pattern.valueName || config.panelDefaults.defaultPattern.valueName];
           let decimalInfo = this.getDecimalsForValue(series.value, series.decimals);
           let formatFunc = kbn.valueFormats[series.pattern.format || config.panelDefaults.defaultPattern.format];
-          if(series.value === null){
+          if (series.value === null) {
             series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null";
           }
           else if (!isNaN(series.value)) {
@@ -394,17 +394,17 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // Filter Values
-      this.dataComputed = this.dataComputed.filter(series =>{
-        if(!series.pattern.filter){
+      this.dataComputed = this.dataComputed.filter(series => {
+        if (!series.pattern.filter) {
           series.pattern.filter = {};
           series.pattern.filter.value_below = "";
           series.pattern.filter.value_above = "";
         }
-        if(series.pattern && series.pattern.filter && (series.pattern.filter.value_below !== "" || series.pattern.filter.value_above !== "" )) {
-          if(series.pattern.filter.value_below !== "" && series.value < +(series.pattern.filter.value_below) ){
+        if (series.pattern && series.pattern.filter && (series.pattern.filter.value_below !== "" || series.pattern.filter.value_above !== "")) {
+          if (series.pattern.filter.value_below !== "" && series.value < +(series.pattern.filter.value_below)) {
             return false
           }
-          if(series.pattern.filter.value_above !== "" && series.value > +(series.pattern.filter.value_above)){
+          if (series.pattern.filter.value_above !== "" && series.value > +(series.pattern.filter.value_above)) {
             return false
           }
           return true
@@ -417,7 +417,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       this.dataComputed = this.dataComputed.map(series => {
         series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
           return r.replace(new RegExp(this.panel.row_col_wrapper + i + this.panel.row_col_wrapper, "g"), it)
-        }, series.pattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper , "g"), series.alias) || config.panelDefaults.defaultPattern.row_name.replace(new RegExp(this.panel.row_col_wrapper +"series"+this.panel.row_col_wrapper, "g"), series.alias));
+        }, series.pattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias) || config.panelDefaults.defaultPattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias));
         if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
           series.row_name = series.alias;
         }
@@ -426,7 +426,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       // Assign Col Name
       this.dataComputed = this.dataComputed.map(series => {
         series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
-          return r.replace(new RegExp(this.panel.row_col_wrapper+ i + this.panel.row_col_wrapper, "g"), it)
+          return r.replace(new RegExp(this.panel.row_col_wrapper + i + this.panel.row_col_wrapper, "g"), it)
         }, series.pattern.col_name || config.panelDefaults.defaultPattern.col_name);
         if (series.alias.split(series.pattern.delimiter || ".").length === 1 || series.row_name === series.alias) {
           series.col_name = series.pattern.col_name || "Value";
@@ -441,19 +441,19 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       // Assign Thresholds
       this.dataComputed = this.dataComputed.map(series => {
         series.thresholds = (series.pattern.thresholds || config.panelDefaults.defaultPattern.thresholds).split(",").map(d => +d);
-        if(series.pattern.enable_time_based_thresholds){
+        if (series.pattern.enable_time_based_thresholds) {
           let metricrecivedTimeStamp = series.current_servertimestamp || new Date();
-          let metricrecivedTimeStamp_innumber = metricrecivedTimeStamp.getHours()*100 + metricrecivedTimeStamp.getMinutes();
-          let weekdays = ["sun","mon","tue","wed","thu","fri","sat"];          
-          _.each(series.pattern.time_based_thresholds,(tbtx)=>{
-              if(tbtx && tbtx.from && tbtx.to && tbtx.enabledDays &&
-                ( metricrecivedTimeStamp_innumber >= +(tbtx.from) ) &&
-                ( metricrecivedTimeStamp_innumber <= +(tbtx.to)   ) &&
-                ( tbtx.enabledDays.toLowerCase().indexOf(weekdays[metricrecivedTimeStamp.getDay()]) > -1) &&
-                tbtx.threshold
-               ){
-                series.thresholds = (tbtx.threshold +"").split(",").map(d => +d);
-              }
+          let metricrecivedTimeStamp_innumber = metricrecivedTimeStamp.getHours() * 100 + metricrecivedTimeStamp.getMinutes();
+          let weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+          _.each(series.pattern.time_based_thresholds, (tbtx) => {
+            if (tbtx && tbtx.from && tbtx.to && tbtx.enabledDays &&
+              (metricrecivedTimeStamp_innumber >= +(tbtx.from)) &&
+              (metricrecivedTimeStamp_innumber <= +(tbtx.to)) &&
+              (tbtx.enabledDays.toLowerCase().indexOf(weekdays[metricrecivedTimeStamp.getDay()]) > -1) &&
+              tbtx.threshold
+            ) {
+              series.thresholds = (tbtx.threshold + "").split(",").map(d => +d);
+            }
           })
         }
         return series;
@@ -469,13 +469,13 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // BG Colors overrides 
-      this.dataComputed = this.dataComputed.map(series =>{
+      this.dataComputed = this.dataComputed.map(series => {
         series.enable_bgColor_overrides = series.pattern.enable_bgColor_overrides;
         series.bgColors_overrides = series.pattern.bgColors_overrides || "";
-        if(series.enable_bgColor_overrides && series.bgColors_overrides !== ""){
-          let _bgColors_overrides = series.bgColors_overrides.split("|").filter(con=>con.indexOf("->")).map(con=> con.split("->")).filter(con=> +(con[0]) === series.value ).map(con=> con[1])
-          if(_bgColors_overrides.length > 0 && _bgColors_overrides[0] !== ""){
-            series.bgColor =  utils.normalizeColor((""+_bgColors_overrides[0]).trim());
+        if (series.enable_bgColor_overrides && series.bgColors_overrides !== "") {
+          let _bgColors_overrides = series.bgColors_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1])
+          if (_bgColors_overrides.length > 0 && _bgColors_overrides[0] !== "") {
+            series.bgColor = utils.normalizeColor(("" + _bgColors_overrides[0]).trim());
           }
         }
         return series;
@@ -494,13 +494,13 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // Value Transform Overrides
-      this.dataComputed = this.dataComputed.map(series =>{
+      this.dataComputed = this.dataComputed.map(series => {
         series.enable_transform_overrides = series.pattern.enable_transform_overrides;
         series.transform_values_overrides = series.pattern.transform_values_overrides || "";
-        if(series.enable_transform_overrides && series.transform_values_overrides !== ""){
-          let _transform_values_overrides = series.transform_values_overrides.split("|").filter(con=>con.indexOf("->")).map(con=> con.split("->")).filter(con=> +(con[0]) === series.value ).map(con=> con[1])
-          if(_transform_values_overrides.length > 0 && _transform_values_overrides[0] !== ""){
-            series.displayValue =  (""+_transform_values_overrides[0]).trim().replace(new RegExp("_value_", "g"), series.displayValue).replace(new RegExp("_row_name_", "g"), series.row_name).replace(new RegExp("_col_name_", "g"),series.col_name);
+        if (series.enable_transform_overrides && series.transform_values_overrides !== "") {
+          let _transform_values_overrides = series.transform_values_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1])
+          if (_transform_values_overrides.length > 0 && _transform_values_overrides[0] !== "") {
+            series.displayValue = ("" + _transform_values_overrides[0]).trim().replace(new RegExp("_value_", "g"), series.displayValue).replace(new RegExp("_row_name_", "g"), series.row_name).replace(new RegExp("_col_name_", "g"), series.col_name);
           }
         }
         return series;
@@ -510,21 +510,21 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         series.actual_displayvalue = series.displayValue
         series.actual_row_name = series.row_name
         series.actual_col_name = series.col_name
-        if(series.displayValue && series.displayValue.indexOf("_fa-")>-1)     series.displayValue      = this.replaceFontAwesomeIcons(series.displayValue)
-        if(series.row_name && series.row_name.indexOf("_fa-")>-1)             series.row_name      = this.replaceFontAwesomeIcons(series.row_name)
-        if(series.col_name && series.col_name.indexOf("_fa-")>-1)             series.col_name      = this.replaceFontAwesomeIcons(series.col_name)
+        if (series.displayValue && series.displayValue.indexOf("_fa-") > -1) series.displayValue = this.replaceFontAwesomeIcons(series.displayValue)
+        if (series.row_name && series.row_name.indexOf("_fa-") > -1) series.row_name = this.replaceFontAwesomeIcons(series.row_name)
+        if (series.col_name && series.col_name.indexOf("_fa-") > -1) series.col_name = this.replaceFontAwesomeIcons(series.col_name)
         return series;
       });
       // Image transforms
       this.dataComputed = this.dataComputed.map(series => {
-        if(series.displayValue && series.displayValue.indexOf("_img-")>-1)     series.displayValue  = this.replaceWithImages(series.displayValue)
-        if(series.row_name && series.row_name.indexOf("_img-")>-1)             series.row_name      = this.replaceWithImages(series.row_name)
-        if(series.col_name && series.col_name.indexOf("_img-")>-1)             series.col_name      = this.replaceWithImages(series.col_name)
+        if (series.displayValue && series.displayValue.indexOf("_img-") > -1) series.displayValue = this.replaceWithImages(series.displayValue)
+        if (series.row_name && series.row_name.indexOf("_img-") > -1) series.row_name = this.replaceWithImages(series.row_name)
+        if (series.col_name && series.col_name.indexOf("_img-") > -1) series.col_name = this.replaceWithImages(series.col_name)
         return series;
       });
       // Cell Links
       this.dataComputed = this.dataComputed.map(series => {
-        if(series.pattern.enable_clickable_cells){
+        if (series.pattern.enable_clickable_cells) {
           let targetLink = series.pattern.clickable_cells_link || "#";
           targetLink = targetLink.replace(new RegExp("_row_name_", "g"), this.getActualNameWithoutTransformSign(series.actual_row_name).trim());
           targetLink = targetLink.replace(new RegExp("_col_name_", "g"), this.getActualNameWithoutTransformSign(series.actual_col_name).trim());
@@ -536,9 +536,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       // Display overrides
       let text_align_table_header = this.getOptionOverride("TEXT_ALIGN_TABLE_HEADER");
       let text_align_first_column = this.getOptionOverride("TEXT_ALIGN_FIRST_COLUMN");
-      let text_align_table_cells  = this.getOptionOverride("TEXT_ALIGN_TABLE_CELLS");
-      let hide_headers            = this.getOptionOverride("HIDE_HEADERS") === "true";
-      let hide_first_column       = this.getOptionOverride("HIDE_FIRST_COLUMN") === "true";
+      let text_align_table_cells = this.getOptionOverride("TEXT_ALIGN_TABLE_CELLS");
+      let hide_headers = this.getOptionOverride("HIDE_HEADERS") === "true";
+      let hide_first_column = this.getOptionOverride("HIDE_FIRST_COLUMN") === "true";
       // Grouping
       const rows_found = utils.getFields(this.dataComputed, "row_name");
       const cols_found = utils.getFields(this.dataComputed, "col_name");
@@ -562,8 +562,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
             o.cols.push({
               "name": col_name,
               "value": matched_value.value,
-              "actual_col_name":matched_value.actual_col_name,
-              "actual_row_name":matched_value.actual_row_name,
+              "actual_col_name": matched_value.actual_col_name,
+              "actual_row_name": matched_value.actual_row_name,
               "displayValue": matched_value.displayValue || matched_value.value,
               "bgColor": matched_value.bgColor || "transparent"
             });
@@ -573,12 +573,12 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         //region Output table construction
         var boomtable_output_body_headers = this.elem.find("#boomtable_output_body_headers");
         let boomtable_output_body_headers_output = `<br/>`;
-        if(hide_headers !== true){
+        if (hide_headers !== true) {
           boomtable_output_body_headers_output += "<tr>";
-          if(hide_first_column !== true){
+          if (hide_first_column !== true) {
             boomtable_output_body_headers_output += `<th style="padding:4px;text-align:${text_align_table_header}">${this.panel.default_title_for_rows}</th>`;
           }
-          _.each(_.uniq(cols_found), c=>{
+          _.each(_.uniq(cols_found), c => {
             boomtable_output_body_headers_output += `<th style="padding:4px;text-align:${text_align_table_header}">${c}</th>`;
           })
           boomtable_output_body_headers_output += "</tr>";
@@ -586,15 +586,15 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         boomtable_output_body_headers.html(boomtable_output_body_headers_output);
         var boomtable_output_body = this.elem.find('#boomtable_output_body');
         let boomtable_output_body_output = ``;
-        _.each(output,o=>{
+        _.each(output, o => {
           boomtable_output_body_output += "<tr>"
-          if(hide_first_column !== true){
+          if (hide_first_column !== true) {
             boomtable_output_body_output += `<td style="padding:4px;text-align:${text_align_first_column}">${o.row}</td>`;
-          }         
-          _.each(o.cols, c=>{
+          }
+          _.each(o.cols, c => {
             boomtable_output_body_output += `<td 
               style="padding:4px;background-color:${c.bgColor};text-align:${text_align_table_cells}" 
-              title="${ "Row Name : "+this.getActualNameWithoutTransformSign(c.actual_row_name) + "\nCol Name : "+ this.getActualNameWithoutTransformSign(c.actual_col_name) + "\nValue : "+ c.value}"
+              title="${ "Row Name : " + this.getActualNameWithoutTransformSign(c.actual_row_name) + "\nCol Name : " + this.getActualNameWithoutTransformSign(c.actual_col_name) + "\nValue : " + c.value}"
             >${c.displayValue}</td>`;
           })
           boomtable_output_body_output += "</tr>"
@@ -614,11 +614,11 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       //region Debug table body construction
       var boomtable_output_body_debug = this.elem.find('#boomtable_output_body_debug');
       let boomtable_output_body_debug_output = ``;
-      _.each(this.dataComputed, d=>{
+      _.each(this.dataComputed, d => {
         boomtable_output_body_debug_output += `
         <tr>
           <td style="padding:4px;" width="40%">${d.alias}</td>
-          <td style="padding:4px;">${d.pattern.pattern || "Default" }</td>
+          <td style="padding:4px;">${d.pattern.pattern || "Default"}</td>
           <td style="padding:4px;background-color:${d.bgColor}">${d.displayValue}</td>
           <td style="padding:4px;">${d.row_name}</td>
           <td style="padding:4px;">${d.col_name}</td>
@@ -630,8 +630,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       //endregion
     }
     var rootElem = this.elem.find('.table-panel-scroll');
-    var maxheightofpanel = this.panel.debug_mode ?  this.ctrl.height - 71 : this.ctrl.height - 31;
-    rootElem.css({ 'max-height': maxheightofpanel+ "px"  });
+    var maxheightofpanel = this.panel.debug_mode ? this.ctrl.height - 71 : this.ctrl.height - 31;
+    rootElem.css({ 'max-height': maxheightofpanel + "px" });
   }
 };
 
