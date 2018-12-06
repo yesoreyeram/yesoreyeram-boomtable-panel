@@ -3,13 +3,14 @@
 
 [![CircleCI](https://circleci.com/gh/yesoreyeram/yesoreyeram-boomtable-panel.svg?style=svg)](https://circleci.com/gh/yesoreyeram/yesoreyeram-boomtable-panel)
 
+[![Build Status](https://yesoreyeram.visualstudio.com/yesoreyeram-boomtable-panel/_apis/build/status/yesoreyeram-boomtable-panel)](https://yesoreyeram.visualstudio.com/yesoreyeram-boomtable-panel/_build/latest?definitionId=1)
+
 Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for Graphite, InfluDB, Prometheus, Azure Monitor.
 
 ![Boom Table - Sample Panel](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panel.png)
 
 ![Boom Table - Panel with Font Awesome icons](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panels-fa.png)
 
-![Image transform](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/img-transform-example.png)
 
 Features :
 ----------
