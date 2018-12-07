@@ -17,13 +17,13 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   static templateUrl: string = "partials/module.html";
   ctrl: any;
   elem: any;
-  dataReceived: any;
+  dataReceived: any;  
+  valueNameOptions :any = config.valueNameOptions;
+  unitFormats :any = kbn.getUnitFormats();  
+  optionOverrides :any = config.optionOverrides;
   constructor($scope, $injector, $sce) {
     super($scope, $injector);
     _.defaults(this.panel, config.panelDefaults);
-    this.panel.valueNameOptions = config.valueNameOptions;
-    this.panel.unitFormats = kbn.getUnitFormats();  
-    this.panel.optionOverrides = config.optionOverrides;
     this.events.on("data-received", this.onDataReceived.bind(this));
     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
   }

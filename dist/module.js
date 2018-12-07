@@ -39,10 +39,10 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
                 __extends(GrafanaBoomTableCtrl, _super);
                 function GrafanaBoomTableCtrl($scope, $injector, $sce) {
                     _super.call(this, $scope, $injector);
+                    this.valueNameOptions = app_1.config.valueNameOptions;
+                    this.unitFormats = kbn_1.default.getUnitFormats();
+                    this.optionOverrides = app_1.config.optionOverrides;
                     lodash_1.default.defaults(this.panel, app_1.config.panelDefaults);
-                    this.panel.valueNameOptions = app_1.config.valueNameOptions;
-                    this.panel.unitFormats = kbn_1.default.getUnitFormats();
-                    this.panel.optionOverrides = app_1.config.optionOverrides;
                     this.events.on("data-received", this.onDataReceived.bind(this));
                     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
                 }

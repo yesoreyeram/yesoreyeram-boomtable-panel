@@ -46,7 +46,7 @@
                     <div class="gr-form-inline">
                         <div class="gf-form">
                             <label class="gf-form-label width-20">Stat</label>
-                            <select class="gf-form-input width-18" ng-model="pattern.valueName" ng-options="f.value as f.text for f in ctrl.panel.valueNameOptions"
+                            <select class="gf-form-input width-18" ng-model="pattern.valueName" ng-options="f.value as f.text for f in ctrl.valueNameOptions"
                                 ng-change="ctrl.render()"></select>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
                     <div class="gr-form-inline">
                         <div class="gf-form">
                             <label class="gf-form-label width-20">Format</label>
-                            <div class="gf-form-dropdown-typeahead width-18" ng-model="pattern.format" dropdown-typeahead2="ctrl.panel.unitFormats" dropdown-typeahead-on-select="ctrl.setUnitFormat($subItem,$index)"></div>
+                            <div class="gf-form-dropdown-typeahead width-18" ng-model="pattern.format" dropdown-typeahead2="ctrl.unitFormats" dropdown-typeahead-on-select="ctrl.setUnitFormat($subItem,$index)"></div>
                         </div>
                     </div>
                 </div>
@@ -235,7 +235,7 @@
                     <div class="gr-form-inline">
                         <div class="gf-form">
                             <label class="gf-form-label width-20">Stat</label>
-                            <select class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.valueName" ng-options="f.value as f.text for f in ctrl.panel.valueNameOptions"
+                            <select class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.valueName" ng-options="f.value as f.text for f in ctrl.valueNameOptions"
                                 ng-change="ctrl.render()"></select>
                         </div>
                     </div>
@@ -263,7 +263,7 @@
                     <div class="gr-form-inline">
                         <div class="gf-form">
                             <label class="gf-form-label width-20">Format</label>
-                            <div class="gf-form-dropdown-typeahead width-18" ng-model="ctrl.panel.defaultPattern.format" dropdown-typeahead2="ctrl.panel.unitFormats"
+                            <div class="gf-form-dropdown-typeahead width-18" ng-model="ctrl.panel.defaultPattern.format" dropdown-typeahead2="ctrl.unitFormats"
                                 dropdown-typeahead-on-select="ctrl.setUnitFormat($subItem,-1)"></div>
                         </div>
                     </div>
