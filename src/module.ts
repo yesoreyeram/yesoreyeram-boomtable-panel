@@ -1,16 +1,15 @@
-import {
-  kbn,
-  loadPluginCss,
-  MetricsPanelCtrl,
-  TimeSeries,
-  utils,
-  config
-} from "./app/app"
+///<reference path="../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
+
 import _ from "lodash";
+import kbn from 'app/core/utils/kbn';
+import TimeSeries from "app/core/time_series2";
+import { loadPluginCss, MetricsPanelCtrl } from "app/plugins/sdk";
+import { plugin_id, config } from "./app/app";
+import * as utils from "./app/utils";
 
 loadPluginCss({
-  dark: `plugins/${config.plugin_id}/css/default.dark.css`,
-  light: `plugins/${config.plugin_id}/css/default.light.css`
+  dark: `plugins/${plugin_id}/css/default.dark.css`,
+  light: `plugins/${plugin_id}/css/default.light.css`
 });
 
 class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
@@ -28,9 +27,9 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
   }
   onInitEditMode() {
-    this.addEditorTab("Patterns", `public/plugins/${config.plugin_id}/partials/patterns.html`, 2);
-    this.addEditorTab("Time based thresholds & Filters", `public/plugins/${config.plugin_id}/partials/patterns-advanced-options.html`, 3);
-    this.addEditorTab("Options", `public/plugins/${config.plugin_id}/partials/options.html`, 4);
+    this.addEditorTab("Patterns", `public/plugins/${plugin_id}/partials/patterns.html`, 2);
+    this.addEditorTab("Time based thresholds & Filters", `public/plugins/${plugin_id}/partials/patterns-advanced-options.html`, 3);
+    this.addEditorTab("Options", `public/plugins/${plugin_id}/partials/options.html`, 4);
   }
   onDataReceived(data) {
     this.dataReceived = data;
@@ -41,7 +40,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       datapoints: seriesData.datapoints || [],
       alias: seriesData.target
     });
-    series.flotpairs = series.getFlotPairs(this.panel.nullPointMode);
+    series.flotpairs = series.getFlotPairs("connected");
     return series;
   }
   addPattern() {

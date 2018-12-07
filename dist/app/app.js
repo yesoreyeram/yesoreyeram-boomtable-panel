@@ -1,24 +1,8 @@
 ///<reference path="../../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
-System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2", "lodash", "./utils"], function(exports_1) {
-    var kbn_1, sdk_1, time_series2_1, lodash_1, utils;
+System.register([], function(exports_1) {
     var plugin_id, config;
     return {
-        setters:[
-            function (kbn_1_1) {
-                kbn_1 = kbn_1_1;
-            },
-            function (sdk_1_1) {
-                sdk_1 = sdk_1_1;
-            },
-            function (time_series2_1_1) {
-                time_series2_1 = time_series2_1_1;
-            },
-            function (lodash_1_1) {
-                lodash_1 = lodash_1_1;
-            },
-            function (utils_1) {
-                utils = utils_1;
-            }],
+        setters:[],
         execute: function() {
             plugin_id = "yesoreyeram-boomtable-panel";
             config = {
@@ -28,9 +12,7 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
                 groupedData: undefined,
                 optionOverrides: [],
                 panelDefaults: {
-                    plugin_title: "Boom Table",
                     currentOptionOverrides: [],
-                    nullPointMode: "connected",
                     patterns: [],
                     defaultPattern: {
                         delimiter: ".",
@@ -98,16 +80,10 @@ System.register(['app/core/utils/kbn', "app/plugins/sdk", "app/core/time_series2
                     index: i,
                     defaultValue: o[3],
                     values: o[2],
-                    submenu: lodash_1.default.map(o[2], function (value) {
-                        return { text: String(value), value: value };
-                    })
+                    submenu: [].concat(o[2]).map(function (value) { return { text: String(value), value: value }; })
                 });
             });
-            exports_1("kbn", kbn_1.default);
-            exports_1("loadPluginCss", sdk_1.loadPluginCss);
-            exports_1("MetricsPanelCtrl", sdk_1.MetricsPanelCtrl);
-            exports_1("TimeSeries", time_series2_1.default);
-            exports_1("utils", utils);
+            exports_1("plugin_id", plugin_id);
             exports_1("config", config);
         }
     }

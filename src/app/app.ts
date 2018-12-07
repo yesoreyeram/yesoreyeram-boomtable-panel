@@ -1,15 +1,9 @@
 ///<reference path="../../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
 
-import kbn from 'app/core/utils/kbn';
-import {
-    loadPluginCss,
-    MetricsPanelCtrl
-} from "app/plugins/sdk";
-import TimeSeries from "app/core/time_series2";
 import _ from "lodash";
-import * as utils from "./utils";
 
 const plugin_id = "yesoreyeram-boomtable-panel";
+
 const config: any = {
     plugin_id: plugin_id,
     debug_mode: false,
@@ -17,9 +11,7 @@ const config: any = {
     groupedData: undefined,
     optionOverrides: [],
     panelDefaults: {
-        plugin_title: "Boom Table",
         currentOptionOverrides: [],
-        nullPointMode: "connected",
         patterns: [],
         defaultPattern: {
             delimiter: ".",
@@ -87,16 +79,11 @@ const config: any = {
         index: i,
         defaultValue: o[3],
         values: o[2],
-        submenu: _.map(o[2], value => {
-            return { text: String(value), value: value };
-        })
+        submenu: [].concat(o[2]).map(value => { return { text: String(value), value: value }; })
     });
 })
+
 export {
-    kbn,
-    loadPluginCss,
-    MetricsPanelCtrl,
-    TimeSeries,
-    utils,
+    plugin_id,
     config
 }

@@ -1,29 +1,42 @@
-System.register(["./app/app", "lodash"], function(exports_1) {
+///<reference path="../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
+System.register(["lodash", 'app/core/utils/kbn', "app/core/time_series2", "app/plugins/sdk", "./app/app", "./app/utils"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    var app_1, lodash_1;
+    var lodash_1, kbn_1, time_series2_1, sdk_1, app_1, utils;
     var GrafanaBoomTableCtrl;
     return {
         setters:[
+            function (lodash_1_1) {
+                lodash_1 = lodash_1_1;
+            },
+            function (kbn_1_1) {
+                kbn_1 = kbn_1_1;
+            },
+            function (time_series2_1_1) {
+                time_series2_1 = time_series2_1_1;
+            },
+            function (sdk_1_1) {
+                sdk_1 = sdk_1_1;
+            },
             function (app_1_1) {
                 app_1 = app_1_1;
             },
-            function (lodash_1_1) {
-                lodash_1 = lodash_1_1;
+            function (utils_1) {
+                utils = utils_1;
             }],
         execute: function() {
-            app_1.loadPluginCss({
-                dark: "plugins/" + app_1.config.plugin_id + "/css/default.dark.css",
-                light: "plugins/" + app_1.config.plugin_id + "/css/default.light.css"
+            sdk_1.loadPluginCss({
+                dark: "plugins/" + app_1.plugin_id + "/css/default.dark.css",
+                light: "plugins/" + app_1.plugin_id + "/css/default.light.css"
             });
             GrafanaBoomTableCtrl = (function (_super) {
                 __extends(GrafanaBoomTableCtrl, _super);
                 function GrafanaBoomTableCtrl($scope, $injector, $sce) {
                     _super.call(this, $scope, $injector);
-                    this.unitFormats = app_1.kbn.getUnitFormats();
+                    this.unitFormats = kbn_1.default.getUnitFormats();
                     this.valueNameOptions = app_1.config.valueNameOptions;
                     this.optionOverrides = app_1.config.optionOverrides;
                     lodash_1.default.defaults(this.panel, app_1.config.panelDefaults);
@@ -31,20 +44,20 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
                 }
                 GrafanaBoomTableCtrl.prototype.onInitEditMode = function () {
-                    this.addEditorTab("Patterns", "public/plugins/" + app_1.config.plugin_id + "/partials/patterns.html", 2);
-                    this.addEditorTab("Time based thresholds & Filters", "public/plugins/" + app_1.config.plugin_id + "/partials/patterns-advanced-options.html", 3);
-                    this.addEditorTab("Options", "public/plugins/" + app_1.config.plugin_id + "/partials/options.html", 4);
+                    this.addEditorTab("Patterns", "public/plugins/" + app_1.plugin_id + "/partials/patterns.html", 2);
+                    this.addEditorTab("Time based thresholds & Filters", "public/plugins/" + app_1.plugin_id + "/partials/patterns-advanced-options.html", 3);
+                    this.addEditorTab("Options", "public/plugins/" + app_1.plugin_id + "/partials/options.html", 4);
                 };
                 GrafanaBoomTableCtrl.prototype.onDataReceived = function (data) {
                     this.dataReceived = data;
                     this.render();
                 };
                 GrafanaBoomTableCtrl.prototype.seriesHandler = function (seriesData) {
-                    var series = new app_1.TimeSeries({
+                    var series = new time_series2_1.default({
                         datapoints: seriesData.datapoints || [],
                         alias: seriesData.target
                     });
-                    series.flotpairs = series.getFlotPairs(this.panel.nullPointMode);
+                    series.flotpairs = series.getFlotPairs("connected");
                     return series;
                 };
                 GrafanaBoomTableCtrl.prototype.addPattern = function () {
@@ -158,10 +171,10 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                         }
                         for (var i = thresholds.length; i > 0; i--) {
                             if (value >= thresholds[i - 1]) {
-                                return app_1.utils.normalizeColor(bgColors[i]);
+                                return utils.normalizeColor(bgColors[i]);
                             }
                         }
-                        return app_1.utils.normalizeColor(lodash_1.default.first(bgColors));
+                        return utils.normalizeColor(lodash_1.default.first(bgColors));
                     }
                     return c;
                 };
@@ -189,7 +202,7 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                         .map(function (a) {
                         if (a.startsWith("_fa-") && a.endsWith("_")) {
                             var icon = a.replace(/\_/g, "").split(",")[0];
-                            var color = a.indexOf(",") > -1 ? " style=\"color:" + app_1.utils.normalizeColor(a.replace(/\_/g, "").split(",")[1]) + "\" " : "";
+                            var color = a.indexOf(",") > -1 ? " style=\"color:" + utils.normalizeColor(a.replace(/\_/g, "").split(",")[1]) + "\" " : "";
                             var repeatCount = a.split(",").length > 2 ? +(a.replace(/\_/g, "").split(",")[2]) : 1;
                             a = ("<i class=\"fa " + icon + "\" " + color + "></i> ").repeat(repeatCount);
                         }
@@ -336,14 +349,14 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                 };
                 GrafanaBoomTableCtrl.templateUrl = "partials/module.html";
                 return GrafanaBoomTableCtrl;
-            })(app_1.MetricsPanelCtrl);
+            })(sdk_1.MetricsPanelCtrl);
             GrafanaBoomTableCtrl.prototype.render = function () {
                 var _this = this;
                 if (this.dataReceived) {
                     // Copying the data received
                     this.dataComputed = this.dataReceived;
                     this.panel.default_title_for_rows = this.panel.default_title_for_rows || app_1.config.default_title_for_rows;
-                    var metricsReceived = app_1.utils.getFields(this.dataComputed, "target");
+                    var metricsReceived = utils.getFields(this.dataComputed, "target");
                     if (metricsReceived.length !== lodash_1.default.uniq(metricsReceived).length) {
                         var duplicateKeys = lodash_1.default.uniq(metricsReceived.filter(function (v) {
                             return metricsReceived.filter(function (t) { return t === v; }).length > 1;
@@ -388,13 +401,13 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                             if (series.stats) {
                                 series.value = series.stats[series.pattern.valueName || app_1.config.panelDefaults.defaultPattern.valueName];
                                 var decimalInfo = _this.getDecimalsForValue(series.value, series.decimals);
-                                var formatFunc = app_1.kbn.valueFormats[series.pattern.format || app_1.config.panelDefaults.defaultPattern.format];
+                                var formatFunc = kbn_1.default.valueFormats[series.pattern.format || app_1.config.panelDefaults.defaultPattern.format];
                                 if (series.value === null) {
                                     series.displayValue = series.pattern.null_value || app_1.config.panelDefaults.defaultPattern.null_value || "Null";
                                 }
                                 else if (!isNaN(series.value)) {
                                     series.valueFormatted = formatFunc(series.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
-                                    series.valueRounded = app_1.kbn.roundValue(series.value, decimalInfo.decimals);
+                                    series.valueRounded = kbn_1.default.roundValue(series.value, decimalInfo.decimals);
                                     series.displayValue = series.valueFormatted;
                                 }
                                 else {
@@ -485,7 +498,7 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                             if (series.enable_bgColor_overrides && series.bgColors_overrides !== "") {
                                 var _bgColors_overrides = series.bgColors_overrides.split("|").filter(function (con) { return con.indexOf("->"); }).map(function (con) { return con.split("->"); }).filter(function (con) { return +(con[0]) === series.value; }).map(function (con) { return con[1]; });
                                 if (_bgColors_overrides.length > 0 && _bgColors_overrides[0] !== "") {
-                                    series.bgColor = app_1.utils.normalizeColor(("" + _bgColors_overrides[0]).trim());
+                                    series.bgColor = utils.normalizeColor(("" + _bgColors_overrides[0]).trim());
                                 }
                             }
                             return series;
@@ -556,9 +569,9 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                         var hide_headers = this.getOptionOverride("HIDE_HEADERS") === "true";
                         var hide_first_column = this.getOptionOverride("HIDE_FIRST_COLUMN") === "true";
                         // Grouping
-                        var rows_found = app_1.utils.getFields(this.dataComputed, "row_name");
-                        var cols_found = app_1.utils.getFields(this.dataComputed, "col_name");
-                        var keys_found = app_1.utils.getFields(this.dataComputed, "key_name");
+                        var rows_found = utils.getFields(this.dataComputed, "row_name");
+                        var cols_found = utils.getFields(this.dataComputed, "col_name");
+                        var keys_found = utils.getFields(this.dataComputed, "key_name");
                         var is_unique_keys = (keys_found.length === lodash_1.default.uniq(keys_found).length);
                         if (is_unique_keys) {
                             this.panel.error = undefined; ////
