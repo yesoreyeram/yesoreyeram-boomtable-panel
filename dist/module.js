@@ -5,7 +5,7 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    var lodash_1, kbn_1, sdk_1, app_1, seriesHandler, utils, renderer;
+    var lodash_1, kbn_1, sdk_1, app_1, seriesHandler_1, utils, renderer;
     var GrafanaBoomTableCtrl;
     return {
         setters:[
@@ -21,8 +21,8 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
             function (app_1_1) {
                 app_1 = app_1_1;
             },
-            function (seriesHandler_1) {
-                seriesHandler = seriesHandler_1;
+            function (seriesHandler_1_1) {
+                seriesHandler_1 = seriesHandler_1_1;
             },
             function (utils_1) {
                 utils = utils_1;
@@ -232,7 +232,7 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
             })(sdk_1.MetricsPanelCtrl);
             GrafanaBoomTableCtrl.prototype.render = function () {
                 if (this.dataReceived) {
-                    this.panel.default_title_for_rows = this.panel.default_title_for_rows || app_1.config.default_title_for_rows;
+                    this.panel.default_title_for_rows = this.panel.default_title_for_rows;
                     var metricsReceived = utils.getFields(this.dataReceived, "target");
                     if (metricsReceived.length !== lodash_1.default.uniq(metricsReceived).length) {
                         var duplicateKeys = lodash_1.default.uniq(metricsReceived.filter(function (v) {
@@ -243,7 +243,7 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
                     }
                     else {
                         this.panel.error = undefined;
-                        var dataComputed = seriesHandler.compute(this.dataReceived.map(seriesHandler.defaultHandler.bind(this)), this.panel.defaultPattern || app_1.config.panelDefaults.defaultPattern, this.panel.patterns, this.panel.row_col_wrapper);
+                        var dataComputed = seriesHandler_1.compute(this.dataReceived.map(seriesHandler_1.defaultHandler.bind(this)), this.panel.defaultPattern || app_1.config.panelDefaults.defaultPattern, this.panel.patterns, this.panel.row_col_wrapper);
                         var rows_found = utils.getFields(dataComputed, "row_name");
                         var cols_found = utils.getFields(dataComputed, "col_name");
                         var keys_found = utils.getFields(dataComputed, "key_name");

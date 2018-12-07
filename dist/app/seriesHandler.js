@@ -1,7 +1,7 @@
 ///<reference path="../../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
 System.register(["lodash", 'app/core/utils/kbn', "app/core/time_series2", "./utils"], function(exports_1) {
     var lodash_1, kbn_1, time_series2_1, utils;
-    var transformValue_, computeBgColor_, defaultHandler, computeServerTimestamp, assignPattern, assignRowName, assignColName, assignDecimals, transformValue, transformValueOverrides, filterValues, assignBGColors, applyBGColorOverrides, applyFontAwesomeIcons, applyImageTransform, assignClickableLinks, assignRowColKey, assignThresholds, assignValue, compute;
+    var ___transformValue, ___computeBgColor, defaultHandler, computeServerTimestamp, assignPattern, assignRowName, assignColName, assignDecimals, transformValue, transformValueOverrides, filterValues, assignBGColors, applyBGColorOverrides, applyFontAwesomeIcons, applyImageTransform, assignClickableLinks, assignRowColKey, assignThresholds, assignValue, compute;
     return {
         setters:[
             function (lodash_1_1) {
@@ -17,7 +17,7 @@ System.register(["lodash", 'app/core/utils/kbn', "app/core/time_series2", "./uti
                 utils = utils_1;
             }],
         execute: function() {
-            transformValue_ = function (thresholds, transform_values, value, displayValue, row_name, col_name) {
+            ___transformValue = function (thresholds, transform_values, value, displayValue, row_name, col_name) {
                 var t = value;
                 if (thresholds && transform_values && typeof value === "number" && thresholds.length + 1 <= transform_values.length) {
                     transform_values = lodash_1.default.dropRight(transform_values, transform_values.length - thresholds.length - 1);
@@ -33,7 +33,7 @@ System.register(["lodash", 'app/core/utils/kbn', "app/core/time_series2", "./uti
                 }
                 return t;
             };
-            computeBgColor_ = function (thresholds, bgColors, value) {
+            ___computeBgColor = function (thresholds, bgColors, value) {
                 var c = "transparent";
                 if (thresholds && bgColors && typeof value === "number" && thresholds.length + 1 <= bgColors.length) {
                     bgColors = lodash_1.default.dropRight(bgColors, bgColors.length - thresholds.length - 1);
@@ -100,7 +100,7 @@ System.register(["lodash", 'app/core/utils/kbn', "app/core/time_series2", "./uti
             transformValue = function (series, defaultPattern) {
                 series.enable_transform = series.pattern.enable_transform;
                 series.transform_values = (series.pattern.transform_values || defaultPattern.transform_values).split("|");
-                series.displayValue = series.enable_transform === true ? transformValue_(series.thresholds, series.transform_values, series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
+                series.displayValue = series.enable_transform === true ? ___transformValue(series.thresholds, series.transform_values, series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
                 if (series.displayValue === (series.pattern.null_value || defaultPattern.null_value || "Null")) {
                     series.displayValue = series.pattern.null_value || defaultPattern.null_value;
                 }
@@ -143,7 +143,7 @@ System.register(["lodash", 'app/core/utils/kbn', "app/core/time_series2", "./uti
             assignBGColors = function (series, defaultPattern) {
                 series.enable_bgColor = series.pattern.enable_bgColor;
                 series.bgColors = (series.pattern.bgColors || defaultPattern.bgColors).split("|");
-                series.bgColor = series.enable_bgColor === true ? computeBgColor_(series.thresholds, series.bgColors, series.value) : "transparent";
+                series.bgColor = series.enable_bgColor === true ? ___computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
                 if (series.displayValue === (series.pattern.null_value || defaultPattern.null_value || "Null")) {
                     series.bgColor = series.pattern.null_color || defaultPattern.null_color;
                 }

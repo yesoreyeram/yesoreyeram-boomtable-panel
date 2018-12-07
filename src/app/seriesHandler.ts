@@ -5,7 +5,7 @@ import kbn from 'app/core/utils/kbn';
 import TimeSeries from "app/core/time_series2";
 import * as utils from "./utils";
 
-let transformValue_ = function (thresholds, transform_values, value, displayValue, row_name, col_name) {
+let ___transformValue = function (thresholds, transform_values, value, displayValue, row_name, col_name) {
     let t = value;
     if (thresholds && transform_values && typeof value === "number" && thresholds.length + 1 <= transform_values.length) {
         transform_values = _.dropRight(transform_values, transform_values.length - thresholds.length - 1);
@@ -21,7 +21,7 @@ let transformValue_ = function (thresholds, transform_values, value, displayValu
     }
     return t;
 }
-let computeBgColor_ = function (thresholds, bgColors, value) {
+let ___computeBgColor = function (thresholds, bgColors, value) {
     let c = "transparent";
     if (thresholds && bgColors && typeof value === "number" && thresholds.length + 1 <= bgColors.length) {
         bgColors = _.dropRight(bgColors, bgColors.length - thresholds.length - 1);
@@ -88,7 +88,7 @@ let assignDecimals = function (series, defaultPattern) {
 let transformValue = function (series, defaultPattern) {
     series.enable_transform = series.pattern.enable_transform;
     series.transform_values = (series.pattern.transform_values || defaultPattern.transform_values).split("|");
-    series.displayValue = series.enable_transform === true ? transformValue_(series.thresholds, series.transform_values, series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
+    series.displayValue = series.enable_transform === true ? ___transformValue(series.thresholds, series.transform_values, series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
     if (series.displayValue === (series.pattern.null_value || defaultPattern.null_value || "Null")) {
         series.displayValue = series.pattern.null_value || defaultPattern.null_value;
     }
@@ -130,7 +130,7 @@ let filterValues = function (series) {
 let assignBGColors = function (series, defaultPattern) {
     series.enable_bgColor = series.pattern.enable_bgColor;
     series.bgColors = (series.pattern.bgColors || defaultPattern.bgColors).split("|");
-    series.bgColor = series.enable_bgColor === true ? computeBgColor_(series.thresholds, series.bgColors, series.value) : "transparent";
+    series.bgColor = series.enable_bgColor === true ? ___computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
     if (series.displayValue === (series.pattern.null_value || defaultPattern.null_value || "Null")) {
         series.bgColor = series.pattern.null_color || defaultPattern.null_color;
     }

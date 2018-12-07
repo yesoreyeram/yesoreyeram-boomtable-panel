@@ -1,10 +1,10 @@
 ///<reference path="../../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
 
 import _ from "lodash";
+import { Config } from "../interfaces/interfaces"
 
-const plugin_id = "yesoreyeram-boomtable-panel";
-
-const config: any = {
+const plugin_id : String = "yesoreyeram-boomtable-panel";
+const config: Config = {
     plugin_id: plugin_id,
     debug_mode: false,
     error: undefined,

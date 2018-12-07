@@ -2,7 +2,7 @@ import _ from "lodash";
 import * as utils from "./utils";
 
 function buildHTML(elem: any, hide_headers: boolean, hide_first_column: boolean, text_align_table_header: any, cols_found: any, output: any[], text_align_first_column: any, text_align_table_cells: any, default_title_for_rows: any) {
-    var boomtable_output_body_headers = elem.find("#boomtable_output_body_headers");
+    let boomtable_output_body_headers = elem.find("#boomtable_output_body_headers");
     let boomtable_output_body_headers_output = `<br/>`;
     if (hide_headers !== true) {
         boomtable_output_body_headers_output += "<tr>";
@@ -15,7 +15,7 @@ function buildHTML(elem: any, hide_headers: boolean, hide_first_column: boolean,
         boomtable_output_body_headers_output += "</tr>";
     }
     boomtable_output_body_headers.html(boomtable_output_body_headers_output);
-    var boomtable_output_body = elem.find('#boomtable_output_body');
+    let boomtable_output_body = elem.find('#boomtable_output_body');
     let boomtable_output_body_output = ``;
     _.each(output, o => {
         boomtable_output_body_output += "<tr>";

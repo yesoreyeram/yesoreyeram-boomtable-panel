@@ -4,7 +4,7 @@ import _ from "lodash";
 import kbn from 'app/core/utils/kbn';
 import { loadPluginCss, MetricsPanelCtrl } from "app/plugins/sdk";
 import { plugin_id, config } from "./app/app";
-import * as seriesHandler from "./app/seriesHandler";
+import { compute, defaultHandler } from "./app/seriesHandler";
 import * as utils from "./app/utils";
 import * as renderer from "./app/renderer"
 
@@ -210,8 +210,8 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
 
 GrafanaBoomTableCtrl.prototype.render = function () {
   if (this.dataReceived) {
-    this.panel.default_title_for_rows = this.panel.default_title_for_rows || config.default_title_for_rows;
-    const metricsReceived = utils.getFields(this.dataReceived, "target");
+    this.panel.default_title_for_rows = this.panel.default_title_for_rows;
+    let metricsReceived = utils.getFields(this.dataReceived, "target");
     if (metricsReceived.length !== _.uniq(metricsReceived).length) {
       let duplicateKeys = _.uniq(metricsReceived.filter(v => {
         return metricsReceived.filter(t => t === v).length > 1
@@ -220,11 +220,11 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       this.panel.data = undefined;
     } else {
       this.panel.error = undefined;
-      let dataComputed = seriesHandler.compute(this.dataReceived.map(seriesHandler.defaultHandler.bind(this)), this.panel.defaultPattern || config.panelDefaults.defaultPattern, this.panel.patterns, this.panel.row_col_wrapper);
-      const rows_found = utils.getFields(dataComputed, "row_name");
-      const cols_found = utils.getFields(dataComputed, "col_name");
-      const keys_found = utils.getFields(dataComputed, "key_name");
-      const is_unique_keys = (keys_found.length === _.uniq(keys_found).length);
+      let dataComputed = compute(this.dataReceived.map(defaultHandler.bind(this)), this.panel.defaultPattern || config.panelDefaults.defaultPattern, this.panel.patterns, this.panel.row_col_wrapper);
+      let rows_found = utils.getFields(dataComputed, "row_name");
+      let cols_found = utils.getFields(dataComputed, "col_name");
+      let keys_found = utils.getFields(dataComputed, "key_name");
+      let is_unique_keys = (keys_found.length === _.uniq(keys_found).length);
       if (is_unique_keys) {
         this.panel.error = undefined;
         let output = [];

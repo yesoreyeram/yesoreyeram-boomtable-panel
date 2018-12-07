@@ -33,7 +33,7 @@ const getActualNameWithoutTransformSign = function (value): String {
         .join(" ");
 }
 const buildError = function (errorTitle, errorMessage) {
-    var err = new Error();
+    let err = new Error();
     err.name = errorTitle;
     err.message = errorMessage;
     return err;
@@ -72,17 +72,17 @@ const replaceWithImages = function (value) {
 }
 const getDecimalsForValue = function (value, _decimals) {
     if (_.isNumber(+_decimals)) {
-        var o: Object = {
+        let o: Object = {
             decimals: _decimals,
             scaledDecimals: null
         };
         return o;
     }
 
-    var delta = value / 2;
-    var dec = -Math.floor(Math.log(delta) / Math.LN10);
+    let delta = value / 2;
+    let dec = -Math.floor(Math.log(delta) / Math.LN10);
 
-    var magn = Math.pow(10, -dec),
+    let magn = Math.pow(10, -dec),
         norm = delta / magn, // norm is between 1.0 and 10.0
         size;
 
@@ -108,7 +108,7 @@ const getDecimalsForValue = function (value, _decimals) {
         dec = 0;
     }
 
-    var result: Object = {
+    let result: Object = {
         decimals: Math.max(0, dec),
         scaledDecimals: Math.max(0, dec) - Math.floor(Math.log(size) / Math.LN10) + 2
     };
