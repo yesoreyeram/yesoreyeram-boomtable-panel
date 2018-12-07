@@ -2,10 +2,11 @@
 
 import _ from "lodash";
 import kbn from 'app/core/utils/kbn';
-import TimeSeries from "app/core/time_series2";
 import { loadPluginCss, MetricsPanelCtrl } from "app/plugins/sdk";
 import { plugin_id, config } from "./app/app";
+import * as seriesHandler from "./app/seriesHandler";
 import * as utils from "./app/utils";
+import * as renderer from "./app/renderer"
 
 loadPluginCss({
   dark: `plugins/${plugin_id}/css/default.dark.css`,
@@ -14,15 +15,15 @@ loadPluginCss({
 
 class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   static templateUrl: string = "partials/module.html";
-  unitFormats: any = kbn.getUnitFormats();
-  valueNameOptions: Object = config.valueNameOptions;
-  dataReceived: any;
   ctrl: any;
   elem: any;
-  optionOverrides = config.optionOverrides;
+  dataReceived: any;
   constructor($scope, $injector, $sce) {
     super($scope, $injector);
     _.defaults(this.panel, config.panelDefaults);
+    this.panel.valueNameOptions = config.valueNameOptions;
+    this.panel.unitFormats = kbn.getUnitFormats();  
+    this.panel.optionOverrides = config.optionOverrides;
     this.events.on("data-received", this.onDataReceived.bind(this));
     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
   }
@@ -35,16 +36,8 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.dataReceived = data;
     this.render();
   }
-  seriesHandler(seriesData) {
-    var series = new TimeSeries({
-      datapoints: seriesData.datapoints || [],
-      alias: seriesData.target
-    });
-    series.flotpairs = series.getFlotPairs("connected");
-    return series;
-  }
   addPattern() {
-    var newPattern = {
+    let newPattern = {
       name: "New Pattern",
       pattern: "^server.*cpu$",
       delimiter: ".",
@@ -102,7 +95,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.render();
   }
   add_time_based_thresholds(index) {
-    var new_time_based_threshold = {
+    let new_time_based_threshold = {
       name: "Early morning of everyday",
       from: "0000",
       to: "0530",
@@ -145,129 +138,6 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
 
     this.render();
-  }
-  computeBgColor(thresholds, bgColors, value) {
-    var c = "transparent";
-    if (thresholds && bgColors && typeof value === "number" && thresholds.length + 1 <= bgColors.length) {
-      bgColors = _.dropRight(bgColors, bgColors.length - thresholds.length - 1);
-      if (bgColors[bgColors.length - 1] === "") {
-        bgColors[bgColors.length - 1] = "transparent";
-      }
-      for (var i = thresholds.length; i > 0; i--) {
-        if (value >= thresholds[i - 1]) {
-          return utils.normalizeColor(bgColors[i]);
-        }
-      }
-      return utils.normalizeColor(_.first(bgColors));
-    }
-    return c;
-  }
-  transformValue(thresholds, transform_values, value, displayValue, row_name, col_name) {
-    var t = value;
-    if (thresholds && transform_values && typeof value === "number" && thresholds.length + 1 <= transform_values.length) {
-      transform_values = _.dropRight(transform_values, transform_values.length - thresholds.length - 1);
-      if (transform_values[transform_values.length - 1] === "") {
-        transform_values[transform_values.length - 1] = "_value_";
-      }
-      for (var i = thresholds.length; i > 0; i--) {
-        if (value >= thresholds[i - 1]) {
-          return transform_values[i].replace(new RegExp("_value_", "g"), displayValue).replace(new RegExp("_row_name_", "g"), row_name).replace(new RegExp("_col_name_", "g"), col_name);
-        }
-      }
-      return _.first(transform_values).replace(new RegExp("_value_", "g"), displayValue).replace(new RegExp("_row_name_", "g"), row_name).replace(new RegExp("_col_name_", "g"), col_name);
-    }
-    return t;
-  }
-  replaceFontAwesomeIcons(value) {
-    if (!value) return value;
-    return (value + "")
-      .split(" ")
-      .map(a => {
-        if (a.startsWith("_fa-") && a.endsWith("_")) {
-          let icon = a.replace(/\_/g, "").split(",")[0];
-          let color = a.indexOf(",") > -1 ? ` style="color:${utils.normalizeColor(a.replace(/\_/g, "").split(",")[1])}" ` : "";
-          let repeatCount = a.split(",").length > 2 ? +(a.replace(/\_/g, "").split(",")[2]) : 1;
-          a = `<i class="fa ${icon}" ${color}></i> `.repeat(repeatCount);
-        }
-        return a;
-      })
-      .join(" ");
-  }
-  replaceWithImages(value) {
-    if (!value) return value;
-    return (value + "")
-      .split(" ")
-      .map(a => {
-        if (a.startsWith("_img-") && a.endsWith("_")) {
-          a = a.slice(0, -1);
-          let imgUrl = a.replace("_img-", "").split(",")[0];
-          let imgWidth = a.split(",").length > 1 ? a.replace("_img-", "").split(",")[1] : "20px";
-          let imgHeight = a.split(",").length > 2 ? a.replace("_img-", "").split(",")[2] : "20px";
-          let repeatCount = a.split(",").length > 3 ? +(a.replace("_img-", "").split(",")[3]) : 1;
-          a = `<img width="${imgWidth}" height="${imgHeight}" src="${imgUrl}"/>`.repeat(repeatCount);
-        }
-        return a;
-      })
-      .join(" ");
-  }
-  getActualNameWithoutTransformSign(value) {
-    return (value + "")
-      .split(" ")
-      .map(a => {
-        if (a.startsWith("_fa-") && a.endsWith("_")) {
-          a = ``;
-        }
-        if (a.startsWith("_img-") && a.endsWith("_")) {
-          a = ``;
-        }
-        return a;
-      })
-      .join(" ");
-  }
-  getDecimalsForValue(value, _decimals) {
-    if (_.isNumber(+_decimals)) {
-      var o: Object = {
-        decimals: _decimals,
-        scaledDecimals: null
-      };
-      return o;
-    }
-
-    var delta = value / 2;
-    var dec = -Math.floor(Math.log(delta) / Math.LN10);
-
-    var magn = Math.pow(10, -dec),
-      norm = delta / magn, // norm is between 1.0 and 10.0
-      size;
-
-    if (norm < 1.5) {
-      size = 1;
-    } else if (norm < 3) {
-      size = 2;
-      // special case for 2.5, requires an extra decimal
-      if (norm > 2.25) {
-        size = 2.5;
-        ++dec;
-      }
-    } else if (norm < 7.5) {
-      size = 5;
-    } else {
-      size = 10;
-    }
-
-    size *= magn;
-
-    // reduce starting decimals if not needed
-    if (Math.floor(value) === value) {
-      dec = 0;
-    }
-
-    var result: Object = {
-      decimals: Math.max(0, dec),
-      scaledDecimals: Math.max(0, dec) - Math.floor(Math.log(size) / Math.LN10) + 2
-    };
-
-    return result;
   }
   setUnitFormat(subItem, index) {
     if (index === -1) {
@@ -331,231 +201,39 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.currentOptionOverrides = newOverrides;
     this.render();
   }
+  adjustPanelHeight(panelHeight){
+    let rootElem = this.elem.find('.table-panel-scroll');
+    let maxheightofpanel = this.panel.debug_mode ? panelHeight - 71 : panelHeight - 31;
+    rootElem.css({ 'max-height': maxheightofpanel + "px" });
+  }
 }
 
 GrafanaBoomTableCtrl.prototype.render = function () {
   if (this.dataReceived) {
-    // Copying the data received
-    this.dataComputed = this.dataReceived;
     this.panel.default_title_for_rows = this.panel.default_title_for_rows || config.default_title_for_rows;
-    const metricsReceived = utils.getFields(this.dataComputed, "target");
+    const metricsReceived = utils.getFields(this.dataReceived, "target");
     if (metricsReceived.length !== _.uniq(metricsReceived).length) {
-      var duplicateKeys = _.uniq(metricsReceived.filter(v => {
+      let duplicateKeys = _.uniq(metricsReceived.filter(v => {
         return metricsReceived.filter(t => t === v).length > 1
       }));
-      var err = new Error();
-      err.name = "Duplicate data received";
-      err.message = "Duplicate keys : <br/>" + duplicateKeys.join("<br/> ");
-      this.panel.error = err;
+      this.panel.error = utils.buildError("Duplicate data received", "Duplicate key values : <br/>" + duplicateKeys.join("<br/> "))
       this.panel.data = undefined;
     } else {
       this.panel.error = undefined;
-      // Binding the grafana computations to the metrics received
-      this.dataComputed = this.dataReceived.map(this.seriesHandler.bind(this));
-      // Get Server Time Stamp of the Series for time based thresholds.
-      this.dataComputed = this.dataComputed.map(series => {
-        series.current_servertimestamp = new Date();
-        if (series && series.datapoints && series.datapoints.length > 0) {
-          if (_.last(series.datapoints).length === 2) {
-            series.current_servertimestamp = new Date(_.last(series.datapoints)[1]);
-          }
-        }
-        return series;
-      });
-      // Assign pattern
-      this.dataComputed = this.dataComputed.map(series => {
-        series.pattern = _.find(this.panel.patterns.filter(p => { return p.disabled !== true }), function (p) {
-          return series.alias.match(p.pattern);
-        });
-        if (series.pattern === undefined) {
-          series.pattern = this.panel.defaultPattern || config.panelDefaults.defaultPattern;
-        }
-        return series;
-      });
-      // Assign Decimal Values
-      this.dataComputed = this.dataComputed.map(series => {
-        series.decimals = (series.pattern.decimals) || config.panelDefaults.defaultPattern.decimals;
-        return series;
-      });
-      // Assign value
-      this.dataComputed = this.dataComputed.map(series => {
-        if (series.stats) {
-          series.value = series.stats[series.pattern.valueName || config.panelDefaults.defaultPattern.valueName];
-          let decimalInfo = this.getDecimalsForValue(series.value, series.decimals);
-          let formatFunc = kbn.valueFormats[series.pattern.format || config.panelDefaults.defaultPattern.format];
-          if (series.value === null) {
-            series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null";
-          }
-          else if (!isNaN(series.value)) {
-            series.valueFormatted = formatFunc(series.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
-            series.valueRounded = kbn.roundValue(series.value, decimalInfo.decimals);
-            series.displayValue = series.valueFormatted;
-          } else {
-            series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null";
-          }
-        }
-        return series;
-      });
-      // Filter Values
-      this.dataComputed = this.dataComputed.filter(series => {
-        if (!series.pattern.filter) {
-          series.pattern.filter = {};
-          series.pattern.filter.value_below = "";
-          series.pattern.filter.value_above = "";
-        }
-        if (series.pattern && series.pattern.filter && (series.pattern.filter.value_below !== "" || series.pattern.filter.value_above !== "")) {
-          if (series.pattern.filter.value_below !== "" && series.value < +(series.pattern.filter.value_below)) {
-            return false
-          }
-          if (series.pattern.filter.value_above !== "" && series.value > +(series.pattern.filter.value_above)) {
-            return false
-          }
-          return true
-        }
-        else {
-          return true
-        };
-      })
-      // Assign Row Name
-      this.dataComputed = this.dataComputed.map(series => {
-        series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
-          return r.replace(new RegExp(this.panel.row_col_wrapper + i + this.panel.row_col_wrapper, "g"), it)
-        }, series.pattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias) || config.panelDefaults.defaultPattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias));
-        if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
-          series.row_name = series.alias;
-        }
-        return series;
-      });
-      // Assign Col Name
-      this.dataComputed = this.dataComputed.map(series => {
-        series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
-          return r.replace(new RegExp(this.panel.row_col_wrapper + i + this.panel.row_col_wrapper, "g"), it)
-        }, series.pattern.col_name || config.panelDefaults.defaultPattern.col_name);
-        if (series.alias.split(series.pattern.delimiter || ".").length === 1 || series.row_name === series.alias) {
-          series.col_name = series.pattern.col_name || "Value";
-        }
-        return series;
-      });
-      // Assign RowCol Key
-      this.dataComputed = this.dataComputed.map(series => {
-        series.key_name = series.row_name + "#" + series.col_name;
-        return series;
-      });
-      // Assign Thresholds
-      this.dataComputed = this.dataComputed.map(series => {
-        series.thresholds = (series.pattern.thresholds || config.panelDefaults.defaultPattern.thresholds).split(",").map(d => +d);
-        if (series.pattern.enable_time_based_thresholds) {
-          let metricrecivedTimeStamp = series.current_servertimestamp || new Date();
-          let metricrecivedTimeStamp_innumber = metricrecivedTimeStamp.getHours() * 100 + metricrecivedTimeStamp.getMinutes();
-          let weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
-          _.each(series.pattern.time_based_thresholds, (tbtx) => {
-            if (tbtx && tbtx.from && tbtx.to && tbtx.enabledDays &&
-              (metricrecivedTimeStamp_innumber >= +(tbtx.from)) &&
-              (metricrecivedTimeStamp_innumber <= +(tbtx.to)) &&
-              (tbtx.enabledDays.toLowerCase().indexOf(weekdays[metricrecivedTimeStamp.getDay()]) > -1) &&
-              tbtx.threshold
-            ) {
-              series.thresholds = (tbtx.threshold + "").split(",").map(d => +d);
-            }
-          })
-        }
-        return series;
-      });
-      // Assign BG Colors
-      this.dataComputed = this.dataComputed.map(series => {
-        series.enable_bgColor = series.pattern.enable_bgColor;
-        series.bgColors = (series.pattern.bgColors || config.panelDefaults.defaultPattern.bgColors).split("|");
-        series.bgColor = series.enable_bgColor === true ? this.computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
-        if (series.displayValue === (series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null")) {
-          series.bgColor = series.pattern.null_color || config.panelDefaults.defaultPattern.null_color;
-        }
-        return series;
-      });
-      // BG Colors overrides 
-      this.dataComputed = this.dataComputed.map(series => {
-        series.enable_bgColor_overrides = series.pattern.enable_bgColor_overrides;
-        series.bgColors_overrides = series.pattern.bgColors_overrides || "";
-        if (series.enable_bgColor_overrides && series.bgColors_overrides !== "") {
-          let _bgColors_overrides = series.bgColors_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1])
-          if (_bgColors_overrides.length > 0 && _bgColors_overrides[0] !== "") {
-            series.bgColor = utils.normalizeColor(("" + _bgColors_overrides[0]).trim());
-          }
-        }
-        return series;
-      })
-      // Value Transform
-      this.dataComputed = this.dataComputed.map(series => {
-        series.enable_transform = series.pattern.enable_transform;
-        series.transform_values = (series.pattern.transform_values || config.panelDefaults.defaultPattern.transform_values).split("|");
-        series.displayValue = series.enable_transform === true ? this.transformValue(series.thresholds, series.transform_values, series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
-        if (series.displayValue === (series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null")) {
-          series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value;
-        }
-        else if (isNaN(series.value)) {
-          series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value;
-        }
-        return series;
-      });
-      // Value Transform Overrides
-      this.dataComputed = this.dataComputed.map(series => {
-        series.enable_transform_overrides = series.pattern.enable_transform_overrides;
-        series.transform_values_overrides = series.pattern.transform_values_overrides || "";
-        if (series.enable_transform_overrides && series.transform_values_overrides !== "") {
-          let _transform_values_overrides = series.transform_values_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1])
-          if (_transform_values_overrides.length > 0 && _transform_values_overrides[0] !== "") {
-            series.displayValue = ("" + _transform_values_overrides[0]).trim().replace(new RegExp("_value_", "g"), series.displayValue).replace(new RegExp("_row_name_", "g"), series.row_name).replace(new RegExp("_col_name_", "g"), series.col_name);
-          }
-        }
-        return series;
-      })
-      // Font awesome icons
-      this.dataComputed = this.dataComputed.map(series => {
-        series.actual_displayvalue = series.displayValue
-        series.actual_row_name = series.row_name
-        series.actual_col_name = series.col_name
-        if (series.displayValue && series.displayValue.indexOf("_fa-") > -1) series.displayValue = this.replaceFontAwesomeIcons(series.displayValue)
-        if (series.row_name && series.row_name.indexOf("_fa-") > -1) series.row_name = this.replaceFontAwesomeIcons(series.row_name)
-        if (series.col_name && series.col_name.indexOf("_fa-") > -1) series.col_name = this.replaceFontAwesomeIcons(series.col_name)
-        return series;
-      });
-      // Image transforms
-      this.dataComputed = this.dataComputed.map(series => {
-        if (series.displayValue && series.displayValue.indexOf("_img-") > -1) series.displayValue = this.replaceWithImages(series.displayValue)
-        if (series.row_name && series.row_name.indexOf("_img-") > -1) series.row_name = this.replaceWithImages(series.row_name)
-        if (series.col_name && series.col_name.indexOf("_img-") > -1) series.col_name = this.replaceWithImages(series.col_name)
-        return series;
-      });
-      // Cell Links
-      this.dataComputed = this.dataComputed.map(series => {
-        if (series.pattern.enable_clickable_cells) {
-          let targetLink = series.pattern.clickable_cells_link || "#";
-          targetLink = targetLink.replace(new RegExp("_row_name_", "g"), this.getActualNameWithoutTransformSign(series.actual_row_name).trim());
-          targetLink = targetLink.replace(new RegExp("_col_name_", "g"), this.getActualNameWithoutTransformSign(series.actual_col_name).trim());
-          targetLink = targetLink.replace(new RegExp("_value_", "g"), this.getActualNameWithoutTransformSign(series.value).trim());
-          series.displayValue = `<a href="${targetLink}" target="_blank">${series.displayValue}</a>`
-        }
-        return series;
-      });
-      // Display overrides
-      let text_align_table_header = this.getOptionOverride("TEXT_ALIGN_TABLE_HEADER");
-      let text_align_first_column = this.getOptionOverride("TEXT_ALIGN_FIRST_COLUMN");
-      let text_align_table_cells = this.getOptionOverride("TEXT_ALIGN_TABLE_CELLS");
-      let hide_headers = this.getOptionOverride("HIDE_HEADERS") === "true";
-      let hide_first_column = this.getOptionOverride("HIDE_FIRST_COLUMN") === "true";
-      // Grouping
-      const rows_found = utils.getFields(this.dataComputed, "row_name");
-      const cols_found = utils.getFields(this.dataComputed, "col_name");
-      const keys_found = utils.getFields(this.dataComputed, "key_name");
+      let dataComputed = seriesHandler.compute(this.dataReceived.map(seriesHandler.defaultHandler.bind(this)), this.panel.defaultPattern || config.panelDefaults.defaultPattern, this.panel.patterns, this.panel.row_col_wrapper);
+      const rows_found = utils.getFields(dataComputed, "row_name");
+      const cols_found = utils.getFields(dataComputed, "col_name");
+      const keys_found = utils.getFields(dataComputed, "key_name");
       const is_unique_keys = (keys_found.length === _.uniq(keys_found).length);
       if (is_unique_keys) {
-        this.panel.error = undefined; ////
-        var output = [];
+        this.panel.error = undefined;
+        let output = [];
         _.each(_.uniq(rows_found), (row_name) => {
-          var o: any = {};
+          let o: any = {};
           o.row = row_name;
           o.cols = [];
           _.each(_.uniq(cols_found), (col_name) => {
-            var matched_value = (_.find(this.dataComputed, (e) => {
+            let matched_value = (_.find(dataComputed, (e) => {
               return e.row_name === row_name && e.col_name === col_name
             }));
             if (!matched_value) matched_value = {
@@ -573,68 +251,16 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           });
           output.push(o);
         })
-        //region Output table construction
-        var boomtable_output_body_headers = this.elem.find("#boomtable_output_body_headers");
-        let boomtable_output_body_headers_output = `<br/>`;
-        if (hide_headers !== true) {
-          boomtable_output_body_headers_output += "<tr>";
-          if (hide_first_column !== true) {
-            boomtable_output_body_headers_output += `<th style="padding:4px;text-align:${text_align_table_header}">${this.panel.default_title_for_rows}</th>`;
-          }
-          _.each(_.uniq(cols_found), c => {
-            boomtable_output_body_headers_output += `<th style="padding:4px;text-align:${text_align_table_header}">${c}</th>`;
-          })
-          boomtable_output_body_headers_output += "</tr>";
-        }
-        boomtable_output_body_headers.html(boomtable_output_body_headers_output);
-        var boomtable_output_body = this.elem.find('#boomtable_output_body');
-        let boomtable_output_body_output = ``;
-        _.each(output, o => {
-          boomtable_output_body_output += "<tr>"
-          if (hide_first_column !== true) {
-            boomtable_output_body_output += `<td style="padding:4px;text-align:${text_align_first_column}">${o.row}</td>`;
-          }
-          _.each(o.cols, c => {
-            boomtable_output_body_output += `<td 
-              style="padding:4px;background-color:${c.bgColor};text-align:${text_align_table_cells}" 
-              title="${ "Row Name : " + this.getActualNameWithoutTransformSign(c.actual_row_name) + "\nCol Name : " + this.getActualNameWithoutTransformSign(c.actual_col_name) + "\nValue : " + c.value}"
-            >${c.displayValue}</td>`;
-          })
-          boomtable_output_body_output += "</tr>"
-        })
-        boomtable_output_body.html(boomtable_output_body_output);
-        //endregion
+        renderer.buildHTML(this.elem, this.getOptionOverride("HIDE_HEADERS") === "true", this.getOptionOverride("HIDE_FIRST_COLUMN") === "true", this.getOptionOverride("TEXT_ALIGN_TABLE_HEADER"), cols_found, output, this.getOptionOverride("TEXT_ALIGN_FIRST_COLUMN"), this.getOptionOverride("TEXT_ALIGN_TABLE_CELLS"), this.panel.default_title_for_rows);
       } else {
-        var duplicateKeys = _.uniq(keys_found.filter(v => {
+        let duplicateKeys = _.uniq(keys_found.filter(v => {
           return keys_found.filter(t => t === v).length > 1
         }));
-        var err = new Error();
-        err.name = "Duplicate keys found";
-        err.message = "Duplicate key values : <br/>" + duplicateKeys.join("<br/> ");
-        this.panel.error = err;
+        this.panel.error = utils.buildError("Duplicate keys found", "Duplicate key values : <br/>" + duplicateKeys.join("<br/> "))
       }
-
-      //region Debug table body construction
-      var boomtable_output_body_debug = this.elem.find('#boomtable_output_body_debug');
-      let boomtable_output_body_debug_output = ``;
-      _.each(this.dataComputed, d => {
-        boomtable_output_body_debug_output += `
-        <tr>
-          <td style="padding:4px;" width="40%">${d.alias}</td>
-          <td style="padding:4px;">${d.pattern.pattern || "Default"}</td>
-          <td style="padding:4px;background-color:${d.bgColor}">${d.displayValue}</td>
-          <td style="padding:4px;">${d.row_name}</td>
-          <td style="padding:4px;">${d.col_name}</td>
-          <td style="padding:4px;">${d.thresholds}</td>
-        </tr>
-        `
-      })
-      boomtable_output_body_debug.html(boomtable_output_body_debug_output);
-      //endregion
+      renderer.buildDebugHTML(this.elem, dataComputed);
     }
-    var rootElem = this.elem.find('.table-panel-scroll');
-    var maxheightofpanel = this.panel.debug_mode ? this.ctrl.height - 71 : this.ctrl.height - 31;
-    rootElem.css({ 'max-height': maxheightofpanel + "px" });
+    this.adjustPanelHeight(this.ctrl.height);
   }
 };
 

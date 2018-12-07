@@ -6,30 +6,17 @@
         <h4 class="text-warning">{{ctrl.panel.error.name}}</h4>
         <p ng-bind-html="ctrl.panel.error.message"></p>
     </div>
-    <div data-ng-if="!ctrl.panel.error">
+    <div>
         <div class="table-panel-scroll" style="overflow:auto;">
-            <table class="table-panel-table">
+            <table class="table-panel-table" data-ng-if="!ctrl.panel.error">
                 <thead id="boomtable_output_body_headers">
                 </thead>
                 <tbody id="boomtable_output_body">
                 </tbody>
             </table>
             <div data-ng-if="ctrl.panel.debug_mode === true" class="debug">
-                <h5 class="text-warning">WARNING: Panel running in debug mode </h5>
-                <table class="table-panel-table">
-                        <thead>
-                            <tr>
-                                <th style="padding:4px;text-align:center">Metric</th>
-                                <th style="padding:4px;text-align:center">Pattern</th>
-                                <th style="padding:4px;text-align:center">Value</th>
-                                <th style="padding:4px;text-align:center">Row Name</th>
-                                <th style="padding:4px;text-align:center">Col Name</th>
-                                <th style="padding:4px;text-align:center">Thresholds</th>
-                            </tr>
-                        </thead>
-                        <tbody id="boomtable_output_body_debug">
-                        </tbody>
-                    </table>
+                <div id="boomtable_debug_table_holder">
+                </div>                
             </div>
         </div>
     </div>
