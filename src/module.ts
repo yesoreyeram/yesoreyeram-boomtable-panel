@@ -7,6 +7,7 @@ import { plugin_id, config } from "./app/app";
 import { compute, defaultHandler } from "./app/seriesHandler";
 import * as utils from "./app/utils";
 import * as renderer from "./app/renderer"
+import { Pattern, TimeBaseThreshold, ValueNameOption } from "./interfaces/interfaces";
 
 loadPluginCss({
   dark: `plugins/${plugin_id}/css/default.dark.css`,
@@ -17,10 +18,10 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   static templateUrl: string = "partials/module.html";
   ctrl: any;
   elem: any;
-  dataReceived: any;  
-  valueNameOptions :any = config.valueNameOptions;
-  unitFormats :any = kbn.getUnitFormats();  
-  optionOverrides :any = config.optionOverrides;
+  dataReceived: any;
+  valueNameOptions: ValueNameOption[] = config.valueNameOptions;
+  unitFormats: any = kbn.getUnitFormats();
+  optionOverrides: any = config.optionOverrides;
   constructor($scope, $injector, $sce) {
     super($scope, $injector);
     _.defaults(this.panel, config.panelDefaults);
@@ -32,12 +33,12 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.addEditorTab("Time based thresholds & Filters", `public/plugins/${plugin_id}/partials/patterns-advanced-options.html`, 3);
     this.addEditorTab("Options", `public/plugins/${plugin_id}/partials/options.html`, 4);
   }
-  onDataReceived(data) {
+  onDataReceived(data: any) {
     this.dataReceived = data;
     this.render();
   }
   addPattern() {
-    let newPattern = {
+    let newPattern: Pattern = {
       name: "New Pattern",
       pattern: "^server.*cpu$",
       delimiter: ".",
@@ -70,8 +71,8 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.activePatternIndex = this.panel.patterns.length - 1;
     this.render();
   }
-  movePattern(direction, index) {
-    let tempElement = this.panel.patterns[index];
+  movePattern(direction: String, index: number) {
+    let tempElement: Pattern = this.panel.patterns[index];
     if (direction === "UP") {
       this.panel.patterns[index] = this.panel.patterns[index - 1];
       this.panel.patterns[index - 1] = tempElement;
@@ -84,18 +85,18 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     this.render();
   }
-  removePattern(index) {
+  removePattern(index: number) {
     this.panel.patterns.splice(index, 1);
     this.panel.activePatternIndex = (this.panel.patterns && this.panel.patterns.length > 0) ? (this.panel.patterns.length - 1) : -1;
     this.render();
   }
-  clonePattern(index) {
-    let copiedPattern = Object.assign({}, this.panel.patterns[index]);
+  clonePattern(index: number) {
+    let copiedPattern: Pattern = Object.assign({}, this.panel.patterns[index]);
     this.panel.patterns.push(copiedPattern);
     this.render();
   }
-  add_time_based_thresholds(index) {
-    let new_time_based_threshold = {
+  add_time_based_thresholds(index: any) {
+    let new_time_based_threshold: TimeBaseThreshold = {
       name: "Early morning of everyday",
       from: "0000",
       to: "0530",
@@ -112,7 +113,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     this.render();
   }
-  remove_time_based_thresholds(patternIndex, index) {
+  remove_time_based_thresholds(patternIndex: any, index: number) {
     if (patternIndex === 'default') {
       this.panel.defaultPattern.time_based_thresholds.splice(index, 1);
     }
@@ -120,7 +121,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       this.panel.patterns[patternIndex].time_based_thresholds.splice(index, 1);
     }
   }
-  inverseBGColors(index) {
+  inverseBGColors(index: number) {
     if (index === -1) {
       this.panel.defaultPattern.bgColors = this.panel.defaultPattern.bgColors.split("|").reverse().join("|");
     }
@@ -129,7 +130,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     this.render();
   }
-  inverseTransformValues(index) {
+  inverseTransformValues(index: number) {
     if (index === -1) {
       this.panel.defaultPattern.transform_values = this.panel.defaultPattern.transform_values.split("|").reverse().join("|");
     }
@@ -139,7 +140,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
 
     this.render();
   }
-  setUnitFormat(subItem, index) {
+  setUnitFormat(subItem, index: number) {
     if (index === -1) {
       this.panel.defaultPattern.format = subItem.value;
     } else {
@@ -147,7 +148,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     this.render();
   }
-  limitText(text, maxlength) {
+  limitText(text: String, maxlength: number) {
     if (text.split('').length > maxlength) {
       text = text.substring(0, maxlength - 3) + "...";
     }
@@ -157,7 +158,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.ctrl = ctrl;
     this.elem = elem;
   }
-  getOptionOverride(propertyName) {
+  getOptionOverride(propertyName: String) {
     let option = _.find(this.panel.currentOptionOverrides, o => o.propertyName === propertyName);
     let default_option = _.find(config.optionOverrides, o => o.propertyName === propertyName);
     if (option) {
@@ -165,7 +166,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     else return default_option.defaultValue;
   }
-  setOptionOverride(propertyName, value, text) {
+  setOptionOverride(propertyName: String, value: String, text: String) {
     let newOverrides = [];
     if (_.filter(this.panel.currentOptionOverrides, o => o.propertyName === propertyName).length === 0) {
       newOverrides.push({
@@ -189,7 +190,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.currentOptionOverrides = newOverrides;
     this.render();
   }
-  removeOptionOverride(option) {
+  removeOptionOverride(option: String) {
     let newOverrides = [];
     if (this.panel.currentOptionOverrides.length > 0) {
       _.each(this.panel.currentOptionOverrides, o => {
@@ -201,7 +202,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.currentOptionOverrides = newOverrides;
     this.render();
   }
-  adjustPanelHeight(panelHeight){
+  adjustPanelHeight(panelHeight: number) {
     let rootElem = this.elem.find('.table-panel-scroll');
     let maxheightofpanel = this.panel.debug_mode ? panelHeight - 71 : panelHeight - 31;
     rootElem.css({ 'max-height': maxheightofpanel + "px" });

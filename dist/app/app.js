@@ -9,12 +9,13 @@ System.register([], function(exports_1) {
                 plugin_id: plugin_id,
                 debug_mode: false,
                 error: undefined,
-                groupedData: undefined,
                 optionOverrides: [],
                 panelDefaults: {
                     currentOptionOverrides: [],
                     patterns: [],
                     defaultPattern: {
+                        name: undefined,
+                        pattern: undefined,
                         delimiter: ".",
                         valueName: "avg",
                         row_name: "_series_",
@@ -75,11 +76,11 @@ System.register([], function(exports_1) {
                 ["Hide first column", "HIDE_FIRST_COLUMN", ["false", "true"], "false"],
             ].forEach(function (o, i) {
                 config.optionOverrides.push({
-                    text: o[0],
-                    propertyName: o[1],
+                    text: String(o[0]),
+                    propertyName: String(o[1]),
                     index: i,
-                    defaultValue: o[3],
-                    values: o[2],
+                    defaultValue: String(o[3]),
+                    values: [].concat(o[2]).map(function (value) { return String[value]; }),
                     submenu: [].concat(o[2]).map(function (value) { return { text: String(value), value: value }; })
                 });
             });

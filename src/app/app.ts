@@ -3,17 +3,18 @@
 import _ from "lodash";
 import { Config } from "../interfaces/interfaces"
 
-const plugin_id : String = "yesoreyeram-boomtable-panel";
+const plugin_id: String = "yesoreyeram-boomtable-panel";
 const config: Config = {
     plugin_id: plugin_id,
     debug_mode: false,
     error: undefined,
-    groupedData: undefined,
     optionOverrides: [],
     panelDefaults: {
         currentOptionOverrides: [],
         patterns: [],
         defaultPattern: {
+            name: undefined,
+            pattern: undefined,
             delimiter: ".",
             valueName: "avg",
             row_name: "_series_",
@@ -74,11 +75,11 @@ const config: Config = {
     ["Hide first column", "HIDE_FIRST_COLUMN", ["false", "true"], "false"],
 ].forEach((o, i) => {
     config.optionOverrides.push({
-        text: o[0],
-        propertyName: o[1],
+        text: String(o[0]),
+        propertyName: String(o[1]),
         index: i,
-        defaultValue: o[3],
-        values: o[2],
+        defaultValue: String(o[3]),
+        values: [].concat(o[2]).map(value => { return String[value] }),
         submenu: [].concat(o[2]).map(value => { return { text: String(value), value: value }; })
     });
 })
