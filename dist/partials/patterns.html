@@ -102,7 +102,7 @@
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-26">Enable BG Color based on thresholds?</label>
+                            <label class="gf-form-label width-26">Change BG Color based on thresholds?</label>
                             <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_bgColor"
                                 ng-blur="ctrl.render()" ng-change="ctrl.render()">
                             <span class="split"></span>
@@ -117,7 +117,7 @@
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-26">Enable Text Color based on thresholds?</label>
+                            <label class="gf-form-label width-26">Change Text Color based on thresholds?</label>
                             <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_TextColors"
                                 ng-blur="ctrl.render()" ng-change="ctrl.render()">
                             <span class="split"></span>
@@ -133,7 +133,7 @@
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-26">Enable value transform value based on thresholds?</label>
+                            <label class="gf-form-label width-26">Change values based on thresholds?</label>
                             <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_transform"
                                 ng-blur="ctrl.render()" ng-change="ctrl.render()">
                             <span class="split"></span>
@@ -184,7 +184,7 @@
                     </div>
                 </div>
             </div>
-            <div id="boom_editor_row_bg_value_transforms" class="editor-row">
+            <div id="boom_editor_row_bg_value_overrides" class="editor-row">
                 <div class="section gf-form-group">
                     <div class="gr-form-inline">
                         <div class="gf-form">
@@ -192,12 +192,12 @@
                         </div>
                         <div class="gr-form-inline">
                             <div class="gf-form">
-                                <label class="gf-form-label width-26">Enable BG Color overrides for specific values?</label>
+                                <label class="gf-form-label width-26">Override BG Color for specific values?</label>
                                 <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_bgColor_overrides"
                                     ng-blur="ctrl.render()" ng-change="ctrl.render()">
                                 <span class="split"></span>
                                 <label class="gf-form-label width-20" data-ng-if="pattern.enable_bgColor_overrides">BG
-                                    Color Overrides</label>
+                                    color overrides</label>
                                 <input type="text" placeholder="0->red|1->green" class="gf-form-input width-18"
                                     ng-model="pattern.bgColors_overrides" bs-tooltip="'Example : 0->red|1->green '"
                                     ng-blur="ctrl.render()" data-ng-change="ctrl.render();" data-ng-if="pattern.enable_bgColor_overrides">
@@ -205,12 +205,12 @@
                         </div>
                         <div class="gr-form-inline">
                             <div class="gf-form">
-                                <label class="gf-form-label width-26">Enable Text Color overrides for specific values?</label>
+                                <label class="gf-form-label width-26">Override Text Color for specific values?</label>
                                 <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_TextColor_overrides"
                                     ng-blur="ctrl.render()" ng-change="ctrl.render()">
                                 <span class="split"></span>
                                 <label class="gf-form-label width-20" data-ng-if="pattern.enable_TextColor_overrides">Text
-                                    Color Overrides</label>
+                                    color overrides</label>
                                 <input type="text" placeholder="0->red|1->green" class="gf-form-input width-18"
                                     ng-model="pattern.textColors_overrides" bs-tooltip="'Example : 0->red|1->green '"
                                     ng-blur="ctrl.render()" data-ng-change="ctrl.render();" data-ng-if="pattern.enable_TextColor_overrides">
@@ -218,8 +218,7 @@
                         </div>
                         <div class="gr-form-inline">
                             <div class="gf-form">
-                                <label class="gf-form-label width-26">Enable value transform overrides for specific
-                                    values?</label>
+                                <label class="gf-form-label width-26">Override transform value for specific values?</label>
                                 <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_transform_overrides"
                                     ng-blur="ctrl.render()" ng-change="ctrl.render()">
                                 <span class="split"></span>
