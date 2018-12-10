@@ -55,6 +55,7 @@ const config: Config = {
         defaultPattern: defaultPattern,
         activePatternIndex: -1,
         row_col_wrapper: "_",
+        no_match_text : "N/A",
         default_title_for_rows: "Metric"
     },
     valueNameOptions: [{

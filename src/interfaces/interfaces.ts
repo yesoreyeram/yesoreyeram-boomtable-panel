@@ -55,6 +55,7 @@ export interface PanelDefault {
     defaultPattern: Pattern,
     activePatternIndex: Number,
     row_col_wrapper: String,
+    no_match_text : String,
     default_title_for_rows: String
 }
 export interface ValueNameOption {

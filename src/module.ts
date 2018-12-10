@@ -241,7 +241,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
             }));
             if (!matched_value) matched_value = {
               value: NaN,
-              displayValue: "N/A"
+              displayValue: this.panel.no_match_text || "N/A"
             };
             o.cols.push({
               "name": col_name,

@@ -234,6 +234,7 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
                 return GrafanaBoomTableCtrl;
             })(sdk_1.MetricsPanelCtrl);
             GrafanaBoomTableCtrl.prototype.render = function () {
+                var _this = this;
                 if (this.dataReceived) {
                     this.panel.default_title_for_rows = this.panel.default_title_for_rows;
                     var metricsReceived = utils.getFields(this.dataReceived, "target");
@@ -264,7 +265,7 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
                                     if (!matched_value)
                                         matched_value = {
                                             value: NaN,
-                                            displayValue: "N/A"
+                                            displayValue: _this.panel.no_match_text || "N/A"
                                         };
                                     o.cols.push({
                                         "name": col_name,

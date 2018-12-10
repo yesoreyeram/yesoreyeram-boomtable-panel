@@ -38,6 +38,15 @@
                     </div>
                 </div>
             </div>
+            <div class="gf-form">
+                <div class="gr-form-inline">
+                    <div class="gf-form">
+                        <label class="gf-form-label width-20">Text if no row/col pair found</label>
+                        <input type="text" placeholder="N/A" class="gf-form-input width-18" ng-model="ctrl.panel.no_match_text"
+                            bs-tooltip="'Text to be replaced when there are no metrics for the given row & column pair'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="section gf-form-group">
             <h4>Advanced Options</h4><br/>
