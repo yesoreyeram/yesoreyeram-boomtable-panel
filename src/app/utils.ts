@@ -1,13 +1,13 @@
 import _ from "lodash";
 
-const getFields = function (collection, field) {
+const getFields = function (collection, field): any[] {
     return _.map(collection, d => d[field]);
 };
-const getUniqueFields = function (collection, field) {
+const getUniqueFields = function (collection, field): any[] {
     return _.uniq(_.map(collection, d => d[field]));
 };
 const normalizeColor = function (color): String {
-    switch((color || "").toLowerCase()) {
+    switch ((color || "").toLowerCase()) {
         case "green":
             return "rgba(50, 172, 45, 0.97)";
         case "orange":
@@ -32,13 +32,13 @@ const getActualNameWithoutTransformSign = function (value): String {
         })
         .join(" ");
 }
-const buildError = function (errorTitle, errorMessage) {
+const buildError = function (errorTitle, errorMessage): Error {
     let err = new Error();
     err.name = errorTitle;
     err.message = errorMessage;
     return err;
 }
-const replaceFontAwesomeIcons = function (value) {
+const replaceFontAwesomeIcons = function (value): String {
     if (!value) return value;
     return (value + "")
         .split(" ")
@@ -53,7 +53,7 @@ const replaceFontAwesomeIcons = function (value) {
         })
         .join(" ");
 }
-const replaceWithImages = function (value) {
+const replaceWithImages = function (value): String {
     if (!value) return value;
     return (value + "")
         .split(" ")
@@ -70,7 +70,7 @@ const replaceWithImages = function (value) {
         })
         .join(" ");
 }
-const getDecimalsForValue = function (value, _decimals) {
+const getDecimalsForValue = function (value, _decimals): Object {
     if (_.isNumber(+_decimals)) {
         let o: Object = {
             decimals: _decimals,

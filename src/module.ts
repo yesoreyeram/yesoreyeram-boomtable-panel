@@ -3,11 +3,11 @@
 import _ from "lodash";
 import kbn from 'app/core/utils/kbn';
 import { loadPluginCss, MetricsPanelCtrl } from "app/plugins/sdk";
+import { Pattern, TimeBaseThreshold, ValueNameOption } from "./interfaces/interfaces";
 import { plugin_id, config } from "./app/app";
 import { compute, defaultHandler } from "./app/seriesHandler";
-import * as utils from "./app/utils";
 import * as renderer from "./app/renderer"
-import { Pattern, TimeBaseThreshold, ValueNameOption } from "./interfaces/interfaces";
+import * as utils from "./app/utils";
 
 loadPluginCss({
   dark: `plugins/${plugin_id}/css/default.dark.css`,
@@ -27,11 +27,13 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     _.defaults(this.panel, config.panelDefaults);
     this.events.on("data-received", this.onDataReceived.bind(this));
     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
+    if (this.panel.activePatternIndex === -1) {
+      this.panel.activePatternIndex = this.panel.patterns.length;
+    }
   }
   onInitEditMode() {
     this.addEditorTab("Patterns", `public/plugins/${plugin_id}/partials/patterns.html`, 2);
-    this.addEditorTab("Time based thresholds & Filters", `public/plugins/${plugin_id}/partials/patterns-advanced-options.html`, 3);
-    this.addEditorTab("Options", `public/plugins/${plugin_id}/partials/options.html`, 4);
+    this.addEditorTab("Options", `public/plugins/${plugin_id}/partials/options.html`, 3);
   }
   onDataReceived(data: any) {
     this.dataReceived = data;
@@ -95,7 +97,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.patterns.push(copiedPattern);
     this.render();
   }
-  add_time_based_thresholds(index: any) {
+  add_time_based_thresholds(index: number) {
     let new_time_based_threshold: TimeBaseThreshold = {
       name: "Early morning of everyday",
       from: "0000",
@@ -103,7 +105,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       enabledDays: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
       threshold: "70,90"
     }
-    if (index === 'default') {
+    if (index === this.panel.patterns.length || index === -1) {
       this.panel.defaultPattern.time_based_thresholds = this.panel.defaultPattern.time_based_thresholds || [];
       this.panel.defaultPattern.time_based_thresholds.push(new_time_based_threshold);
     }
@@ -113,16 +115,17 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     this.render();
   }
-  remove_time_based_thresholds(patternIndex: any, index: number) {
-    if (patternIndex === 'default') {
+  remove_time_based_thresholds(patternIndex: number, index: number) {
+    if (patternIndex === this.panel.patterns.length || patternIndex === -1) {
       this.panel.defaultPattern.time_based_thresholds.splice(index, 1);
     }
     else {
       this.panel.patterns[patternIndex].time_based_thresholds.splice(index, 1);
     }
+    this.render();
   }
   inverseBGColors(index: number) {
-    if (index === -1) {
+    if (index === this.panel.patterns.length || index === -1) {
       this.panel.defaultPattern.bgColors = this.panel.defaultPattern.bgColors.split("|").reverse().join("|");
     }
     else {
@@ -131,7 +134,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.render();
   }
   inverseTransformValues(index: number) {
-    if (index === -1) {
+    if (index === this.panel.patterns.length || index === -1) {
       this.panel.defaultPattern.transform_values = this.panel.defaultPattern.transform_values.split("|").reverse().join("|");
     }
     else {
@@ -141,7 +144,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.render();
   }
   setUnitFormat(subItem, index: number) {
-    if (index === -1) {
+    if (index === this.panel.patterns.length || index === this.panel.patterns.length) {
       this.panel.defaultPattern.format = subItem.value;
     } else {
       this.panel.patterns[index].format = subItem.value;
@@ -217,8 +220,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       let duplicateKeys = _.uniq(metricsReceived.filter(v => {
         return metricsReceived.filter(t => t === v).length > 1
       }));
-      this.panel.error = utils.buildError("Duplicate data received", "Duplicate key values : <br/>" + duplicateKeys.join("<br/> "))
-      this.panel.data = undefined;
+      this.panel.error = utils.buildError(`Duplicate keys found`, `Duplicate key values : <br/> ${duplicateKeys.join("<br/> ")}`)
     } else {
       this.panel.error = undefined;
       let dataComputed = compute(this.dataReceived.map(defaultHandler.bind(this)), this.panel.defaultPattern || config.panelDefaults.defaultPattern, this.panel.patterns, this.panel.row_col_wrapper);
@@ -257,7 +259,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         let duplicateKeys = _.uniq(keys_found.filter(v => {
           return keys_found.filter(t => t === v).length > 1
         }));
-        this.panel.error = utils.buildError("Duplicate keys found", "Duplicate key values : <br/>" + duplicateKeys.join("<br/> "))
+        this.panel.error = utils.buildError(`Duplicate keys found`, `Duplicate key values : <br/> ${duplicateKeys.join("<br/> ")}`)
       }
       renderer.buildDebugHTML(this.elem, dataComputed);
     }

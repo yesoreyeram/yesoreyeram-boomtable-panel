@@ -1,11 +1,11 @@
 ///<reference path="../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
-System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app", "./app/seriesHandler", "./app/utils", "./app/renderer"], function(exports_1) {
+System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app", "./app/seriesHandler", "./app/renderer", "./app/utils"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    var lodash_1, kbn_1, sdk_1, app_1, seriesHandler_1, utils, renderer;
+    var lodash_1, kbn_1, sdk_1, app_1, seriesHandler_1, renderer, utils;
     var GrafanaBoomTableCtrl;
     return {
         setters:[
@@ -24,11 +24,11 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
             function (seriesHandler_1_1) {
                 seriesHandler_1 = seriesHandler_1_1;
             },
-            function (utils_1) {
-                utils = utils_1;
-            },
             function (renderer_1) {
                 renderer = renderer_1;
+            },
+            function (utils_1) {
+                utils = utils_1;
             }],
         execute: function() {
             sdk_1.loadPluginCss({
@@ -45,11 +45,13 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
                     lodash_1.default.defaults(this.panel, app_1.config.panelDefaults);
                     this.events.on("data-received", this.onDataReceived.bind(this));
                     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
+                    if (this.panel.activePatternIndex === -1) {
+                        this.panel.activePatternIndex = this.panel.patterns.length;
+                    }
                 }
                 GrafanaBoomTableCtrl.prototype.onInitEditMode = function () {
                     this.addEditorTab("Patterns", "public/plugins/" + app_1.plugin_id + "/partials/patterns.html", 2);
-                    this.addEditorTab("Time based thresholds & Filters", "public/plugins/" + app_1.plugin_id + "/partials/patterns-advanced-options.html", 3);
-                    this.addEditorTab("Options", "public/plugins/" + app_1.plugin_id + "/partials/options.html", 4);
+                    this.addEditorTab("Options", "public/plugins/" + app_1.plugin_id + "/partials/options.html", 3);
                 };
                 GrafanaBoomTableCtrl.prototype.onDataReceived = function (data) {
                     this.dataReceived = data;
@@ -121,7 +123,7 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
                         enabledDays: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
                         threshold: "70,90"
                     };
-                    if (index === 'default') {
+                    if (index === this.panel.patterns.length || index === -1) {
                         this.panel.defaultPattern.time_based_thresholds = this.panel.defaultPattern.time_based_thresholds || [];
                         this.panel.defaultPattern.time_based_thresholds.push(new_time_based_threshold);
                     }
@@ -132,15 +134,16 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
                     this.render();
                 };
                 GrafanaBoomTableCtrl.prototype.remove_time_based_thresholds = function (patternIndex, index) {
-                    if (patternIndex === 'default') {
+                    if (patternIndex === this.panel.patterns.length || patternIndex === -1) {
                         this.panel.defaultPattern.time_based_thresholds.splice(index, 1);
                     }
                     else {
                         this.panel.patterns[patternIndex].time_based_thresholds.splice(index, 1);
                     }
+                    this.render();
                 };
                 GrafanaBoomTableCtrl.prototype.inverseBGColors = function (index) {
-                    if (index === -1) {
+                    if (index === this.panel.patterns.length || index === -1) {
                         this.panel.defaultPattern.bgColors = this.panel.defaultPattern.bgColors.split("|").reverse().join("|");
                     }
                     else {
@@ -149,7 +152,7 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
                     this.render();
                 };
                 GrafanaBoomTableCtrl.prototype.inverseTransformValues = function (index) {
-                    if (index === -1) {
+                    if (index === this.panel.patterns.length || index === -1) {
                         this.panel.defaultPattern.transform_values = this.panel.defaultPattern.transform_values.split("|").reverse().join("|");
                     }
                     else {
@@ -158,7 +161,7 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
                     this.render();
                 };
                 GrafanaBoomTableCtrl.prototype.setUnitFormat = function (subItem, index) {
-                    if (index === -1) {
+                    if (index === this.panel.patterns.length || index === this.panel.patterns.length) {
                         this.panel.defaultPattern.format = subItem.value;
                     }
                     else {
@@ -238,8 +241,7 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
                         var duplicateKeys = lodash_1.default.uniq(metricsReceived.filter(function (v) {
                             return metricsReceived.filter(function (t) { return t === v; }).length > 1;
                         }));
-                        this.panel.error = utils.buildError("Duplicate data received", "Duplicate key values : <br/>" + duplicateKeys.join("<br/> "));
-                        this.panel.data = undefined;
+                        this.panel.error = utils.buildError("Duplicate keys found", "Duplicate key values : <br/> " + duplicateKeys.join("<br/> "));
                     }
                     else {
                         this.panel.error = undefined;
@@ -281,7 +283,7 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
                             var duplicateKeys = lodash_1.default.uniq(keys_found.filter(function (v) {
                                 return keys_found.filter(function (t) { return t === v; }).length > 1;
                             }));
-                            this.panel.error = utils.buildError("Duplicate keys found", "Duplicate key values : <br/>" + duplicateKeys.join("<br/> "));
+                            this.panel.error = utils.buildError("Duplicate keys found", "Duplicate key values : <br/> " + duplicateKeys.join("<br/> "));
                         }
                         renderer.buildDebugHTML(this.elem, dataComputed);
                     }

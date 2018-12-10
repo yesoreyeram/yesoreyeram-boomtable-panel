@@ -5,7 +5,7 @@ import kbn from 'app/core/utils/kbn';
 import TimeSeries from "app/core/time_series2";
 import * as utils from "./utils";
 
-let ___transformValue = function (thresholds, transform_values, value, displayValue, row_name, col_name) {
+let ___transformValue = function (thresholds, transform_values, value, displayValue, row_name, col_name): String {
     let t = value;
     if (thresholds && transform_values && typeof value === "number" && thresholds.length + 1 <= transform_values.length) {
         transform_values = _.dropRight(transform_values, transform_values.length - thresholds.length - 1);
@@ -21,7 +21,7 @@ let ___transformValue = function (thresholds, transform_values, value, displayVa
     }
     return t;
 }
-let ___computeBgColor = function (thresholds, bgColors, value) {
+let ___computeBgColor = function (thresholds, bgColors, value): String {
     let c = "transparent";
     if (thresholds && bgColors && typeof value === "number" && thresholds.length + 1 <= bgColors.length) {
         bgColors = _.dropRight(bgColors, bgColors.length - thresholds.length - 1);
@@ -37,7 +37,7 @@ let ___computeBgColor = function (thresholds, bgColors, value) {
     }
     return c;
 }
-let defaultHandler = function (seriesData) {
+let defaultHandler = function (seriesData): any {
     let series = new TimeSeries({
         datapoints: seriesData.datapoints || [],
         alias: seriesData.target
@@ -45,7 +45,7 @@ let defaultHandler = function (seriesData) {
     series.flotpairs = series.getFlotPairs("connected");
     return series;
 }
-let computeServerTimestamp = function (series) {
+let computeServerTimestamp = function (series): any {
     series.current_servertimestamp = new Date();
     if (series && series.datapoints && series.datapoints.length > 0) {
         if (_.last(series.datapoints).length === 2) {
@@ -54,7 +54,7 @@ let computeServerTimestamp = function (series) {
     }
     return series;
 }
-let assignPattern = function (series, patterns, defaultPattern) {
+let assignPattern = function (series, patterns, defaultPattern): any {
     series.pattern = _.find(patterns.filter(p => { return p.disabled !== true }), function (p) {
         return series.alias.match(p.pattern);
     });
@@ -63,7 +63,7 @@ let assignPattern = function (series, patterns, defaultPattern) {
     }
     return series;
 }
-let assignRowName = function (series, defaultPattern, row_col_wrapper) {
+let assignRowName = function (series, defaultPattern, row_col_wrapper): any {
     series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
         return r.replace(new RegExp(row_col_wrapper + i + row_col_wrapper, "g"), it)
     }, series.pattern.row_name.replace(new RegExp(row_col_wrapper + "series" + row_col_wrapper, "g"), series.alias) || defaultPattern.row_name.replace(new RegExp(row_col_wrapper + "series" + row_col_wrapper, "g"), series.alias));
@@ -72,7 +72,7 @@ let assignRowName = function (series, defaultPattern, row_col_wrapper) {
     }
     return series;
 }
-let assignColName = function (series, defaultPattern, row_col_wrapper) {
+let assignColName = function (series, defaultPattern, row_col_wrapper): any {
     series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
         return r.replace(new RegExp(row_col_wrapper + i + row_col_wrapper, "g"), it)
     }, series.pattern.col_name || defaultPattern.col_name);
@@ -81,11 +81,11 @@ let assignColName = function (series, defaultPattern, row_col_wrapper) {
     }
     return series;
 }
-let assignDecimals = function (series, defaultPattern) {
+let assignDecimals = function (series, defaultPattern): any {
     series.decimals = (series.pattern.decimals) || defaultPattern.decimals;
     return series;
 }
-let transformValue = function (series, defaultPattern) {
+let transformValue = function (series, defaultPattern): any {
     series.enable_transform = series.pattern.enable_transform;
     series.transform_values = (series.pattern.transform_values || defaultPattern.transform_values).split("|");
     series.displayValue = series.enable_transform === true ? ___transformValue(series.thresholds, series.transform_values, series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
@@ -97,7 +97,7 @@ let transformValue = function (series, defaultPattern) {
     }
     return series;
 }
-let transformValueOverrides = function (series) {
+let transformValueOverrides = function (series): any {
     series.enable_transform_overrides = series.pattern.enable_transform_overrides;
     series.transform_values_overrides = series.pattern.transform_values_overrides || "";
     if (series.enable_transform_overrides && series.transform_values_overrides !== "") {
@@ -108,7 +108,7 @@ let transformValueOverrides = function (series) {
     }
     return series;
 }
-let filterValues = function (series) {
+let filterValues = function (series): any {
     if (!series.pattern.filter) {
         series.pattern.filter = {};
         series.pattern.filter.value_below = "";
@@ -127,7 +127,7 @@ let filterValues = function (series) {
         return true
     };
 }
-let assignBGColors = function (series, defaultPattern) {
+let assignBGColors = function (series, defaultPattern): any {
     series.enable_bgColor = series.pattern.enable_bgColor;
     series.bgColors = (series.pattern.bgColors || defaultPattern.bgColors).split("|");
     series.bgColor = series.enable_bgColor === true ? ___computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
@@ -136,7 +136,7 @@ let assignBGColors = function (series, defaultPattern) {
     }
     return series;
 }
-let applyBGColorOverrides = function (series) {
+let applyBGColorOverrides = function (series): any {
     series.enable_bgColor_overrides = series.pattern.enable_bgColor_overrides;
     series.bgColors_overrides = series.pattern.bgColors_overrides || "";
     if (series.enable_bgColor_overrides && series.bgColors_overrides !== "") {
@@ -147,7 +147,7 @@ let applyBGColorOverrides = function (series) {
     }
     return series;
 }
-let applyFontAwesomeIcons = function (series) {
+let applyFontAwesomeIcons = function (series): any {
     series.actual_displayvalue = series.displayValue
     series.actual_row_name = series.row_name
     series.actual_col_name = series.col_name
@@ -156,13 +156,13 @@ let applyFontAwesomeIcons = function (series) {
     if (series.col_name && series.col_name.indexOf("_fa-") > -1) series.col_name = utils.replaceFontAwesomeIcons(series.col_name)
     return series;
 }
-let applyImageTransform = function (series) {
+let applyImageTransform = function (series): any {
     if (series.displayValue && series.displayValue.indexOf("_img-") > -1) series.displayValue = utils.replaceWithImages(series.displayValue)
     if (series.row_name && series.row_name.indexOf("_img-") > -1) series.row_name = utils.replaceWithImages(series.row_name)
     if (series.col_name && series.col_name.indexOf("_img-") > -1) series.col_name = utils.replaceWithImages(series.col_name)
     return series;
 }
-let assignClickableLinks = function (series) {
+let assignClickableLinks = function (series): any {
     if (series.pattern.enable_clickable_cells) {
         let targetLink = series.pattern.clickable_cells_link || "#";
         targetLink = targetLink.replace(new RegExp("_row_name_", "g"), utils.getActualNameWithoutTransformSign(series.actual_row_name).trim());
@@ -172,11 +172,11 @@ let assignClickableLinks = function (series) {
     }
     return series;
 }
-let assignRowColKey = function (series) {
+let assignRowColKey = function (series): any {
     series.key_name = series.row_name + "#" + series.col_name;
     return series;
 }
-let assignThresholds = function (series, defaultPattern) {
+let assignThresholds = function (series, defaultPattern): any {
     series.thresholds = (series.pattern.thresholds || defaultPattern.thresholds).split(",").map(d => +d);
     if (series.pattern.enable_time_based_thresholds) {
         let metricrecivedTimeStamp = series.current_servertimestamp || new Date();
@@ -195,7 +195,7 @@ let assignThresholds = function (series, defaultPattern) {
     }
     return series;
 }
-let assignValue = function (series, defaultPattern) {
+let assignValue = function (series, defaultPattern): any {
     if (series.stats) {
         series.value = series.stats[series.pattern.valueName || defaultPattern.valueName];
         let decimalInfo: any = utils.getDecimalsForValue(series.value, series.decimals);
@@ -213,7 +213,7 @@ let assignValue = function (series, defaultPattern) {
     }
     return series;
 }
-let compute = function (dataComputed, defaultPattern, patterns, row_col_wrapper) {
+let compute = function (dataComputed, defaultPattern, patterns, row_col_wrapper): any {
     dataComputed = dataComputed.map(series => computeServerTimestamp(series))
         .map(series => assignPattern(series, patterns, defaultPattern))
         .map(series => assignDecimals(series, defaultPattern))

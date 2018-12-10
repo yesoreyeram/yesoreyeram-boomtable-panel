@@ -356,6 +356,9 @@ Same as other time series data sources. You need to properly format your legend 
 
 | Version | Changes   |
 | --------|-----------|
+| 0.6.0   | Patterns Editor UI redesign |
+|         | Code refractoring |
+|         | Bug fixes |
 | 0.5.3   | Advanced options implementation |
 |         | BREAKING : Hide first column, Hide header options are moved to advanced options |
 | 0.5.1   | Images as values based on thresholds |

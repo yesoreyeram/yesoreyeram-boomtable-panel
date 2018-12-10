@@ -1,7 +1,7 @@
 import _ from "lodash";
 import * as utils from "./utils";
 
-function buildHTML(elem: any, hide_headers: boolean, hide_first_column: boolean, text_align_table_header: any, cols_found: any, output: any[], text_align_first_column: any, text_align_table_cells: any, default_title_for_rows: any) {
+function buildHTML(elem: any, hide_headers: boolean, hide_first_column: boolean, text_align_table_header: any, cols_found: any, output: any[], text_align_first_column: any, text_align_table_cells: any, default_title_for_rows: any): void {
     let boomtable_output_body_headers = elem.find("#boomtable_output_body_headers");
     let boomtable_output_body_headers_output = `<br/>`;
     if (hide_headers !== true) {
@@ -32,7 +32,7 @@ function buildHTML(elem: any, hide_headers: boolean, hide_first_column: boolean,
     });
     boomtable_output_body.html(boomtable_output_body_output);
 }
-function buildDebugHTML(elem: any, dataComputed: any) {
+function buildDebugHTML(elem: any, dataComputed: any): void {
     let debug_table_holder = elem.find("#boomtable_debug_table_holder");
     let debug_output = `
         <table class="table-panel-table">

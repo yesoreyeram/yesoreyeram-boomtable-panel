@@ -1,9 +1,49 @@
 ///<reference path="../../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
 
 import _ from "lodash";
-import { Config } from "../interfaces/interfaces"
+import { Config, Pattern } from "../interfaces/interfaces"
+
+let buildOptionOverride = function (o, i) {
+    return {
+        text: String(o[0]),
+        propertyName: String(o[1]),
+        index: i,
+        defaultValue: String(o[3]),
+        values: [].concat(o[2]).map(value => { return String[value] }),
+        submenu: [].concat(o[2]).map(value => { return { text: String(value), value: value }; })
+    }
+}
 
 const plugin_id: String = "yesoreyeram-boomtable-panel";
+const defaultPattern: Pattern = {
+    name: undefined,
+    pattern: undefined,
+    delimiter: ".",
+    valueName: "avg",
+    row_name: "_series_",
+    col_name: "Value",
+    thresholds: "70,90",
+    time_based_thresholds: [],
+    enable_time_based_thresholds: false,
+    enable_bgColor: false,
+    bgColors: "green|orange|red",
+    enable_bgColor_overrides: false,
+    bgColors_overrides: "0->green|2->red|1->yellow",
+    enable_transform: false,
+    transform_values: "_value_|_value_|_value_",
+    enable_transform_overrides: false,
+    transform_values_overrides: "0->down|1->up",
+    decimals: 2,
+    format: "none",
+    null_color: "darkred",
+    null_value: "No data",
+    enable_clickable_cells: false,
+    clickable_cells_link: "",
+    filter: {
+        value_below: "",
+        value_above: ""
+    }
+}
 const config: Config = {
     plugin_id: plugin_id,
     debug_mode: false,
@@ -12,35 +52,7 @@ const config: Config = {
     panelDefaults: {
         currentOptionOverrides: [],
         patterns: [],
-        defaultPattern: {
-            name: undefined,
-            pattern: undefined,
-            delimiter: ".",
-            valueName: "avg",
-            row_name: "_series_",
-            col_name: "Value",
-            thresholds: "70,90",
-            time_based_thresholds: [],
-            enable_time_based_thresholds: false,
-            enable_bgColor: false,
-            bgColors: "green|orange|red",
-            enable_bgColor_overrides: false,
-            bgColors_overrides: "0->green|2->red|1->yellow",
-            enable_transform: false,
-            transform_values: "_value_|_value_|_value_",
-            enable_transform_overrides: false,
-            transform_values_overrides: "0->down|1->up",
-            decimals: 2,
-            format: "none",
-            null_color: "darkred",
-            null_value: "No data",
-            enable_clickable_cells: false,
-            clickable_cells_link: "",
-            filter: {
-                value_below: "",
-                value_above: ""
-            }
-        },
+        defaultPattern: defaultPattern,
         activePatternIndex: -1,
         row_col_wrapper: "_",
         default_title_for_rows: "Metric"
@@ -67,22 +79,12 @@ const config: Config = {
     }
     ],
 };
-[
-    ["Text alignment header", "TEXT_ALIGN_TABLE_HEADER", ["left", "right", "center"], "left"],
-    ["Text alignment first column", "TEXT_ALIGN_FIRST_COLUMN", ["left", "right", "center"], "left"],
-    ["Text alignment table cells", "TEXT_ALIGN_TABLE_CELLS", ["left", "right", "center"], "left"],
-    ["Hide Headers", "HIDE_HEADERS", ["false", "true"], "false"],
-    ["Hide first column", "HIDE_FIRST_COLUMN", ["false", "true"], "false"],
-].forEach((o, i) => {
-    config.optionOverrides.push({
-        text: String(o[0]),
-        propertyName: String(o[1]),
-        index: i,
-        defaultValue: String(o[3]),
-        values: [].concat(o[2]).map(value => { return String[value] }),
-        submenu: [].concat(o[2]).map(value => { return { text: String(value), value: value }; })
-    });
-})
+
+config.optionOverrides.push(buildOptionOverride(["Text alignment header", "TEXT_ALIGN_TABLE_HEADER", ["left", "right", "center"], "left"], 0));
+config.optionOverrides.push(buildOptionOverride(["Text alignment first column", "TEXT_ALIGN_FIRST_COLUMN", ["left", "right", "center"], "left"], 1));
+config.optionOverrides.push(buildOptionOverride(["Text alignment table cells", "TEXT_ALIGN_TABLE_CELLS", ["left", "right", "center"], "left"], 2));
+config.optionOverrides.push(buildOptionOverride(["Hide Headers", "HIDE_HEADERS", ["false", "true"], "false"], 3));
+config.optionOverrides.push(buildOptionOverride(["Hide first column", "HIDE_FIRST_COLUMN", ["false", "true"], "false"], 4));
 
 export {
     plugin_id,

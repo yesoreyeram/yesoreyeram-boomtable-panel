@@ -15,3 +15,21 @@
 .boom-table .btn-small .fa{
     margin-right: 5px;
 }
+.boom-table .split {
+    margin-right: 20px;
+}
+.boom-table h6.text-header {
+    padding: 0 0 10px 0;
+    color: cadetblue;
+    font-weight: bolder;
+}
+.boom-table h6.text-header i{
+    font-weight: 100;
+    color: darksalmon;
+}
+.boom-table .boom-label{
+    padding-left: 10px;
+}
+.boom-table .boom-label{
+    padding-left: 10px;
+}
