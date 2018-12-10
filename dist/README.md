@@ -357,6 +357,7 @@ Same as other time series data sources. You need to properly format your legend 
 | Version | Changes   |
 | --------|-----------|
 | 0.6.0   | Patterns Editor UI redesign |
+|         | Text color based on threshold |
 |         | Code refractoring |
 |         | Bug fixes |
 | 0.5.3   | Advanced options implementation |

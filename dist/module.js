@@ -72,6 +72,10 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
                         bgColors: "green|orange|red",
                         enable_bgColor_overrides: false,
                         bgColors_overrides: "0->green|2->red|1->yellow",
+                        enable_TextColors: false,
+                        textColors: "green|orange|red",
+                        enable_TextColor_overrides: false,
+                        textColors_overrides: "0->green|2->red|1->yellow",
                         enable_transform: false,
                         transform_values: "_value_|_value_|_value_",
                         enable_transform_overrides: false,
@@ -148,6 +152,15 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
                     }
                     else {
                         this.panel.patterns[index].bgColors = this.panel.patterns[index].bgColors.split("|").reverse().join("|");
+                    }
+                    this.render();
+                };
+                GrafanaBoomTableCtrl.prototype.inverseTextColors = function (index) {
+                    if (index === this.panel.patterns.length || index === -1) {
+                        this.panel.defaultPattern.textColors = this.panel.defaultPattern.textColors.split("|").reverse().join("|");
+                    }
+                    else {
+                        this.panel.patterns[index].textColors = this.panel.patterns[index].textColors.split("|").reverse().join("|");
                     }
                     this.render();
                 };
@@ -273,7 +286,8 @@ System.register(["lodash", 'app/core/utils/kbn', "app/plugins/sdk", "./app/app",
                                         "actual_col_name": matched_value.actual_col_name,
                                         "actual_row_name": matched_value.actual_row_name,
                                         "displayValue": matched_value.displayValue || matched_value.value,
-                                        "bgColor": matched_value.bgColor || "transparent"
+                                        "bgColor": matched_value.bgColor || "transparent",
+                                        "textColor": matched_value.textColor || "white"
                                     });
                                 });
                                 output.push(o);

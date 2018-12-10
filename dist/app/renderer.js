@@ -22,7 +22,7 @@ System.register(["lodash", "./utils"], function(exports_1) {
                 boomtable_output_body_output += "<td style=\"padding:4px;text-align:" + text_align_first_column + "\">" + o.row + "</td>";
             }
             lodash_1.default.each(o.cols, function (c) {
-                boomtable_output_body_output += "<td \n                style=\"padding:4px;background-color:" + c.bgColor + ";text-align:" + text_align_table_cells + "\" \n                title=\"" + ("Row Name : " + utils.getActualNameWithoutTransformSign(c.actual_row_name) + "\nCol Name : " + utils.getActualNameWithoutTransformSign(c.actual_col_name) + "\nValue : " + c.value) + "\"\n              >" + c.displayValue + "</td>";
+                boomtable_output_body_output += "<td \n                style=\"padding:4px;background-color:" + c.bgColor + ";text-align:" + text_align_table_cells + ";color:" + c.textColor + "\" \n                title=\"" + ("Row Name : " + utils.getActualNameWithoutTransformSign(c.actual_row_name) + "\nCol Name : " + utils.getActualNameWithoutTransformSign(c.actual_col_name) + "\nValue : " + c.value) + "\"\n              >" + c.displayValue + "</td>";
             });
             boomtable_output_body_output += "</tr>";
         });

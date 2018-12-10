@@ -90,7 +90,7 @@
                 <div class="section gf-form-group">
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <h6 class="text-header">Background, Color & Value transformations</h6>
+                            <h6 class="text-header">Background, Color & Value transformations based on thresholds</h6>
                         </div>
                     </div>
                     <div class="gr-form-inline">
@@ -117,20 +117,23 @@
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-26">Enable BG Color overrides for specific values?</label>
-                            <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_bgColor_overrides"
+                            <label class="gf-form-label width-26">Enable Text Color based on thresholds?</label>
+                            <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_TextColors"
                                 ng-blur="ctrl.render()" ng-change="ctrl.render()">
                             <span class="split"></span>
-                            <label class="gf-form-label width-20" data-ng-if="pattern.enable_bgColor_overrides">BG
-                                Color Overrides</label>
-                            <input type="text" placeholder="0->red|1->green" class="gf-form-input width-18" ng-model="pattern.bgColors_overrides"
-                                bs-tooltip="'Example : 0->red|1->green '" ng-blur="ctrl.render()" data-ng-change="ctrl.render();"
-                                data-ng-if="pattern.enable_bgColor_overrides">
+                            <label class="gf-form-label width-20" data-ng-if="pattern.enable_TextColors">Text Colors
+                                for
+                                thresholds</label>
+                            <input type="text" placeholder="green|orange|red" class="gf-form-input width-18" ng-model="pattern.textColors"
+                                bs-tooltip="'Text Colors seperated by | (pipe)'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();"
+                                data-ng-if="pattern.enable_TextColors">
+                            <button type="button" class="btn btn-primary btn-small" ng-click="ctrl.inverseTextColors($index)"
+                                title="Inverse" data-ng-if="pattern.enable_TextColors">Inverse</button>
                         </div>
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-26">Transform value based on thresholds?</label>
+                            <label class="gf-form-label width-26">Enable value transform value based on thresholds?</label>
                             <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_transform"
                                 ng-blur="ctrl.render()" ng-change="ctrl.render()">
                             <span class="split"></span>
@@ -141,19 +144,6 @@
                                 ng-blur="ctrl.render()" data-ng-change="ctrl.render();" data-ng-if="pattern.enable_transform">
                             <button type="button" class="btn btn-primary btn-small" ng-click="ctrl.inverseTransformValues($index)"
                                 title="Inverse" data-ng-if="pattern.enable_transform">Inverse</button>
-                        </div>
-                    </div>
-                    <div class="gr-form-inline">
-                        <div class="gf-form">
-                            <label class="gf-form-label width-26">Enable value transform overrides for specific values?</label>
-                            <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_transform_overrides"
-                                ng-blur="ctrl.render()" ng-change="ctrl.render()">
-                            <span class="split"></span>
-                            <label class="gf-form-label width-20" data-ng-if="pattern.enable_transform_overrides">Value
-                                transform Overrides</label>
-                            <input type="text" placeholder="0->down|1->up" class="gf-form-input width-18" ng-model="pattern.transform_values_overrides"
-                                bs-tooltip="'Example : 0->down|1->up '" ng-blur="ctrl.render()" data-ng-change="ctrl.render();"
-                                data-ng-if="pattern.enable_transform_overrides">
                         </div>
                     </div>
                 </div>
@@ -190,6 +180,55 @@
                                 ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                             <button type="button" class="btn btn-danger btn-small" ng-click="ctrl.remove_time_based_thresholds( $parent.$index, $index)">X</button>
                             <br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="boom_editor_row_bg_value_transforms" class="editor-row">
+                <div class="section gf-form-group">
+                    <div class="gr-form-inline">
+                        <div class="gf-form">
+                            <h6 class="text-header">Background, Color & Value overrides</h6>
+                        </div>
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-26">Enable BG Color overrides for specific values?</label>
+                                <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_bgColor_overrides"
+                                    ng-blur="ctrl.render()" ng-change="ctrl.render()">
+                                <span class="split"></span>
+                                <label class="gf-form-label width-20" data-ng-if="pattern.enable_bgColor_overrides">BG
+                                    Color Overrides</label>
+                                <input type="text" placeholder="0->red|1->green" class="gf-form-input width-18"
+                                    ng-model="pattern.bgColors_overrides" bs-tooltip="'Example : 0->red|1->green '"
+                                    ng-blur="ctrl.render()" data-ng-change="ctrl.render();" data-ng-if="pattern.enable_bgColor_overrides">
+                            </div>
+                        </div>
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-26">Enable Text Color overrides for specific values?</label>
+                                <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_TextColor_overrides"
+                                    ng-blur="ctrl.render()" ng-change="ctrl.render()">
+                                <span class="split"></span>
+                                <label class="gf-form-label width-20" data-ng-if="pattern.enable_TextColor_overrides">Text
+                                    Color Overrides</label>
+                                <input type="text" placeholder="0->red|1->green" class="gf-form-input width-18"
+                                    ng-model="pattern.textColors_overrides" bs-tooltip="'Example : 0->red|1->green '"
+                                    ng-blur="ctrl.render()" data-ng-change="ctrl.render();" data-ng-if="pattern.enable_TextColor_overrides">
+                            </div>
+                        </div>
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-26">Enable value transform overrides for specific
+                                    values?</label>
+                                <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.enable_transform_overrides"
+                                    ng-blur="ctrl.render()" ng-change="ctrl.render()">
+                                <span class="split"></span>
+                                <label class="gf-form-label width-20" data-ng-if="pattern.enable_transform_overrides">Value
+                                    transform Overrides</label>
+                                <input type="text" placeholder="0->down|1->up" class="gf-form-input width-18" ng-model="pattern.transform_values_overrides"
+                                    bs-tooltip="'Example : 0->down|1->up '" ng-blur="ctrl.render()" data-ng-change="ctrl.render();"
+                                    data-ng-if="pattern.enable_transform_overrides">
+                            </div>
                         </div>
                     </div>
                 </div>

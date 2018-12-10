@@ -24,7 +24,7 @@ function buildHTML(elem: any, hide_headers: boolean, hide_first_column: boolean,
         }
         _.each(o.cols, c => {
             boomtable_output_body_output += `<td 
-                style="padding:4px;background-color:${c.bgColor};text-align:${text_align_table_cells}" 
+                style="padding:4px;background-color:${c.bgColor};text-align:${text_align_table_cells};color:${c.textColor}" 
                 title="${"Row Name : " + utils.getActualNameWithoutTransformSign(c.actual_row_name) + "\nCol Name : " + utils.getActualNameWithoutTransformSign(c.actual_col_name) + "\nValue : " + c.value}"
               >${c.displayValue}</td>`;
         });

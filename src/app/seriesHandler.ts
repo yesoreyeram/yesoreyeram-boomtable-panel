@@ -37,6 +37,22 @@ let ___computeBgColor = function (thresholds, bgColors, value): String {
     }
     return c;
 }
+let ___computetextColor = function (thresholds, bgColors, value): String {
+    let c = "white";
+    if (thresholds && bgColors && typeof value === "number" && thresholds.length + 1 <= bgColors.length) {
+        bgColors = _.dropRight(bgColors, bgColors.length - thresholds.length - 1);
+        if (bgColors[bgColors.length - 1] === "") {
+            bgColors[bgColors.length - 1] = "white";
+        }
+        for (let i = thresholds.length; i > 0; i--) {
+            if (value >= thresholds[i - 1]) {
+                return utils.normalizeColor(bgColors[i]);
+            }
+        }
+        return utils.normalizeColor(_.first(bgColors));
+    }
+    return c;
+}
 let defaultHandler = function (seriesData): any {
     let series = new TimeSeries({
         datapoints: seriesData.datapoints || [],
@@ -129,11 +145,14 @@ let filterValues = function (series): any {
 }
 let assignBGColors = function (series, defaultPattern): any {
     series.enable_bgColor = series.pattern.enable_bgColor;
-    series.bgColors = (series.pattern.bgColors || defaultPattern.bgColors).split("|");
+    series.bgColors = (series.pattern.bgColors || defaultPattern.bgColors || "" ).split("|");
     series.bgColor = series.enable_bgColor === true ? ___computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
     if (series.displayValue === (series.pattern.null_value || defaultPattern.null_value || "Null")) {
         series.bgColor = series.pattern.null_color || defaultPattern.null_color;
     }
+    series.enable_TextColors = series.pattern.enable_TextColors;
+    series.textColors = (series.pattern.textColors || defaultPattern.textColors || "").split("|");
+    series.textColor = series.enable_TextColors === true ? ___computetextColor(series.thresholds, series.textColors, series.value) : "white";
     return series;
 }
 let applyBGColorOverrides = function (series): any {
@@ -143,6 +162,14 @@ let applyBGColorOverrides = function (series): any {
         let _bgColors_overrides = series.bgColors_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1])
         if (_bgColors_overrides.length > 0 && _bgColors_overrides[0] !== "") {
             series.bgColor = utils.normalizeColor(("" + _bgColors_overrides[0]).trim());
+        }
+    }
+    series.enable_TextColor_overrides = series.pattern.enable_TextColor_overrides;
+    series.textColors_overrides = series.pattern.textColors_overrides || "";
+    if (series.enable_TextColor_overrides && series.textColors_overrides !== "") {
+        let _textColors_overrides = series.textColors_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1])
+        if (_textColors_overrides.length > 0 && _textColors_overrides[0] !== "") {
+            series.textColor = utils.normalizeColor(("" + _textColors_overrides[0]).trim());
         }
     }
     return series;
