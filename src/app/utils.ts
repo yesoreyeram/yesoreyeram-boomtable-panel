@@ -1,5 +1,11 @@
 import _ from "lodash";
 
+const COLORS = {
+    GREEN : "rgba(50, 172, 45, 0.97)",
+    ORANGE : "rgba(237, 129, 40, 0.89)",
+    RED : "rgba(245, 54, 54, 0.9)"
+};
+
 const getFields = function (collection: any[], field: String): any[] {
     return _.map(collection, d => d[String(field)]);
 };
@@ -9,11 +15,11 @@ const getUniqueFields = function (collection: any[], field: String): any[] {
 const normalizeColor = function (color: String): String {
     switch ((color || "").toLowerCase()) {
         case "green":
-            return "rgba(50, 172, 45, 0.97)";
+            return COLORS.GREEN;
         case "orange":
-            return "rgba(237, 129, 40, 0.89)";
+            return COLORS.ORANGE;
         case "red":
-            return "rgba(245, 54, 54, 0.9)";
+            return COLORS.RED;
         default:
             return color;
     }
@@ -120,6 +126,7 @@ const getDecimalsForValue = function (value: number, _decimals: number): Object 
     return result;
 };
 export {
+    COLORS,
     getFields,
     getUniqueFields,
     getDecimalsForValue,

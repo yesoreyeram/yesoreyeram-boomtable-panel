@@ -26,10 +26,18 @@ module.exports = grunt => {
       }
     },
 
+    run : {
+      options: {
+      },
+      tests : {
+        exec: "npm run test"
+      }
+    },
+
     watch: {
       rebuild_all: {
         files: ["src/**/*", "plugin.json", "README.md"],
-        tasks: ["default"],
+        tasks: ["dev"],
         options: {
           debounceDelay: 250,
           spawn: false
@@ -54,12 +62,20 @@ module.exports = grunt => {
 
   });
 
-  grunt.registerTask("default", [
-    "clean",
+  grunt.registerTask("dev", [
+    "ts:build",
     "copy:src_to_dist",
     "copy:pluginDef",
-    "copy:img_to_dist",
+    "copy:img_to_dist"
+  ]);
+
+  grunt.registerTask("default", [
+    "clean",
+    "run:tests",
     "tslint",
-    "ts:build"
+    "ts:build",
+    "copy:src_to_dist",
+    "copy:pluginDef",
+    "copy:img_to_dist"
   ]);
 };
