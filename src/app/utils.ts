@@ -13,7 +13,8 @@ const getUniqueFields = function (collection: any[], field: String): any[] {
     return _.uniq(_.map(collection, d => d[String(field)]));
 };
 const normalizeColor = function (color: String): String {
-    switch ((color || "").toLowerCase()) {
+    color = (color || "").toLowerCase().trim();
+    switch (color) {
         case "green":
             return COLORS.GREEN;
         case "orange":

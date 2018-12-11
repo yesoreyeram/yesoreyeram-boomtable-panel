@@ -28,6 +28,10 @@ describe("Utils Normalize Color",()=>{
             let result = normalizeColor("Green");
             expect(result).toBe(COLORS.GREEN);
         });
+        it("returns Grafana green removing whitespace", () => {
+            let result = normalizeColor("   green ");
+            expect(result).toBe(COLORS.GREEN);
+        });
         it("returns Grafana red", () => {
             let result = normalizeColor("Red");
             expect(result).toBe(COLORS.RED);
