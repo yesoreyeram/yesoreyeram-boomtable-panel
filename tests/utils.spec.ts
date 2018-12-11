@@ -22,8 +22,8 @@ describe("Utils GetDecimalsForValue", () => {
         });
     });
 });
-describe("Utils Normalize Color",()=>{
-    describe("With named color",()=>{
+describe("Utils Normalize Color", () => {
+    describe("With named color", () => {
         it("returns Grafana green", () => {
             let result = normalizeColor("Green");
             expect(result).toBe(COLORS.GREEN);
@@ -37,7 +37,7 @@ describe("Utils Normalize Color",()=>{
             expect(result).toBe(COLORS.RED);
         });
     });
-    describe("With unnamed color",()=>{
+    describe("With unnamed color", () => {
         it("returns white", () => {
             let result = normalizeColor("#fff");
             expect(result).toBe("#fff");
