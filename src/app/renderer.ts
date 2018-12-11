@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 let getTooltipMessage = function(row_name : String, col_name : String, value : Number) : String {
-    return `${"Row Name : " +  row_name + "\nCol Name : " + col_name + "\nValue : " + value}`;
+    return `${"Row Name : " +  row_name + "<br/>Col Name : " + col_name + "<br/>Value : " + value}`;
 };
 let buildHTML = function(elem: any, hide_headers: boolean, hide_first_column: boolean, text_align_table_header: any, cols_found: any, output: any[], text_align_first_column: any, text_align_table_cells: any, default_title_for_rows: any ): void {
     let boomtable_output_body_headers = elem.find("#boomtable_output_body_headers");
@@ -27,12 +27,21 @@ let buildHTML = function(elem: any, hide_headers: boolean, hide_first_column: bo
         _.each(o.cols, c => {
             boomtable_output_body_output += `<td
                 style="padding:4px;background-color:${c.bgColor};text-align:${text_align_table_cells};color:${c.textColor}"
+              >
+                <div
+                data-toggle="tooltip"
+                data-html="true"
+                data-placement="left"
                 title="${c.tooltip}"
-              >${c.displayValue}</td>`;
+                style="padding-left:20px">
+                    ${c.displayValue}
+                </div>
+              </td>`;
         });
         boomtable_output_body_output += "</tr>";
     });
     boomtable_output_body.html(boomtable_output_body_output);
+    elem.find("[data-toggle='tooltip']").tooltip();
 };
 let buildDebugHTML = function(elem: any, dataComputed: any): void {
     let debug_table_holder = elem.find("#boomtable_debug_table_holder");

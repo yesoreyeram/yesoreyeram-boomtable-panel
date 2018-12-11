@@ -92,17 +92,17 @@ Sample graphite series / Influx / Prometheus metrics
     alias(carbon.agents.a.cache.queries, 'Carbon A usage')
     alias(carbon.agents.b.cache.queries, 'Carbon B usage')
 
-patterns and matching metrics
-
-    usage$ --> All the CPU, Memory metrics from prod and dev and also requests_per_sec metrics and also carbon usage
-    cpu.usage$ --> All the CPU metrics
-    free --> All the disk freespace metrics
-    ^prod --> All the prod metrics
-    ^dev.*.usage$ --> All the cpu, mem metrics of dev servers
-    ^prod.*.cpu.usage$ --> All the cpu metrics of prod servers
-    dev.server.my-app-01.sys.cpu.usage --> only dev.server.my-app-01.sys.cpu.usage
-     usage$ --> Carbon usage(Note the space before the pattern)
-    A usage$ --> Only carbon A usage
+| Pattern                                | Matching Metric        |
+| ---------------------------------------|---------------|
+| `usage$`   |   All the CPU, Memory metrics from prod and dev and also requests_per_sec metrics and also carbon usage |
+| `cpu.usage$`   |   All the CPU metrics |
+| `free`   |   All the disk freespace metrics |
+| `^prod`   |   All the prod metrics |
+| `^dev.*.usage$`   |   All the cpu, mem metrics of dev servers |
+| `^prod.*.cpu.usage$`   |   All the cpu metrics of prod servers |
+| `dev.server.my-app-01.sys.cpu.usage`   |   only dev.server.my-app-01.sys.cpu.usage |
+| ` usage$`   |   Carbon usage(Note the space before the pattern) |
+| `A usage$`   |   Only carbon A usage |
 
 Row and Column name guidelines
 ------------------------------
@@ -113,16 +113,17 @@ Sample graphite series / Influx / Prometheus Metrics
 
     prod.server.my-app-01.sys.cpu.usage
 
-Pattern & Output
 
-    _4_                         --> cpu
-    _4_ _5_                     --> cpu usage
-    _4_ 2 _5_                   --> cpu 2 usage
-    _4_ use                     --> cpu use
-    Production _4_ usage        --> Production cpu usage
-    _series_                    --> prod.server.my-app-01.sys.cpu.usage
-    _1_ _1_                     --> server server
-    _4_ __5_                    --> cpu _usage
+| Pattern                                | Output        |
+| ---------------------------------------|---------------|
+| `_4_`                                  | cpu           |
+| `_4_ _5_`                              | cpu usage     |
+| `_4_ 2 _5_`                            | cpu 2 usage   |
+| `_4_ use`                              | cpu use       |
+| `Production _4_ usage`                 | Production cpu usage |
+| `_series_`                             | prod.server.my-app-01.sys.cpu.usage |
+| `_1_ _1_`                              | server server |
+| `_4_ __5_`                             | cpu _usage |
 
 **Note** : If you prefer to change the wrapper from "_" to somthing like "~" or "__", you can do it through the option "Row / Column indentification wrapper" in options tab.
 
@@ -357,6 +358,7 @@ Same as other time series data sources. You need to properly format your legend 
 | 0.6.0   | Patterns Editor UI redesign |
 |         | Text color based on threshold |
 |         | Code refractoring, Typescript Lint error fixes |
+|         | HTML / Bootstrap tooltip |
 |         | Unit tests added |
 |         | Bug fixes (#48,#52,#53) |
 | 0.5.3   | Advanced options implementation |
