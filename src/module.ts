@@ -254,21 +254,18 @@ GrafanaBoomTableCtrl.prototype.render = function () {
             let matched_value = (_.find(dataComputed, (e) => {
               return e.row_name === row_name && e.col_name === col_name;
             }));
-            if (!matched_value) {
-              matched_value = {
-                value: NaN,
-                displayValue: this.panel.no_match_text || "N/A",
-                tooltip : "No Values found"
-              };
-          }
-            o.cols.push({
-              "name": col_name,
-              "value": matched_value.value,
-              "displayValue": matched_value.displayValue || matched_value.value,
-              "tooltip" : renderer.getTooltipMessage( utils.getActualNameWithoutTransformSign(matched_value.actual_row_name), utils.getActualNameWithoutTransformSign(matched_value.actual_col_name), matched_value.valueFormatted),
-              "bgColor": matched_value.bgColor || "transparent",
-              "textColor": matched_value.textColor || "white"
-            });
+            let mycol : any = {};
+            mycol.name = col_name;
+            mycol.value = matched_value ? matched_value.value || NaN : NaN;
+            mycol.displayValue = matched_value ? matched_value.displayValue || matched_value.value || "N/A" : this.panel.no_match_text || "N/A";
+            mycol.bgColor = matched_value && matched_value.bgColor ? matched_value.bgColor : "transparent";
+            mycol.textColor = matched_value && matched_value.textColor ? matched_value.textColor : "white";
+            if (matched_value) {
+              mycol.tooltip = renderer.getTooltipMessage(utils.getActualNameWithoutTransformSign(matched_value.actual_row_name || row_name), utils.getActualNameWithoutTransformSign(matched_value.actual_col_name || col_name), matched_value.valueFormatted || this.panel.no_match_text || "N/A");
+            } else {
+              mycol.tooltip = renderer.getTooltipMessage(utils.getActualNameWithoutTransformSign(row_name), utils.getActualNameWithoutTransformSign(col_name), "NaN" || this.panel.no_match_text || "N/A");
+            }
+            o.cols.push(mycol);
           });
           output.push(o);
         });
