@@ -1,12 +1,12 @@
 ///<reference path="../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
 
 import _ from "lodash";
-import kbn from 'app/core/utils/kbn';
+import kbn from "app/core/utils/kbn";
 import { loadPluginCss, MetricsPanelCtrl } from "app/plugins/sdk";
 import { Pattern, TimeBaseThreshold, ValueNameOption } from "./interfaces/interfaces";
 import { plugin_id, config } from "./app/app";
 import { compute, defaultHandler } from "./app/seriesHandler";
-import * as renderer from "./app/renderer"
+import * as renderer from "./app/renderer";
 import * as utils from "./app/utils";
 
 loadPluginCss({
@@ -30,6 +30,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     if (this.panel.activePatternIndex === -1) {
       this.panel.activePatternIndex = this.panel.patterns.length;
     }
+    if ($sce) { $sce = $sce; }
   }
   onInitEditMode() {
     this.addEditorTab("Patterns", `public/plugins/${plugin_id}/partials/patterns.html`, 2);
@@ -110,12 +111,11 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       to: "0530",
       enabledDays: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
       threshold: "70,90"
-    }
+    };
     if (index === this.panel.patterns.length || index === -1) {
       this.panel.defaultPattern.time_based_thresholds = this.panel.defaultPattern.time_based_thresholds || [];
       this.panel.defaultPattern.time_based_thresholds.push(new_time_based_threshold);
-    }
-    else {
+    } else {
       this.panel.patterns[index].time_based_thresholds = this.panel.patterns[index].time_based_thresholds || [];
       this.panel.patterns[index].time_based_thresholds.push(new_time_based_threshold);
     }
@@ -124,8 +124,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   remove_time_based_thresholds(patternIndex: number, index: number) {
     if (patternIndex === this.panel.patterns.length || patternIndex === -1) {
       this.panel.defaultPattern.time_based_thresholds.splice(index, 1);
-    }
-    else {
+    } else {
       this.panel.patterns[patternIndex].time_based_thresholds.splice(index, 1);
     }
     this.render();
@@ -133,17 +132,15 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   inverseBGColors(index: number) {
     if (index === this.panel.patterns.length || index === -1) {
       this.panel.defaultPattern.bgColors = this.panel.defaultPattern.bgColors.split("|").reverse().join("|");
-    }
-    else {
+    } else {
       this.panel.patterns[index].bgColors = this.panel.patterns[index].bgColors.split("|").reverse().join("|");
     }
     this.render();
   }
-  inverseTextColors(index:number) {
+  inverseTextColors(index: number) {
     if (index === this.panel.patterns.length || index === -1) {
       this.panel.defaultPattern.textColors = this.panel.defaultPattern.textColors.split("|").reverse().join("|");
-    }
-    else {
+    } else {
       this.panel.patterns[index].textColors = this.panel.patterns[index].textColors.split("|").reverse().join("|");
     }
     this.render();
@@ -151,8 +148,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   inverseTransformValues(index: number) {
     if (index === this.panel.patterns.length || index === -1) {
       this.panel.defaultPattern.transform_values = this.panel.defaultPattern.transform_values.split("|").reverse().join("|");
-    }
-    else {
+    } else {
       this.panel.patterns[index].transform_values = this.panel.patterns[index].transform_values.split("|").reverse().join("|");
     }
 
@@ -167,12 +163,14 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.render();
   }
   limitText(text: String, maxlength: number) {
-    if (text.split('').length > maxlength) {
+    if (text.split("").length > maxlength) {
       text = text.substring(0, maxlength - 3) + "...";
     }
     return text;
   }
   link(scope, elem, attrs, ctrl) {
+    if (scope) { scope = scope; }
+    if (attrs) { attrs = attrs; }
     this.ctrl = ctrl;
     this.elem = elem;
   }
@@ -180,9 +178,10 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     let option = _.find(this.panel.currentOptionOverrides, o => o.propertyName === propertyName);
     let default_option = _.find(config.optionOverrides, o => o.propertyName === propertyName);
     if (option) {
-      return option.value
+      return option.value;
+    } else {
+      return default_option.defaultValue;
     }
-    else return default_option.defaultValue;
   }
   setOptionOverride(propertyName: String, value: String, text: String) {
     let newOverrides = [];
@@ -191,7 +190,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
         propertyName,
         value,
         text
-      })
+      });
     }
     if (this.panel.currentOptionOverrides.length > 0) {
       _.each(this.panel.currentOptionOverrides, o => {
@@ -200,10 +199,11 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
             propertyName,
             value,
             text
-          })
+          });
+        } else {
+          newOverrides.push(o);
         }
-        else newOverrides.push(o);
-      })
+      });
     }
     this.panel.currentOptionOverrides = newOverrides;
     this.render();
@@ -213,17 +213,17 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     if (this.panel.currentOptionOverrides.length > 0) {
       _.each(this.panel.currentOptionOverrides, o => {
         if (o.propertyName !== option) {
-          newOverrides.push(o)
+          newOverrides.push(o);
         }
-      })
+      });
     }
     this.panel.currentOptionOverrides = newOverrides;
     this.render();
   }
   adjustPanelHeight(panelHeight: number) {
-    let rootElem = this.elem.find('.table-panel-scroll');
+    let rootElem = this.elem.find(".table-panel-scroll");
     let maxheightofpanel = this.panel.debug_mode ? panelHeight - 71 : panelHeight - 31;
-    rootElem.css({ 'max-height': maxheightofpanel + "px" });
+    rootElem.css({ "max-height": maxheightofpanel + "px" });
   }
 }
 
@@ -233,9 +233,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     let metricsReceived = utils.getFields(this.dataReceived, "target");
     if (metricsReceived.length !== _.uniq(metricsReceived).length) {
       let duplicateKeys = _.uniq(metricsReceived.filter(v => {
-        return metricsReceived.filter(t => t === v).length > 1
+        return metricsReceived.filter(t => t === v).length > 1;
       }));
-      this.panel.error = utils.buildError(`Duplicate keys found`, `Duplicate key values : <br/> ${duplicateKeys.join("<br/> ")}`)
+      this.panel.error = utils.buildError(`Duplicate keys found`, `Duplicate key values : <br/> ${duplicateKeys.join("<br/> ")}`);
     } else {
       this.panel.error = undefined;
       let dataComputed = compute(this.dataReceived.map(defaultHandler.bind(this)), this.panel.defaultPattern || config.panelDefaults.defaultPattern, this.panel.patterns, this.panel.row_col_wrapper);
@@ -252,12 +252,14 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           o.cols = [];
           _.each(_.uniq(cols_found), (col_name) => {
             let matched_value = (_.find(dataComputed, (e) => {
-              return e.row_name === row_name && e.col_name === col_name
+              return e.row_name === row_name && e.col_name === col_name;
             }));
-            if (!matched_value) matched_value = {
-              value: NaN,
-              displayValue: this.panel.no_match_text || "N/A"
-            };
+            if (!matched_value) {
+              matched_value = {
+                value: NaN,
+                displayValue: this.panel.no_match_text || "N/A"
+              };
+          }
             o.cols.push({
               "name": col_name,
               "value": matched_value.value,
@@ -269,13 +271,23 @@ GrafanaBoomTableCtrl.prototype.render = function () {
             });
           });
           output.push(o);
-        })
-        renderer.buildHTML(this.elem, this.getOptionOverride("HIDE_HEADERS") === "true", this.getOptionOverride("HIDE_FIRST_COLUMN") === "true", this.getOptionOverride("TEXT_ALIGN_TABLE_HEADER"), cols_found, output, this.getOptionOverride("TEXT_ALIGN_FIRST_COLUMN"), this.getOptionOverride("TEXT_ALIGN_TABLE_CELLS"), this.panel.default_title_for_rows);
+        });
+        renderer.buildHTML(
+          this.elem,
+          this.getOptionOverride("HIDE_HEADERS") === "true",
+          this.getOptionOverride("HIDE_FIRST_COLUMN") === "true",
+          this.getOptionOverride("TEXT_ALIGN_TABLE_HEADER"),
+          cols_found,
+          output,
+          this.getOptionOverride("TEXT_ALIGN_FIRST_COLUMN"),
+          this.getOptionOverride("TEXT_ALIGN_TABLE_CELLS"),
+          this.panel.default_title_for_rows
+        );
       } else {
         let duplicateKeys = _.uniq(keys_found.filter(v => {
-          return keys_found.filter(t => t === v).length > 1
+          return keys_found.filter(t => t === v).length > 1;
         }));
-        this.panel.error = utils.buildError(`Duplicate keys found`, `Duplicate key values : <br/> ${duplicateKeys.join("<br/> ")}`)
+        this.panel.error = utils.buildError(`Duplicate keys found`, `Duplicate key values : <br/> ${duplicateKeys.join("<br/> ")}`);
       }
       renderer.buildDebugHTML(this.elem, dataComputed);
     }

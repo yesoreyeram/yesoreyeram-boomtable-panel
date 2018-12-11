@@ -1,65 +1,55 @@
 ///<reference path="../../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
 
 import _ from "lodash";
-import { Config, Pattern } from "../interfaces/interfaces"
+import { Config, Pattern } from "../interfaces/interfaces";
 
-let buildOptionOverride = function (o : any[], i: Number) {
+let buildOptionOverride = function (o: any[], i: Number) {
     return {
         text: String(o[0]),
         propertyName: String(o[1]),
         index: i,
         defaultValue: String(o[3]),
-        values: [].concat(o[2]).map(value => { return String[value] }),
+        values: [].concat(o[2]).map(value => { return String[value]; }),
         submenu: [].concat(o[2]).map(value => { return { text: String(value), value: value }; })
-    }
-}
+    };
+};
 
 const plugin_id: String = "yesoreyeram-boomtable-panel";
 const defaultPattern: Pattern = {
     name: undefined,
     pattern: undefined,
-    disabled : false,
-    
+    disabled: false,
     row_name: "_series_",
     col_name: "Value",
     delimiter: ".",
-    
     valueName: "avg",
     format: "none",
     decimals: 2,
-    
     thresholds: "70,90",
-    
     enable_bgColor: false,
     bgColors: "green|orange|red",
     enable_bgColor_overrides: false,
     bgColors_overrides: "0->green|2->red|1->yellow",
-    
     enable_TextColors: false,
     textColors: "white|white|white",
     enable_TextColor_overrides: false,
     textColors_overrides: "0->white|2->white|1->white",
-
     enable_transform: false,
     transform_values: "_value_|_value_|_value_",
     enable_transform_overrides: false,
     transform_values_overrides: "0->down|1->up",
-
     enable_time_based_thresholds: false,
     time_based_thresholds: [],
-    
     null_color: "darkred",
     null_text_color: "white",
     null_value: "No data",
-    
     enable_clickable_cells: false,
     clickable_cells_link: "",
-    
     filter: {
         value_below: "",
         value_above: ""
     }
-}
+};
 const config: Config = {
     plugin_id: plugin_id,
     debug_mode: false,
@@ -71,7 +61,7 @@ const config: Config = {
         defaultPattern: defaultPattern,
         activePatternIndex: -1,
         row_col_wrapper: "_",
-        no_match_text : "N/A",
+        no_match_text: "N/A",
         default_title_for_rows: "Metric"
     },
     valueNameOptions: [{
@@ -106,4 +96,4 @@ config.optionOverrides.push(buildOptionOverride(["Hide first column", "HIDE_FIRS
 export {
     plugin_id,
     config
-}
+};

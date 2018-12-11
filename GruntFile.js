@@ -1,11 +1,9 @@
 module.exports = grunt => {
+
   require("load-grunt-tasks")(grunt);
 
-  grunt.loadNpmTasks("grunt-execute");
-  grunt.loadNpmTasks("grunt-contrib-clean");
-  grunt.loadNpmTasks('grunt-typescript');
-
   grunt.initConfig({
+
     clean: ["dist"],
 
     copy: {
@@ -33,26 +31,26 @@ module.exports = grunt => {
         files: ["src/**/*", "plugin.json", "README.md"],
         tasks: ["default"],
         options: {
+          debounceDelay: 250,
           spawn: false
         }
       }
     },
 
-    typescript: {
+    tslint: {
+      options: {
+        configuration: "tslint.json"
+      },
+      files: {
+        src: ['src/**/*.ts'],
+      },
+    },
+
+    ts: {
       build: {
-        src: ['src/**/*.ts', '!**/*.d.ts'],
-        dest: 'dist/',
-        options: {
-          module: 'system',
-          target: 'es5',
-          declaration: false,
-          emitDecoratorMetadata: true,
-          experimentalDecorators: true,
-          sourceMap: true,
-          noImplicitAny: false,
-        }
+        tsconfig: './tsconfig.json'
       }
-    }
+    },
 
   });
 
@@ -61,6 +59,7 @@ module.exports = grunt => {
     "copy:src_to_dist",
     "copy:pluginDef",
     "copy:img_to_dist",
-    "typescript"
+    "tslint",
+    "ts:build"
   ]);
 };
