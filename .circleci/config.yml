@@ -10,8 +10,7 @@ jobs:
           name : Test
           command : |
             npm install
-            npm install -g grunt-cli
-            grunt test
+            npm run test
       - save_cache:
           paths:
             - node_modules
@@ -30,8 +29,7 @@ jobs:
           name : Build
           command : |
             npm install
-            npm install -g grunt-cli
-            grunt
+            npm run build
       - save_cache:
           paths:
             - node_modules

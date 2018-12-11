@@ -4,6 +4,7 @@
   "description": "Boom table panel for Graphite, InfluxDB, Prometheus",
   "main": "dist/module.js",
   "scripts": {
+    "build": "grunt",
     "test": "jest"
   },
   "repository": {
