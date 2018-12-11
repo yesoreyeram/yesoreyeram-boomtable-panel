@@ -26,7 +26,7 @@ describe("Utils Normalize Color",()=>{
     describe("With named color",()=>{
         it("returns Grafana green", () => {
             let result = normalizeColor("Green");
-            expect(result).toBe(COLORS.GREEN);
+            expect(result).toBe(COLORS.GREEN + " ");
         });
         it("returns Grafana red", () => {
             let result = normalizeColor("Red");
