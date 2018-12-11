@@ -1,12 +1,12 @@
 import _ from "lodash";
 
-const getFields = function (collection, field): any[] {
-    return _.map(collection, d => d[field]);
+const getFields = function (collection : any[], field : String): any[] {
+    return _.map(collection, d => d[String(field)]);
 };
-const getUniqueFields = function (collection, field): any[] {
-    return _.uniq(_.map(collection, d => d[field]));
+const getUniqueFields = function (collection : any[], field : String): any[] {
+    return _.uniq(_.map(collection, d => d[String(field)]));
 };
-const normalizeColor = function (color): String {
+const normalizeColor = function (color : String): String {
     switch ((color || "").toLowerCase()) {
         case "green":
             return "rgba(50, 172, 45, 0.97)";
@@ -18,7 +18,7 @@ const normalizeColor = function (color): String {
             return color;
     }
 }
-const getActualNameWithoutTransformSign = function (value): String {
+const getActualNameWithoutTransformSign = function (value:String): String {
     return (value + "")
         .split(" ")
         .map(a => {
@@ -32,13 +32,13 @@ const getActualNameWithoutTransformSign = function (value): String {
         })
         .join(" ");
 }
-const buildError = function (errorTitle, errorMessage): Error {
+const buildError = function (errorTitle :String, errorMessage: String): Error {
     let err = new Error();
-    err.name = errorTitle;
-    err.message = errorMessage;
+    err.name = String(errorTitle);
+    err.message = String(errorMessage);
     return err;
 }
-const replaceFontAwesomeIcons = function (value): String {
+const replaceFontAwesomeIcons = function (value: String): String {
     if (!value) return value;
     return (value + "")
         .split(" ")
@@ -53,7 +53,7 @@ const replaceFontAwesomeIcons = function (value): String {
         })
         .join(" ");
 }
-const replaceWithImages = function (value): String {
+const replaceWithImages = function (value : String): String {
     if (!value) return value;
     return (value + "")
         .split(" ")
@@ -70,7 +70,7 @@ const replaceWithImages = function (value): String {
         })
         .join(" ");
 }
-const getDecimalsForValue = function (value, _decimals): Object {
+const getDecimalsForValue = function (value : number, _decimals : number): Object {
     if (_.isNumber(+_decimals)) {
         let o: Object = {
             decimals: _decimals,

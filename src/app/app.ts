@@ -3,7 +3,7 @@
 import _ from "lodash";
 import { Config, Pattern } from "../interfaces/interfaces"
 
-let buildOptionOverride = function (o, i) {
+let buildOptionOverride = function (o : any[], i: Number) {
     return {
         text: String(o[0]),
         propertyName: String(o[1]),
@@ -18,6 +18,7 @@ const plugin_id: String = "yesoreyeram-boomtable-panel";
 const defaultPattern: Pattern = {
     name: undefined,
     pattern: undefined,
+    disabled : false,
     
     row_name: "_series_",
     col_name: "Value",
@@ -48,6 +49,7 @@ const defaultPattern: Pattern = {
     time_based_thresholds: [],
     
     null_color: "darkred",
+    null_text_color: "white",
     null_value: "No data",
     
     enable_clickable_cells: false,

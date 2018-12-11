@@ -8,10 +8,10 @@ System.register(["lodash"], function(exports_1) {
             }],
         execute: function() {
             getFields = function (collection, field) {
-                return lodash_1.default.map(collection, function (d) { return d[field]; });
+                return lodash_1.default.map(collection, function (d) { return d[String(field)]; });
             };
             getUniqueFields = function (collection, field) {
-                return lodash_1.default.uniq(lodash_1.default.map(collection, function (d) { return d[field]; }));
+                return lodash_1.default.uniq(lodash_1.default.map(collection, function (d) { return d[String(field)]; }));
             };
             normalizeColor = function (color) {
                 switch ((color || "").toLowerCase()) {
@@ -41,8 +41,8 @@ System.register(["lodash"], function(exports_1) {
             };
             buildError = function (errorTitle, errorMessage) {
                 var err = new Error();
-                err.name = errorTitle;
-                err.message = errorMessage;
+                err.name = String(errorTitle);
+                err.message = String(errorMessage);
                 return err;
             };
             replaceFontAwesomeIcons = function (value) {

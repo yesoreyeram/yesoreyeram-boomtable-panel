@@ -18,6 +18,7 @@ System.register([], function(exports_1) {
             defaultPattern = {
                 name: undefined,
                 pattern: undefined,
+                disabled: false,
                 row_name: "_series_",
                 col_name: "Value",
                 delimiter: ".",
@@ -40,6 +41,7 @@ System.register([], function(exports_1) {
                 enable_time_based_thresholds: false,
                 time_based_thresholds: [],
                 null_color: "darkred",
+                null_text_color: "white",
                 null_value: "No data",
                 enable_clickable_cells: false,
                 clickable_cells_link: "",

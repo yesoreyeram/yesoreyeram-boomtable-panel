@@ -43,6 +43,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     let newPattern: Pattern = {
       name: "New Pattern",
       pattern: "^server.*cpu$",
+      disabled: false,
       delimiter: ".",
       valueName: "avg",
       row_name: this.panel.row_col_wrapper + "0" + this.panel.row_col_wrapper,
@@ -65,6 +66,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       decimals: 2,
       format: "none",
       null_color: "darkred",
+      null_text_color: "white",
       null_value: "No data",
       enable_clickable_cells: false,
       clickable_cells_link: "",

@@ -1,7 +1,8 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-      "target": "ES5",
+      "lib": ["es6"],
+      "target": "es5",
       "module": "system",
       "sourceMap": true,
       "declaration": false,

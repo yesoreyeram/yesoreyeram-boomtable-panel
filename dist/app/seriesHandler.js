@@ -1,7 +1,7 @@
 ///<reference path="../../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
 System.register(["lodash", 'app/core/utils/kbn', "app/core/time_series2", "./utils"], function(exports_1) {
     var lodash_1, kbn_1, time_series2_1, utils;
-    var ___transformValue, ___computeBgColor, ___computetextColor, defaultHandler, computeServerTimestamp, assignPattern, assignRowName, assignColName, assignDecimals, transformValue, transformValueOverrides, filterValues, assignBGColors, applyBGColorOverrides, applyFontAwesomeIcons, applyImageTransform, assignClickableLinks, assignRowColKey, assignThresholds, assignValue, compute;
+    var ___transformValue, ___computeColorFromThresholds, defaultHandler, computeServerTimestamp, assignPattern, assignRowName, assignColName, assignDecimals, transformValue, transformValueOverrides, assignBGColors, assignTextColors, applyBGColorOverrides, applyTextColorOverrides, applyFontAwesomeIcons, applyImageTransform, assignClickableLinks, assignRowColKey, assignThresholds, assignValue, filterValues, getFilteredSeries, compute;
     return {
         setters:[
             function (lodash_1_1) {
@@ -26,35 +26,19 @@ System.register(["lodash", 'app/core/utils/kbn', "app/core/time_series2", "./uti
                     }
                     for (var i = thresholds.length; i > 0; i--) {
                         if (value >= thresholds[i - 1]) {
-                            return transform_values[i].replace(new RegExp("_value_", "g"), displayValue).replace(new RegExp("_row_name_", "g"), row_name).replace(new RegExp("_col_name_", "g"), col_name);
+                            return transform_values[i].replace(new RegExp("_value_", "g"), String(displayValue)).replace(new RegExp("_row_name_", "g"), String(row_name)).replace(new RegExp("_col_name_", "g"), String(col_name));
                         }
                     }
-                    return lodash_1.default.first(transform_values).replace(new RegExp("_value_", "g"), displayValue).replace(new RegExp("_row_name_", "g"), row_name).replace(new RegExp("_col_name_", "g"), col_name);
+                    return lodash_1.default.first(transform_values).replace(new RegExp("_value_", "g"), String(displayValue)).replace(new RegExp("_row_name_", "g"), String(row_name)).replace(new RegExp("_col_name_", "g"), String(col_name));
                 }
-                return t;
+                return String(t);
             };
-            ___computeBgColor = function (thresholds, bgColors, value) {
-                var c = "transparent";
+            ___computeColorFromThresholds = function (thresholds, bgColors, value, defaultColor) {
+                var c = defaultColor;
                 if (thresholds && bgColors && typeof value === "number" && thresholds.length + 1 <= bgColors.length) {
                     bgColors = lodash_1.default.dropRight(bgColors, bgColors.length - thresholds.length - 1);
                     if (bgColors[bgColors.length - 1] === "") {
-                        bgColors[bgColors.length - 1] = "transparent";
-                    }
-                    for (var i = thresholds.length; i > 0; i--) {
-                        if (value >= thresholds[i - 1]) {
-                            return utils.normalizeColor(bgColors[i]);
-                        }
-                    }
-                    return utils.normalizeColor(lodash_1.default.first(bgColors));
-                }
-                return c;
-            };
-            ___computetextColor = function (thresholds, bgColors, value) {
-                var c = "white";
-                if (thresholds && bgColors && typeof value === "number" && thresholds.length + 1 <= bgColors.length) {
-                    bgColors = lodash_1.default.dropRight(bgColors, bgColors.length - thresholds.length - 1);
-                    if (bgColors[bgColors.length - 1] === "") {
-                        bgColors[bgColors.length - 1] = "white";
+                        bgColors[bgColors.length - 1] = defaultColor;
                     }
                     for (var i = thresholds.length; i > 0; i--) {
                         if (value >= thresholds[i - 1]) {
@@ -92,19 +76,19 @@ System.register(["lodash", 'app/core/utils/kbn', "app/core/time_series2", "./uti
                 return series;
             };
             assignRowName = function (series, defaultPattern, row_col_wrapper) {
-                series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce(function (r, it, i) {
-                    return r.replace(new RegExp(row_col_wrapper + i + row_col_wrapper, "g"), it);
-                }, series.pattern.row_name.replace(new RegExp(row_col_wrapper + "series" + row_col_wrapper, "g"), series.alias) || defaultPattern.row_name.replace(new RegExp(row_col_wrapper + "series" + row_col_wrapper, "g"), series.alias));
-                if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
+                series.row_name = series.alias.split(String(series.pattern.delimiter) || ".").reduce(function (r, it, i) {
+                    return r.replace(new RegExp(String(row_col_wrapper) + i + String(row_col_wrapper), "g"), it);
+                }, series.pattern.row_name.replace(new RegExp(row_col_wrapper + "series" + row_col_wrapper, "g"), String(series.alias)) || defaultPattern.row_name.replace(new RegExp(row_col_wrapper + "series" + row_col_wrapper, "g"), String(series.alias)));
+                if (series.alias.split(String(series.pattern.delimiter) || ".").length === 1) {
                     series.row_name = series.alias;
                 }
                 return series;
             };
             assignColName = function (series, defaultPattern, row_col_wrapper) {
-                series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce(function (r, it, i) {
-                    return r.replace(new RegExp(row_col_wrapper + i + row_col_wrapper, "g"), it);
+                series.col_name = series.alias.split(String(series.pattern.delimiter) || ".").reduce(function (r, it, i) {
+                    return r.replace(new RegExp(String(row_col_wrapper) + i + String(row_col_wrapper), "g"), it);
                 }, series.pattern.col_name || defaultPattern.col_name);
-                if (series.alias.split(series.pattern.delimiter || ".").length === 1 || series.row_name === series.alias) {
+                if (series.alias.split(String(series.pattern.delimiter) || ".").length === 1 || series.row_name === series.alias) {
                     series.col_name = series.pattern.col_name || "Value";
                 }
                 return series;
@@ -129,58 +113,47 @@ System.register(["lodash", 'app/core/utils/kbn', "app/core/time_series2", "./uti
                 series.enable_transform_overrides = series.pattern.enable_transform_overrides;
                 series.transform_values_overrides = series.pattern.transform_values_overrides || "";
                 if (series.enable_transform_overrides && series.transform_values_overrides !== "") {
-                    var _transform_values_overrides = series.transform_values_overrides.split("|").filter(function (con) { return con.indexOf("->"); }).map(function (con) { return con.split("->"); }).filter(function (con) { return +(con[0]) === series.value; }).map(function (con) { return con[1]; });
+                    var _transform_values_overrides = series.transform_values_overrides.split("|").filter(function (con) { return con.indexOf("->") > -1; }).map(function (con) { return con.split("->"); }).filter(function (con) { return +(con[0]) === series.value; }).map(function (con) { return con[1]; });
                     if (_transform_values_overrides.length > 0 && _transform_values_overrides[0] !== "") {
-                        series.displayValue = ("" + _transform_values_overrides[0]).trim().replace(new RegExp("_value_", "g"), series.displayValue).replace(new RegExp("_row_name_", "g"), series.row_name).replace(new RegExp("_col_name_", "g"), series.col_name);
+                        series.displayValue = ("" + _transform_values_overrides[0]).trim().replace(new RegExp("_value_", "g"), String(series.displayValue)).replace(new RegExp("_row_name_", "g"), String(series.row_name)).replace(new RegExp("_col_name_", "g"), String(series.col_name));
                     }
                 }
                 return series;
             };
-            filterValues = function (series) {
-                if (!series.pattern.filter) {
-                    series.pattern.filter = {};
-                    series.pattern.filter.value_below = "";
-                    series.pattern.filter.value_above = "";
-                }
-                if (series.pattern && series.pattern.filter && (series.pattern.filter.value_below !== "" || series.pattern.filter.value_above !== "")) {
-                    if (series.pattern.filter.value_below !== "" && series.value < +(series.pattern.filter.value_below)) {
-                        return false;
-                    }
-                    if (series.pattern.filter.value_above !== "" && series.value > +(series.pattern.filter.value_above)) {
-                        return false;
-                    }
-                    return true;
-                }
-                else {
-                    return true;
-                }
-                ;
-            };
             assignBGColors = function (series, defaultPattern) {
                 series.enable_bgColor = series.pattern.enable_bgColor;
                 series.bgColors = (series.pattern.bgColors || defaultPattern.bgColors || "").split("|");
-                series.bgColor = series.enable_bgColor === true ? ___computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
+                series.bgColor = series.enable_bgColor === true ? ___computeColorFromThresholds(series.thresholds, series.bgColors, series.value, "transparent") : "transparent";
                 if (series.displayValue === (series.pattern.null_value || defaultPattern.null_value || "Null")) {
-                    series.bgColor = series.pattern.null_color || defaultPattern.null_color;
+                    series.bgColor = series.pattern.null_color || defaultPattern.null_color || "transparent";
                 }
+                return series;
+            };
+            assignTextColors = function (series, defaultPattern) {
                 series.enable_TextColors = series.pattern.enable_TextColors;
                 series.textColors = (series.pattern.textColors || defaultPattern.textColors || "").split("|");
-                series.textColor = series.enable_TextColors === true ? ___computetextColor(series.thresholds, series.textColors, series.value) : "white";
+                series.textColor = series.enable_TextColors === true ? ___computeColorFromThresholds(series.thresholds, series.textColors, series.value, "white") : "white";
+                if (series.displayValue === (series.pattern.null_value || defaultPattern.null_value || "Null")) {
+                    series.textColor = series.pattern.null_text_color || defaultPattern.null_text_color || "white";
+                }
                 return series;
             };
             applyBGColorOverrides = function (series) {
                 series.enable_bgColor_overrides = series.pattern.enable_bgColor_overrides;
                 series.bgColors_overrides = series.pattern.bgColors_overrides || "";
                 if (series.enable_bgColor_overrides && series.bgColors_overrides !== "") {
-                    var _bgColors_overrides = series.bgColors_overrides.split("|").filter(function (con) { return con.indexOf("->"); }).map(function (con) { return con.split("->"); }).filter(function (con) { return +(con[0]) === series.value; }).map(function (con) { return con[1]; });
+                    var _bgColors_overrides = series.bgColors_overrides.split("|").filter(function (con) { return con.indexOf("->") > -1; }).map(function (con) { return con.split("->"); }).filter(function (con) { return +(con[0]) === series.value; }).map(function (con) { return con[1]; });
                     if (_bgColors_overrides.length > 0 && _bgColors_overrides[0] !== "") {
                         series.bgColor = utils.normalizeColor(("" + _bgColors_overrides[0]).trim());
                     }
                 }
+                return series;
+            };
+            applyTextColorOverrides = function (series) {
                 series.enable_TextColor_overrides = series.pattern.enable_TextColor_overrides;
                 series.textColors_overrides = series.pattern.textColors_overrides || "";
                 if (series.enable_TextColor_overrides && series.textColors_overrides !== "") {
-                    var _textColors_overrides = series.textColors_overrides.split("|").filter(function (con) { return con.indexOf("->"); }).map(function (con) { return con.split("->"); }).filter(function (con) { return +(con[0]) === series.value; }).map(function (con) { return con[1]; });
+                    var _textColors_overrides = series.textColors_overrides.split("|").filter(function (con) { return con.indexOf("->") > -1; }).map(function (con) { return con.split("->"); }).filter(function (con) { return +(con[0]) === series.value; }).map(function (con) { return con[1]; });
                     if (_textColors_overrides.length > 0 && _textColors_overrides[0] !== "") {
                         series.textColor = utils.normalizeColor(("" + _textColors_overrides[0]).trim());
                     }
@@ -242,9 +215,9 @@ System.register(["lodash", 'app/core/utils/kbn', "app/core/time_series2", "./uti
             };
             assignValue = function (series, defaultPattern) {
                 if (series.stats) {
-                    series.value = series.stats[series.pattern.valueName || defaultPattern.valueName];
-                    var decimalInfo = utils.getDecimalsForValue(series.value, series.decimals);
-                    var formatFunc = kbn_1.default.valueFormats[series.pattern.format || defaultPattern.format];
+                    series.value = series.stats[String(series.pattern.valueName) || String(defaultPattern.valueName)];
+                    var decimalInfo = utils.getDecimalsForValue(series.value, +(series.decimals));
+                    var formatFunc = kbn_1.default.valueFormats[String(series.pattern.format) || String(defaultPattern.format)];
                     if (series.value === null) {
                         series.displayValue = series.pattern.null_value || defaultPattern.null_value || "Null";
                     }
@@ -259,23 +232,55 @@ System.register(["lodash", 'app/core/utils/kbn', "app/core/time_series2", "./uti
                 }
                 return series;
             };
+            filterValues = function (series) {
+                if (!series.pattern.filter) {
+                    series.pattern.filter = {
+                        value_below: "",
+                        value_above: ""
+                    };
+                }
+                if (series.pattern && series.pattern.filter && (series.pattern.filter.value_below !== "" || series.pattern.filter.value_above !== "")) {
+                    if (series.pattern.filter.value_below !== "" && series.value < +(series.pattern.filter.value_below)) {
+                        return false;
+                    }
+                    if (series.pattern.filter.value_above !== "" && series.value > +(series.pattern.filter.value_above)) {
+                        return false;
+                    }
+                    return true;
+                }
+                else {
+                    return true;
+                }
+                ;
+            };
+            getFilteredSeries = function (seriesArray) {
+                var newSeries = [];
+                lodash_1.default.each(seriesArray, function (series) {
+                    if (filterValues(series)) {
+                        newSeries.push(series);
+                    }
+                });
+                return newSeries;
+            };
             compute = function (dataComputed, defaultPattern, patterns, row_col_wrapper) {
-                dataComputed = dataComputed.map(function (series) { return computeServerTimestamp(series); })
-                    .map(function (series) { return assignPattern(series, patterns, defaultPattern); })
-                    .map(function (series) { return assignDecimals(series, defaultPattern); })
-                    .map(function (series) { return assignValue(series, defaultPattern); })
-                    .filter(function (series) { return filterValues(series); })
-                    .map(function (series) { return assignRowName(series, defaultPattern, row_col_wrapper); })
-                    .map(function (series) { return assignColName(series, defaultPattern, row_col_wrapper); })
-                    .map(function (series) { return assignRowColKey(series); })
-                    .map(function (series) { return assignThresholds(series, defaultPattern); })
-                    .map(function (series) { return assignBGColors(series, defaultPattern); })
-                    .map(function (series) { return applyBGColorOverrides(series); })
-                    .map(function (series) { return transformValue(series, defaultPattern); })
-                    .map(function (series) { return transformValueOverrides(series); })
-                    .map(function (series) { return applyFontAwesomeIcons(series); })
-                    .map(function (series) { return applyImageTransform(series); })
-                    .map(function (series) { return assignClickableLinks(series); });
+                dataComputed = dataComputed.map(function (series) { return computeServerTimestamp(series); });
+                dataComputed = dataComputed.map(function (series) { return assignPattern(series, patterns, defaultPattern); });
+                dataComputed = dataComputed.map(function (series) { return assignDecimals(series, defaultPattern); });
+                dataComputed = dataComputed.map(function (series) { return assignValue(series, defaultPattern); });
+                dataComputed = getFilteredSeries(dataComputed);
+                dataComputed = dataComputed.map(function (series) { return assignRowName(series, defaultPattern, row_col_wrapper); });
+                dataComputed = dataComputed.map(function (series) { return assignColName(series, defaultPattern, row_col_wrapper); });
+                dataComputed = dataComputed.map(function (series) { return assignRowColKey(series); });
+                dataComputed = dataComputed.map(function (series) { return assignThresholds(series, defaultPattern); });
+                dataComputed = dataComputed.map(function (series) { return assignBGColors(series, defaultPattern); });
+                dataComputed = dataComputed.map(function (series) { return applyBGColorOverrides(series); });
+                dataComputed = dataComputed.map(function (series) { return assignTextColors(series, defaultPattern); });
+                dataComputed = dataComputed.map(function (series) { return applyTextColorOverrides(series); });
+                dataComputed = dataComputed.map(function (series) { return transformValue(series, defaultPattern); });
+                dataComputed = dataComputed.map(function (series) { return transformValueOverrides(series); });
+                dataComputed = dataComputed.map(function (series) { return applyFontAwesomeIcons(series); });
+                dataComputed = dataComputed.map(function (series) { return applyImageTransform(series); });
+                dataComputed = dataComputed.map(function (series) { return assignClickableLinks(series); });
                 return dataComputed;
             };
             exports_1("compute", compute);
