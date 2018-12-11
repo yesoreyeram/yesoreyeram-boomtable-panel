@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 const COLORS = {
-    GREEN : "rgba(50, 172, 45, 0.97) ",
+    GREEN : "rgba(50, 172, 45, 0.97)",
     ORANGE : "rgba(237, 129, 40, 0.89)",
     RED : "rgba(245, 54, 54, 0.9)"
 };
