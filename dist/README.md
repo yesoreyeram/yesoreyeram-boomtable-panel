@@ -358,7 +358,7 @@ Same as other time series data sources. You need to properly format your legend 
 |         | Text color based on threshold |
 |         | Code refractoring, Typescript Lint error fixes |
 |         | Unit tests added |
-|         | Bug fixes (#53) |
+|         | Bug fixes (#48,#52,#53) |
 | 0.5.3   | Advanced options implementation |
 |         | BREAKING : Hide first column, Hide header options are moved to advanced options |
 | 0.5.1   | Images as values based on thresholds |
