@@ -49,6 +49,10 @@ export interface OptionOverride {
         value: String
     }[]
 }
+export interface ValueNameOption {
+    value: String,
+    text: String
+}
 export interface PanelDefault {
     currentOptionOverrides: {
         propertyName: String,
@@ -62,15 +66,11 @@ export interface PanelDefault {
     no_match_text: String,
     default_title_for_rows: String
 }
-export interface ValueNameOption {
-    value: String,
-    text: String
-}
 export interface Config {
     plugin_id: String,
     debug_mode: Boolean,
     error: Error,
     optionOverrides: OptionOverride[],
-    panelDefaults: PanelDefault,
-    valueNameOptions: ValueNameOption[]
+    valueNameOptions: ValueNameOption[],
+    panelDefaults: PanelDefault
 }
