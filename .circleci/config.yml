@@ -1,20 +1,5 @@
 version: 2
 jobs:
-  test:
-    docker:
-      - image: circleci/node:7.10
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - run: 
-          name : Test
-          command : |
-            npm install
-            npm run test
-      - save_cache:
-          paths:
-            - node_modules
-          key: boomtable-dependencies-{{ checksum "package.json" }}
   build:
     docker:
       - image: circleci/node:7.10
