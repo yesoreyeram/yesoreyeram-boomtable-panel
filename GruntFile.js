@@ -69,6 +69,11 @@ module.exports = grunt => {
     "copy:img_to_dist"
   ]);
 
+  grunt.registerTask("test", [
+    "run:tests",
+    "tslint",
+  ]);
+
   grunt.registerTask("default", [
     "clean",
     "run:tests",
