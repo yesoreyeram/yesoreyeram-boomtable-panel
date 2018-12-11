@@ -257,15 +257,15 @@ GrafanaBoomTableCtrl.prototype.render = function () {
             if (!matched_value) {
               matched_value = {
                 value: NaN,
-                displayValue: this.panel.no_match_text || "N/A"
+                displayValue: this.panel.no_match_text || "N/A",
+                tooltip : "No Values found"
               };
           }
             o.cols.push({
               "name": col_name,
               "value": matched_value.value,
-              "actual_col_name": matched_value.actual_col_name,
-              "actual_row_name": matched_value.actual_row_name,
               "displayValue": matched_value.displayValue || matched_value.value,
+              "tooltip" : renderer.getTooltipMessage( utils.getActualNameWithoutTransformSign(matched_value.actual_row_name), utils.getActualNameWithoutTransformSign(matched_value.actual_col_name), matched_value.valueFormatted),
               "bgColor": matched_value.bgColor || "transparent",
               "textColor": matched_value.textColor || "white"
             });

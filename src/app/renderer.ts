@@ -1,6 +1,8 @@
 import _ from "lodash";
-import * as utils from "./utils";
 
+let getTooltipMessage = function(row_name : String, col_name : String, value : Number) : String {
+    return `${"Row Name : " +  row_name + "\nCol Name : " + col_name + "\nValue : " + value}`;
+};
 let buildHTML = function(elem: any, hide_headers: boolean, hide_first_column: boolean, text_align_table_header: any, cols_found: any, output: any[], text_align_first_column: any, text_align_table_cells: any, default_title_for_rows: any ): void {
     let boomtable_output_body_headers = elem.find("#boomtable_output_body_headers");
     let boomtable_output_body_headers_output = `<br/>`;
@@ -25,7 +27,7 @@ let buildHTML = function(elem: any, hide_headers: boolean, hide_first_column: bo
         _.each(o.cols, c => {
             boomtable_output_body_output += `<td
                 style="padding:4px;background-color:${c.bgColor};text-align:${text_align_table_cells};color:${c.textColor}"
-                title="${"Row Name : " + utils.getActualNameWithoutTransformSign(c.actual_row_name) + "\nCol Name : " + utils.getActualNameWithoutTransformSign(c.actual_col_name) + "\nValue : " + c.value}"
+                title="${c.tooltip}"
               >${c.displayValue}</td>`;
         });
         boomtable_output_body_output += "</tr>";
@@ -67,6 +69,7 @@ let buildDebugHTML = function(elem: any, dataComputed: any): void {
     debug_table_holder.html(debug_output);
 };
 export {
+    getTooltipMessage,
     buildHTML,
     buildDebugHTML
 };
