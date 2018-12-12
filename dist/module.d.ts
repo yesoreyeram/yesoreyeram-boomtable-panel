@@ -4,6 +4,7 @@ declare class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     static templateUrl: string;
     ctrl: any;
     elem: any;
+    $sce: any;
     dataReceived: any;
     valueNameOptions: ValueNameOption[];
     unitFormats: any;

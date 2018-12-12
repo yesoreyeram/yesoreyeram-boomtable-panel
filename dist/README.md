@@ -266,6 +266,16 @@ Note : If the row_name / col_name contains font awesome keywords like `_fa-circl
 
 Example : `https://mysite.com/_row_name_/_col_name_/?foo=bar`
 
+
+Tooltip
+-------
+
+Default tooltip is `Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_`
+
+If left blank, default tooltip will be used.
+
+Tooltip can be disabled by specifying just `_` as tooltip template. 
+
 Filter
 ------
 

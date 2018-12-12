@@ -18,6 +18,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   static templateUrl: string = "partials/module.html";
   ctrl: any;
   elem: any;
+  $sce: any;
   dataReceived: any;
   valueNameOptions: ValueNameOption[] = config.valueNameOptions;
   unitFormats: any = kbn.getUnitFormats();
@@ -30,7 +31,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     if (this.panel.activePatternIndex === -1) {
       this.panel.activePatternIndex = this.panel.patterns.length;
     }
-    if ($sce) { $sce = $sce; }
+    this.$sce = $sce;
   }
   onInitEditMode() {
     this.addEditorTab("Patterns", `public/plugins/${plugin_id}/partials/patterns.html`, 2);
@@ -277,6 +278,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
                 "NaN" || this.panel.no_match_text || "N/A"
               );
             }
+            mycol.tooltip = this.$sce.trustAsHtml(mycol.tooltip);
             o.cols.push(mycol);
           });
           output.push(o);

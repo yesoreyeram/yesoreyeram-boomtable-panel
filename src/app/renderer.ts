@@ -5,9 +5,9 @@ let getTooltipMessage = function(template: String, row_name : String, col_name :
         return "";
     }
     let tooltip = template;
-    tooltip = tooltip.replace("_row_name_", String(row_name));
-    tooltip = tooltip.replace("_col_name_", String(col_name));
-    tooltip = tooltip.replace("_value_", String(value));
+    tooltip = tooltip.replace(new RegExp("_row_name_", "g"), String(row_name));
+    tooltip = tooltip.replace(new RegExp("_col_name_", "g"), String(col_name));
+    tooltip = tooltip.replace(new RegExp("_value_", "g"), String(value));
     return tooltip;
 };
 let buildHTML = function(elem: any, hide_headers: boolean, hide_first_column: boolean, text_align_table_header: any, cols_found: any, output: any[], text_align_first_column: any, text_align_table_cells: any, default_title_for_rows: any ): void {
@@ -40,7 +40,7 @@ let buildHTML = function(elem: any, hide_headers: boolean, hide_first_column: bo
                 data-html="true"
                 data-placement="left"
                 title="${c.tooltip}"
-                style="padding-left:20px">
+                style="padding-left:10px">
                     ${c.displayValue}
                 </div>
               </td>`;
