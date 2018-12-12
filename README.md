@@ -93,7 +93,7 @@ Sample graphite series / Influx / Prometheus metrics
     alias(carbon.agents.b.cache.queries, 'Carbon B usage')
 
 | Pattern                                | Matching Metric        |
-| ---------------------------------------|---------------|
+| ---------------------------------------|------------------------|
 | `usage$`   |   All the CPU, Memory metrics from prod and dev and also requests_per_sec metrics and also carbon usage |
 | `cpu.usage$`   |   All the CPU metrics |
 | `free`   |   All the disk freespace metrics |
@@ -297,13 +297,12 @@ Using Font Awesome icons in row /column / metric fields
 
 If your row name / col name / transform metrics contains strings that starts with `_fa-` and ends with `_`, then they will be replaced with corresponding font awesome icons grafana supported. Example usage given below.
 
-` _fa-arrow-up_ `           ->  UP ARROW icon in default color
-
-` _fa-arrow-up,green_ `     ->  UP ARROW icon in green color
-
-` _fa-arrow-down,red,5_ `   ->  DOWN ARROW icon in red color repeated 5 times
-
-` _fa-apple,,5_ `           ->  APPLE icon in default color repeated 5 times
+| Transform Value | Output    |
+| ----------------|-----------|
+| ` _fa-arrow-up_ `           |  UP ARROW icon in default color |
+| ` _fa-arrow-up,green_ `     |  UP ARROW icon in green color |
+| ` _fa-arrow-down,red,5_ `   |  DOWN ARROW icon in red color repeated 5 times |
+| ` _fa-apple,,5_ `           |  APPLE icon in default color repeated 5 times |
 
 **Example implementations of icons in metrics:** (Unlimited possibilites like heatmap)
 
@@ -327,13 +326,12 @@ Using images as transform values
 
 If your row name / col name / transform metrics contains strings that starts with `_img-` and ends with `_`, then they will be replaced with images. Example usage given below.
 
-` _img-https://example.com/happy.gif_ `               ->  happy.gif with 20px width, 20px height
-
-` _img-https://example.com/happy.gif,30px_ `          ->  happy.gif with 30px width, 20px height
-
-` _img-https://example.com/happy.gif,30px,40px_ `     ->  happy.gif with 30px width, 40px height
-
-` _img-https://example.com/happy.gif,30px,40px,3_ `   ->  happy.gif with 30px width, 40px height repeated 3 times
+| Transform Value | Output    |
+| ----------------|-----------|
+|` _img-https://example.com/happy.gif_ `               |  happy.gif with 20px width, 20px height |
+|` _img-https://example.com/happy.gif,30px_ `          |  happy.gif with 30px width, 20px height |
+|` _img-https://example.com/happy.gif,30px,40px_ `     |  happy.gif with 30px width, 40px height |
+|` _img-https://example.com/happy.gif,30px,40px,3_ `   |  happy.gif with 30px width, 40px height repeated 3 times |
 
 ![Image transform](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/img-transform-example.png)
 
