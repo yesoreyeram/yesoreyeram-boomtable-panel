@@ -286,7 +286,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         }));
         this.panel.error = utils.buildError(`Duplicate keys found`, `Duplicate key values : <br/> ${duplicateKeys.join("<br/> ")}`);
       }
-      renderer.buildDebugHTML(this.elem, dataComputed);
+      if (this.panel.debug_mode === true) {
+        renderer.buildDebugHTML(this.elem, dataComputed);
+      }
     }
     this.adjustPanelHeight(this.ctrl.height);
   }
