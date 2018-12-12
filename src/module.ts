@@ -244,8 +244,6 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     } else {
       this.panel.error = undefined;
       let mydata = this.dataReceived.map(defaultHandler.bind(this));
-      console.log("I am here");
-      console.log(mydata);
       let dataComputed = compute(mydata, this.panel.defaultPattern || config.panelDefaults.defaultPattern, this.panel.patterns, this.panel.row_col_wrapper);
       let rows_found = utils.getFields(dataComputed, "row_name");
       let cols_found = utils.getFields(dataComputed, "col_name");
