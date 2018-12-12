@@ -266,6 +266,7 @@ let getFilteredSeries = function(seriesArray: Series[]) : Series[] {
     return newSeries;
 };
 let compute = function (dataComputed : Series[] , defaultPattern : Pattern, patterns : Pattern[], row_col_wrapper : String ): Series[] {
+    //console.log(dataComputed);
     dataComputed = dataComputed.map(series => computeServerTimestamp(series));
     dataComputed = dataComputed.map(series => assignPattern(series, patterns, defaultPattern));
     dataComputed = dataComputed.map(series => assignDecimals(series, defaultPattern));

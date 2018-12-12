@@ -231,7 +231,9 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
 }
 
 GrafanaBoomTableCtrl.prototype.render = function () {
-  if (this.dataReceived) {
+  if (this.dataReceived && this.dataReceived.length > 0 && _.filter(this.dataReceived, d => { return d.type && d.type === "table"; }).length > 0) {
+    this.panel.error = utils.buildError(`Only timeseries data supported`, `Only timeseries data supported`);
+  } else if (this.dataReceived) {
     this.panel.default_title_for_rows = this.panel.default_title_for_rows;
     let metricsReceived = utils.getFields(this.dataReceived, "target");
     if (metricsReceived.length !== _.uniq(metricsReceived).length) {
@@ -241,7 +243,10 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       this.panel.error = utils.buildError(`Duplicate keys found`, `Duplicate key values : <br/> ${duplicateKeys.join("<br/> ")}`);
     } else {
       this.panel.error = undefined;
-      let dataComputed = compute(this.dataReceived.map(defaultHandler.bind(this)), this.panel.defaultPattern || config.panelDefaults.defaultPattern, this.panel.patterns, this.panel.row_col_wrapper);
+      let mydata = this.dataReceived.map(defaultHandler.bind(this));
+      console.log("I am here");
+      console.log(mydata);
+      let dataComputed = compute(mydata, this.panel.defaultPattern || config.panelDefaults.defaultPattern, this.panel.patterns, this.panel.row_col_wrapper);
       let rows_found = utils.getFields(dataComputed, "row_name");
       let cols_found = utils.getFields(dataComputed, "col_name");
       let keys_found = utils.getFields(dataComputed, "key_name");
