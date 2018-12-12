@@ -65,6 +65,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       enable_transform_overrides: false,
       transform_values_overrides: "0->down|1->up",
       decimals: 2,
+      tooltipTemplate : "Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_",
       format: "none",
       null_color: "darkred",
       null_text_color: "white",
@@ -260,10 +261,21 @@ GrafanaBoomTableCtrl.prototype.render = function () {
             mycol.displayValue = matched_value ? matched_value.displayValue || matched_value.value || "N/A" : this.panel.no_match_text || "N/A";
             mycol.bgColor = matched_value && matched_value.bgColor ? matched_value.bgColor : "transparent";
             mycol.textColor = matched_value && matched_value.textColor ? matched_value.textColor : "white";
+            let tooltipTemplate = matched_value && matched_value.tooltipTemplate ? matched_value.tooltipTemplate : this.ctrl.panel.defaultPattern.tooltipTemplate || "No matching series found for _row_name_ & _col_name_";
             if (matched_value) {
-              mycol.tooltip = renderer.getTooltipMessage(utils.getActualNameWithoutTransformSign(matched_value.actual_row_name || row_name), utils.getActualNameWithoutTransformSign(matched_value.actual_col_name || col_name), matched_value.valueFormatted || this.panel.no_match_text || "N/A");
+              mycol.tooltip = renderer.getTooltipMessage(
+                tooltipTemplate,
+                utils.getActualNameWithoutTransformSign(matched_value.actual_row_name || row_name),
+                utils.getActualNameWithoutTransformSign(matched_value.actual_col_name || col_name),
+                matched_value.valueFormatted || this.panel.no_match_text || "N/A"
+              );
             } else {
-              mycol.tooltip = renderer.getTooltipMessage(utils.getActualNameWithoutTransformSign(row_name), utils.getActualNameWithoutTransformSign(col_name), "NaN" || this.panel.no_match_text || "N/A");
+              mycol.tooltip = renderer.getTooltipMessage(
+                tooltipTemplate,
+                utils.getActualNameWithoutTransformSign(row_name),
+                utils.getActualNameWithoutTransformSign(col_name),
+                "NaN" || this.panel.no_match_text || "N/A"
+              );
             }
             o.cols.push(mycol);
           });

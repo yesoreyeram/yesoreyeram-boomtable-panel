@@ -256,11 +256,11 @@
                     </div>
                 </div>
             </div>
-            <div id="boom_editor_row_cell_links" class="editor-row">
+            <div id="boom_editor_row_cell_links_tooltip" class="editor-row">
                 <div class="section gf-form-group">
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <h6 class="text-header">Cell Link</h6>
+                            <h6 class="text-header">Cell Link & Tooltip</h6>
                         </div>
                     </div>
                     <div class="gr-form-inline">
@@ -274,6 +274,13 @@
                             <input type="text" placeholder="#" class="gf-form-input width-18" ng-model="pattern.clickable_cells_link"
                                 bs-tooltip="'Cell target URL'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();"
                                 data-ng-if="pattern.enable_clickable_cells">
+                        </div>
+                    </div>
+                    <div class="gr-form-inline">
+                        <div class="gf-form">
+                            <label class="gf-form-label width-12">Tooltip Template</label>
+                            <input type="text" placeholder="Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_" class="gf-form-input width-18" ng-model="pattern.tooltipTemplate"
+                                bs-tooltip="'Tooltip Template; Leave blank for default template; Enter _ to disable tooltip'" ng-blur="ctrl.render()">
                         </div>
                     </div>
                 </div>
@@ -291,7 +298,7 @@
                             <input type="text" placeholder="Number" class="gf-form-input width-18" ng-model="pattern.filter.value_below"
                                 bs-tooltip="'Hide values from display if below this value. Default is empty'" ng-blur="ctrl.render()">
                             <span class="split"></span>
-                            <label class="gf-form-label width-13">Hide if value is above</label>
+                            <label class="gf-form-label width-12">Hide if value is above</label>
                             <input type="text" placeholder="Number" class="gf-form-input width-18" ng-model="pattern.filter.value_above"
                                 bs-tooltip="'Hide values from display if above this value. Default is empty'" ng-blur="ctrl.render()">
                         </div>

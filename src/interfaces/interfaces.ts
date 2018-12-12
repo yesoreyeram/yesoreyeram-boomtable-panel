@@ -27,6 +27,7 @@ export interface Series {
     row_name : String;
     col_name : String;
     decimals: Number;
+    tooltipTemplate : String;
     enable_transform: Boolean;
     transform_values : String[];
     enable_transform_overrides: Boolean;
@@ -56,6 +57,7 @@ export interface Pattern {
     valueName: String;
     format: String;
     decimals: Number;
+    tooltipTemplate: String;
     thresholds: String;
     enable_bgColor: Boolean;
     bgColors: String;

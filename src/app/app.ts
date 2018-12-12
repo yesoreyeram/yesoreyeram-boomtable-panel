@@ -25,6 +25,7 @@ const defaultPattern: Pattern = {
     valueName: "avg",
     format: "none",
     decimals: 2,
+    tooltipTemplate : "Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_",
     thresholds: "70,90",
     enable_bgColor: false,
     bgColors: "green|orange|red",

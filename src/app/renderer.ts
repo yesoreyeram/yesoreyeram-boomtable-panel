@@ -1,7 +1,14 @@
 import _ from "lodash";
 
-let getTooltipMessage = function(row_name : String, col_name : String, value : Number) : String {
-    return `${"Row Name : " +  row_name + "<br/>Col Name : " + col_name + "<br/>Value : " + value}`;
+let getTooltipMessage = function(template: String, row_name : String, col_name : String, value : Number) : String {
+    if (template === "_") {
+        return "";
+    }
+    let tooltip = template;
+    tooltip = tooltip.replace("_row_name_", String(row_name));
+    tooltip = tooltip.replace("_col_name_", String(col_name));
+    tooltip = tooltip.replace("_value_", String(value));
+    return tooltip;
 };
 let buildHTML = function(elem: any, hide_headers: boolean, hide_first_column: boolean, text_align_table_header: any, cols_found: any, output: any[], text_align_first_column: any, text_align_table_cells: any, default_title_for_rows: any ): void {
     let boomtable_output_body_headers = elem.find("#boomtable_output_body_headers");

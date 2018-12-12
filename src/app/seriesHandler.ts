@@ -233,6 +233,10 @@ let assignValue = function (series : Series, defaultPattern : Pattern): Series {
     }
     return series;
 };
+let assignTooltipTemplate = function (series : Series, defaultPattern : Pattern) : Series {
+    series.tooltipTemplate = series.pattern.tooltipTemplate || defaultPattern.tooltipTemplate || "Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_";
+    return series;
+};
 let filterValues = function (series : Series): Boolean {
     if (!series.pattern.filter) {
         series.pattern.filter = {
@@ -280,6 +284,7 @@ let compute = function (dataComputed : Series[] , defaultPattern : Pattern, patt
     dataComputed = dataComputed.map(series => applyFontAwesomeIcons(series));
     dataComputed = dataComputed.map(series => applyImageTransform(series));
     dataComputed = dataComputed.map(series => assignClickableLinks(series));
+    dataComputed = dataComputed.map(series => assignTooltipTemplate(series, defaultPattern));
     return dataComputed;
 };
 export {

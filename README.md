@@ -357,8 +357,8 @@ Same as other time series data sources. You need to properly format your legend 
 | --------|-----------|
 | 0.6.0   | Patterns Editor UI redesign |
 |         | Text color based on threshold |
+|         | Tooltip template & HTML / Bootstrap tooltip |
 |         | Code refractoring, Typescript Lint error fixes |
-|         | HTML / Bootstrap tooltip |
 |         | Unit tests added |
 |         | Bug fixes (#48,#52,#53) |
 | 0.5.3   | Advanced options implementation |
