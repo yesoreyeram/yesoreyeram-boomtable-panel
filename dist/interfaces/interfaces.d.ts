@@ -21,7 +21,6 @@ export interface Series {
     actual_displayvalue: String;
     actual_row_name: String;
     actual_col_name: String;
-    current_servertimestamp: Date;
     pattern: Pattern;
     delimiter: String;
     row_name: String;
