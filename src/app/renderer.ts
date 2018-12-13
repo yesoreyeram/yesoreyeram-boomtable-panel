@@ -72,7 +72,7 @@ let output = function (output: any[], cols_found: any, options: any): { header: 
             <div
             data-toggle="tooltip"
             data-html="true"
-            data-placement="center"
+            data-placement="left"
             title="${c.tooltip}"
             style="padding-left:10px">
                 ${c.displayValue}
