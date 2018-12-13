@@ -23,27 +23,6 @@ let get_input_default = function () {
         }
     }
 };
-let get_input_with_footer_enabled = function () {
-    let input = get_input_default();
-    input.rendering_options.show_footers = true;
-    return input;
-};
-let get_input_sample_data = function () {
-    let input = get_input_default();
-    input.data.push({
-        target: "dev.server_stats.web_1.cpu.usage",
-        datapoints: [[8885, 1544715580]]
-    })
-    return input;
-}
-let get_input_null_data = function () {
-    let input = get_input_default();
-    input.data.push({
-        target: "dev.server_stats.web_1.cpu.usage",
-        datapoints: [[null, 1544715580]]
-    })
-    return input;
-}
 
 describe("Check Output", () => {
     describe("No data", () => {
@@ -53,7 +32,7 @@ describe("Check Output", () => {
             expect(input_data.error).toBe(undefined);
         });
         it("Check Header", () => {
-            expect(input_data.output_html.header).toBe(`<br/><tr><th style="padding:4px;text-align:left">Server</th></tr>`);
+            expect(input_data.output_html.header).toBe(`<br/><tr><th style="padding:4px;text-align:left">${input.rendering_options.default_title_for_rows}</th></tr>`);
         });
         it("Check Body", () => {
             expect(input_data.output_html.body).toBe(``);
@@ -63,25 +42,31 @@ describe("Check Output", () => {
         });
     });
     describe("Sample data", () => {
-        let input = get_input_sample_data();
+        let input = get_input_default();
+        let METRIC_NAME = "dev.server_stats.web_1.cpu.usage";
+        let METRIC_VALUE = 8885;
+        input.data.push({
+            target: METRIC_NAME,
+            datapoints: [[METRIC_VALUE, 1544715580]]
+        })
         let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options);
         it("Check Error", () => {
             expect(input_data.error).toBe(undefined);
         });
         it("Check Header", () => {
-            expect(input_data.output_html.header).toBe(`<br/><tr><th style=\"padding:4px;text-align:left\">Server</th><th style=\"padding:4px;text-align:left\">Value</th></tr>`);
+            expect(input_data.output_html.header).toBe(`<br/><tr><th style=\"padding:4px;text-align:left\">${input.rendering_options.default_title_for_rows}</th><th style=\"padding:4px;text-align:left\">Value</th></tr>`);
         });
         it("Check Body", () => {
-            expect(input_data.output_html.body).toBe(`<tr><td style=\"padding:4px;text-align:left\">dev.server_stats.web_1.cpu.usage</td><td
+            expect(input_data.output_html.body).toBe(`<tr><td style=\"padding:4px;text-align:left\">${METRIC_NAME}</td><td
             style=\"padding:4px;background-color:transparent;text-align:left;color:white\"
           >
             <div
             data-toggle=\"tooltip\"
             data-html=\"true\"
             data-placement=\"left\"
-            title=\"Row Name : dev.server_stats.web_1.cpu.usage <br/>Col Name : Value <br/>Value : 8885.00\"
+            title=\"Row Name : ${METRIC_NAME} <br/>Col Name : Value <br/>Value : ${METRIC_VALUE}.00\"
             style=\"padding-left:10px\">
-                8885.00
+                ${METRIC_VALUE}.00
             </div>
           </td></tr>`);
         });
@@ -90,23 +75,28 @@ describe("Check Output", () => {
         });
     });
     describe("Null data", () => {
-        let input = get_input_null_data();
+        let input = get_input_default();        
+        let METRIC_NAME = "dev.server_stats.web_1.cpu.usage";
+        input.data.push({
+            target: METRIC_NAME,
+            datapoints: [[null, 1544715580]]
+        })
         let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options);
         it("Check Error", () => {
             expect(input_data.error).toBe(undefined);
         });
         it("Check Header", () => {
-            expect(input_data.output_html.header).toBe(`<br/><tr><th style=\"padding:4px;text-align:left\">Server</th><th style=\"padding:4px;text-align:left\">Value</th></tr>`);
+            expect(input_data.output_html.header).toBe(`<br/><tr><th style=\"padding:4px;text-align:left\">${input.rendering_options.default_title_for_rows}</th><th style=\"padding:4px;text-align:left\">Value</th></tr>`);
         });
         it("Check Body", () => {
-            expect(input_data.output_html.body).toBe(`<tr><td style=\"padding:4px;text-align:left\">dev.server_stats.web_1.cpu.usage</td><td
+            expect(input_data.output_html.body).toBe(`<tr><td style=\"padding:4px;text-align:left\">${METRIC_NAME}</td><td
             style=\"padding:4px;background-color:darkred;text-align:left;color:white\"
           >
             <div
             data-toggle=\"tooltip\"
             data-html=\"true\"
             data-placement=\"left\"
-            title=\"Row Name : dev.server_stats.web_1.cpu.usage <br/>Col Name : Value <br/>Value : No match found\"
+            title=\"Row Name : ${METRIC_NAME} <br/>Col Name : Value <br/>Value : No match found\"
             style=\"padding-left:10px\">
                 No data
             </div>
@@ -117,7 +107,8 @@ describe("Check Output", () => {
         });
     });
     describe("No data with footer enabled", () => {
-        let input = get_input_with_footer_enabled();
+        let input = get_input_default();
+        input.rendering_options.show_footers = true;
         let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options);
         it("Check Footer", () => {
             expect(input_data.output_html.footer).toBe(`<tr><th style="padding:4px;text-align:left">Server</th></tr>`);
