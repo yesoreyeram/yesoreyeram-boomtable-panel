@@ -1,11 +1,17 @@
 import _ from "lodash";
+import { OptionOverride } from "../interfaces/interfaces";
 
 const COLORS = {
-    GREEN : "rgba(50, 172, 45, 0.97)",
-    ORANGE : "rgba(237, 129, 40, 0.89)",
-    RED : "rgba(245, 54, 54, 0.9)"
+    GREEN: "rgba(50, 172, 45, 0.97)",
+    ORANGE: "rgba(237, 129, 40, 0.89)",
+    RED: "rgba(245, 54, 54, 0.9)"
 };
-
+const hasDuplicates = function (array) {
+    return array.length !== _.uniq(array).length;
+};
+const isUniqueArray = function (array) {
+    return (!hasDuplicates(array));
+};
 const getFields = function (collection: any[], field: String): any[] {
     return _.map(collection, d => d[String(field)]);
 };
@@ -126,12 +132,26 @@ const getDecimalsForValue = function (value: number, _decimals: number): Object 
 
     return result;
 };
+const buildOptionOverride = function (o: any[], i: Number): OptionOverride {
+    return {
+        text: String(o[0]),
+        propertyName: String(o[1]),
+        index: i,
+        defaultValue: String(o[3]),
+        values: [].concat(o[2]).map(value => { return String[value]; }),
+        submenu: [].concat(o[2]).map(value => { return { text: String(value), value: value }; })
+    };
+};
 export {
     COLORS,
+    hasDuplicates,
+    hasDuplicates as isDuplicateArray,
+    isUniqueArray,
     getFields,
     getUniqueFields,
     getDecimalsForValue,
     getActualNameWithoutTransformSign,
+    buildOptionOverride,
     normalizeColor,
     replaceFontAwesomeIcons,
     replaceWithImages,

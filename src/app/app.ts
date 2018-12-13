@@ -1,18 +1,10 @@
 ///<reference path="../../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
 
 import _ from "lodash";
+import * as utils from "./utils";
 import { Config, Pattern } from "../interfaces/interfaces";
-
-let buildOptionOverride = function (o: any[], i: Number) {
-    return {
-        text: String(o[0]),
-        propertyName: String(o[1]),
-        index: i,
-        defaultValue: String(o[3]),
-        values: [].concat(o[2]).map(value => { return String[value]; }),
-        submenu: [].concat(o[2]).map(value => { return { text: String(value), value: value }; })
-    };
-};
+import { compute, defaultHandler } from "./seriesHandler";
+import * as renderer from "./renderer";
 
 const plugin_id: String = "yesoreyeram-boomtable-panel";
 const defaultPattern: Pattern = {
@@ -25,7 +17,7 @@ const defaultPattern: Pattern = {
     valueName: "avg",
     format: "none",
     decimals: 2,
-    tooltipTemplate : "Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_",
+    tooltipTemplate: "Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_",
     thresholds: "70,90",
     enable_bgColor: false,
     bgColors: "green|orange|red",
@@ -87,15 +79,62 @@ const config: Config = {
     }
     ],
 };
+const computeRenderingData = function (data: any, patterns: Pattern[], defaultPattern: Pattern, panelOptions, rendering_options) {
+    let returnData = {
+        error: undefined,
+        output_html: {
+            header: "",
+            body: "",
+            footer: "",
+            debug: "",
+        }
+    };
+    if (data && data.length > 0 && _.filter(data, d => { return d.type && d.type === "table"; }).length > 0) {
+        returnData.error = utils.buildError(`Only timeseries data supported`, `Only timeseries data supported`);
+    } else if (data) {
+        let metricsReceived = utils.getFields(data, "target");
+        if (utils.hasDuplicates(metricsReceived)) {
+            let duplicateKeys = _.uniq(metricsReceived.filter(v => {
+                return metricsReceived.filter(t => t === v).length > 1;
+            }));
+            returnData.error = utils.buildError(`Duplicate series found`, `Duplicate series : <br/> ${duplicateKeys.join("<br/> ")}`);
+        } else {
+            returnData.error = undefined;
+            let mydata = data.map(defaultHandler.bind(data));
+            let dataComputed = compute(mydata, defaultPattern, patterns, panelOptions.row_col_wrapper);
+            let rows_found = utils.getFields(dataComputed, "row_name");
+            let cols_found = utils.getFields(dataComputed, "col_name");
+            let keys_found = utils.getFields(dataComputed, "key_name");
+            if (utils.isUniqueArray(keys_found)) {
+                returnData.error = undefined;
+                let output = renderer.buildOutputData(dataComputed, rows_found, cols_found, defaultPattern, {
+                    no_match_text: panelOptions.no_match_text
+                });
+                let { header, body, footer } = renderer.buildOutput(output, cols_found, rendering_options);
+                returnData.output_html.header = String(header);
+                returnData.output_html.body = String(body);
+                returnData.output_html.footer = String(footer);
+            } else {
+                let duplicateKeys = _.uniq(keys_found.filter(v => {
+                    return keys_found.filter(t => t === v).length > 1;
+                }));
+                returnData.error = utils.buildError(`Duplicate keys found`, `Duplicate key values : <br/> ${duplicateKeys.join("<br/> ")}`);
+            }
+            returnData.output_html.debug = String(renderer.buildDebugOutput(dataComputed));
+        }
+    }
+    return returnData;
+};
 
-config.optionOverrides.push(buildOptionOverride(["Text alignment header & footer ", "TEXT_ALIGN_TABLE_HEADER", ["left", "right", "center"], "left"], 0));
-config.optionOverrides.push(buildOptionOverride(["Text alignment first column", "TEXT_ALIGN_FIRST_COLUMN", ["left", "right", "center"], "left"], 1));
-config.optionOverrides.push(buildOptionOverride(["Text alignment cells / Metrics", "TEXT_ALIGN_TABLE_CELLS", ["left", "right", "center"], "left"], 2));
-config.optionOverrides.push(buildOptionOverride(["Hide Headers", "HIDE_HEADERS", ["false", "true"], "false"], 3));
-config.optionOverrides.push(buildOptionOverride(["Hide first column", "HIDE_FIRST_COLUMN", ["false", "true"], "false"], 4));
-config.optionOverrides.push(buildOptionOverride(["Show Footers", "SHOW_FOOTERS", ["false", "true"], "false"], 5));
+config.optionOverrides.push(utils.buildOptionOverride(["Text alignment header & footer ", "TEXT_ALIGN_TABLE_HEADER", ["left", "right", "center"], "left"], 0));
+config.optionOverrides.push(utils.buildOptionOverride(["Text alignment first column", "TEXT_ALIGN_FIRST_COLUMN", ["left", "right", "center"], "left"], 1));
+config.optionOverrides.push(utils.buildOptionOverride(["Text alignment cells / Metrics", "TEXT_ALIGN_TABLE_CELLS", ["left", "right", "center"], "left"], 2));
+config.optionOverrides.push(utils.buildOptionOverride(["Hide Headers", "HIDE_HEADERS", ["false", "true"], "false"], 3));
+config.optionOverrides.push(utils.buildOptionOverride(["Hide first column", "HIDE_FIRST_COLUMN", ["false", "true"], "false"], 4));
+config.optionOverrides.push(utils.buildOptionOverride(["Show Footers", "SHOW_FOOTERS", ["false", "true"], "false"], 5));
 
 export {
     plugin_id,
-    config
+    config,
+    computeRenderingData
 };

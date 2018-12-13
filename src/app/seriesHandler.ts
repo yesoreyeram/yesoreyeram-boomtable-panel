@@ -143,15 +143,6 @@ let filterValues = function (series: Series): Boolean {
         return true;
     }
 };
-let getFilteredSeries = function (seriesArray: Series[]): Series[] {
-    let newSeries: Series[] = [];
-    _.each(seriesArray, series => {
-        if (filterValues(series)) {
-            newSeries.push(series);
-        }
-    });
-    return newSeries;
-};
 let getDisplayValueOverride = function (transform_values_overrides: String, value: Number, row_name: String, col_name: String, displayValue: String): String {
     let _transform_values_overrides = transform_values_overrides.split("|").filter(con => con.indexOf("->") > -1).map(con => con.split("->")).filter(con => +(con[0]) === value).map(con => con[1]);
     if (_transform_values_overrides.length > 0 && _transform_values_overrides[0] !== "") {
@@ -233,7 +224,7 @@ let compute = function (dataComputed: Series[], defaultPattern: Pattern, pattern
         return series;
     });
     dataComputed = dataComputed.map(series => assignValue(series, defaultPattern));
-    dataComputed = getFilteredSeries(dataComputed);
+    dataComputed = dataComputed.filter(series => filterValues(series));
     dataComputed = dataComputed.map(series => {
         series.row_name = getRowName(series.alias, series.pattern, defaultPattern, row_col_wrapper);
         series.col_name = getColName(series.alias, series.row_name, series.pattern, defaultPattern, row_col_wrapper);

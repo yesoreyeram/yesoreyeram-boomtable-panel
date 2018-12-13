@@ -4,10 +4,7 @@ import _ from "lodash";
 import kbn from "app/core/utils/kbn";
 import { loadPluginCss, MetricsPanelCtrl } from "app/plugins/sdk";
 import { Pattern, TimeBaseThreshold, ValueNameOption } from "./interfaces/interfaces";
-import { plugin_id, config } from "./app/app";
-import { compute, defaultHandler } from "./app/seriesHandler";
-import * as renderer from "./app/renderer";
-import * as utils from "./app/utils";
+import { plugin_id, config, computeRenderingData } from "./app/app";
 
 loadPluginCss({
   dark: `plugins/${plugin_id}/css/default.dark.css`,
@@ -42,6 +39,12 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.dataReceived = data;
     this.render();
   }
+  link(scope, elem, attrs, ctrl) {
+    if (scope) { scope = scope; }
+    if (attrs) { attrs = attrs; }
+    this.ctrl = ctrl;
+    this.elem = elem;
+  }
   addPattern() {
     let newPattern: Pattern = {
       name: "New Pattern",
@@ -67,7 +70,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       enable_transform_overrides: false,
       transform_values_overrides: "0->down|1->up",
       decimals: 2,
-      tooltipTemplate : "Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_",
+      tooltipTemplate: "Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_",
       format: "none",
       null_color: "darkred",
       null_text_color: "white",
@@ -171,15 +174,9 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     return text;
   }
-  link(scope, elem, attrs, ctrl) {
-    if (scope) { scope = scope; }
-    if (attrs) { attrs = attrs; }
-    this.ctrl = ctrl;
-    this.elem = elem;
-  }
-  getOptionOverride(propertyName: String) {
-    let option = _.find(this.panel.currentOptionOverrides, o => o.propertyName === propertyName);
-    let default_option = _.find(config.optionOverrides, o => o.propertyName === propertyName);
+  getOptionOverride(currentOptionOverrides, optionOverrides, propertyName: String) {
+    let option = _.find(currentOptionOverrides, o => o.propertyName === propertyName);
+    let default_option = _.find(optionOverrides, o => o.propertyName === propertyName);
     if (option) {
       return option.value;
     } else {
@@ -231,86 +228,32 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
 }
 
 GrafanaBoomTableCtrl.prototype.render = function () {
-  if (this.dataReceived && this.dataReceived.length > 0 && _.filter(this.dataReceived, d => { return d.type && d.type === "table"; }).length > 0) {
-    this.panel.error = utils.buildError(`Only timeseries data supported`, `Only timeseries data supported`);
-  } else if (this.dataReceived) {
-    this.panel.default_title_for_rows = this.panel.default_title_for_rows;
-    let metricsReceived = utils.getFields(this.dataReceived, "target");
-    if (metricsReceived.length !== _.uniq(metricsReceived).length) {
-      let duplicateKeys = _.uniq(metricsReceived.filter(v => {
-        return metricsReceived.filter(t => t === v).length > 1;
-      }));
-      this.panel.error = utils.buildError(`Duplicate keys found`, `Duplicate key values : <br/> ${duplicateKeys.join("<br/> ")}`);
-    } else {
-      this.panel.error = undefined;
-      let mydata = this.dataReceived.map(defaultHandler.bind(this));
-      let dataComputed = compute(mydata, this.panel.defaultPattern || config.panelDefaults.defaultPattern, this.panel.patterns, this.panel.row_col_wrapper);
-      let rows_found = utils.getFields(dataComputed, "row_name");
-      let cols_found = utils.getFields(dataComputed, "col_name");
-      let keys_found = utils.getFields(dataComputed, "key_name");
-      let is_unique_keys = (keys_found.length === _.uniq(keys_found).length);
-      if (is_unique_keys) {
-        this.panel.error = undefined;
-        let output = [];
-        _.each(_.uniq(rows_found), (row_name) => {
-          let o: any = {};
-          o.row = row_name;
-          o.cols = [];
-          _.each(_.uniq(cols_found), (col_name) => {
-            let matched_value = (_.find(dataComputed, (e) => {
-              return e.row_name === row_name && e.col_name === col_name;
-            }));
-            let mycol : any = {};
-            mycol.name = col_name;
-            mycol.value = matched_value ? matched_value.value || NaN : NaN;
-            mycol.displayValue = matched_value ? matched_value.displayValue || matched_value.value || "N/A" : this.panel.no_match_text || "N/A";
-            mycol.bgColor = matched_value && matched_value.bgColor ? matched_value.bgColor : "transparent";
-            mycol.textColor = matched_value && matched_value.textColor ? matched_value.textColor : "white";
-            let tooltipTemplate = matched_value && matched_value.tooltipTemplate ? matched_value.tooltipTemplate : this.ctrl.panel.defaultPattern.tooltipTemplate || "No matching series found for _row_name_ & _col_name_";
-            if (matched_value) {
-              mycol.tooltip = renderer.getTooltipMessage(
-                tooltipTemplate,
-                utils.getActualNameWithoutTransformSign(matched_value.actual_row_name || row_name),
-                utils.getActualNameWithoutTransformSign(matched_value.actual_col_name || col_name),
-                matched_value.valueFormatted || this.panel.no_match_text || "N/A"
-              );
-            } else {
-              mycol.tooltip = renderer.getTooltipMessage(
-                tooltipTemplate,
-                utils.getActualNameWithoutTransformSign(row_name),
-                utils.getActualNameWithoutTransformSign(col_name),
-                "NaN" || this.panel.no_match_text || "N/A"
-              );
-            }
-            mycol.tooltip = this.$sce.trustAsHtml(mycol.tooltip);
-            o.cols.push(mycol);
-          });
-          output.push(o);
-        });
-        renderer.buildHTML(
-          this.elem,
-          this.getOptionOverride("HIDE_HEADERS") === "true",
-          this.getOptionOverride("HIDE_FIRST_COLUMN") === "true",
-          this.getOptionOverride("SHOW_FOOTERS") === "true",
-          this.getOptionOverride("TEXT_ALIGN_TABLE_HEADER"),
-          cols_found,
-          output,
-          this.getOptionOverride("TEXT_ALIGN_FIRST_COLUMN"),
-          this.getOptionOverride("TEXT_ALIGN_TABLE_CELLS"),
-          this.panel.default_title_for_rows
-        );
-      } else {
-        let duplicateKeys = _.uniq(keys_found.filter(v => {
-          return keys_found.filter(t => t === v).length > 1;
-        }));
-        this.panel.error = utils.buildError(`Duplicate keys found`, `Duplicate key values : <br/> ${duplicateKeys.join("<br/> ")}`);
-      }
-      if (this.panel.debug_mode === true) {
-        renderer.buildDebugHTML(this.elem, dataComputed);
-      }
+  let panelOptions = {
+    row_col_wrapper: this.panel.row_col_wrapper,
+    no_match_text: this.panel.no_match_text
+  };
+  let rendering_options = {
+    default_title_for_rows: this.panel.default_title_for_rows,
+    show_footers: this.getOptionOverride(this.panel.currentOptionOverrides, config.optionOverrides, "SHOW_FOOTERS") === "true",
+    hide_headers: this.getOptionOverride(this.panel.currentOptionOverrides, config.optionOverrides, "HIDE_HEADERS") === "true",
+    hide_first_column: this.getOptionOverride(this.panel.currentOptionOverrides, config.optionOverrides, "HIDE_FIRST_COLUMN") === "true",
+    text_align_table_header: this.getOptionOverride(this.panel.currentOptionOverrides, config.optionOverrides, "TEXT_ALIGN_TABLE_HEADER"),
+    text_align_first_column: this.getOptionOverride(this.panel.currentOptionOverrides, config.optionOverrides, "TEXT_ALIGN_FIRST_COLUMN"),
+    text_align_table_cells: this.getOptionOverride(this.panel.currentOptionOverrides, config.optionOverrides, "TEXT_ALIGN_TABLE_CELLS"),
+  };
+  let output = computeRenderingData(this.dataReceived, this.panel.patterns, this.panel.defaultPattern || config.panelDefaults.defaultPattern, panelOptions, rendering_options);
+  if (output.error) {
+    this.panel.error = output.error;
+  } else {
+    this.elem.find("#boomtable_output_body_headers").html(output.output_html.header);
+    this.elem.find("#boomtable_output_body").html(output.output_html.body);
+    this.elem.find("#boomtable_output_body_footers").html(output.output_html.footer);
+    this.elem.find("[data-toggle='tooltip']").tooltip();
+    if (this.panel.debug_mode === true) {
+      this.elem.find("#boomtable_debug_table_holder").html(output.output_html.debug);
     }
-    this.adjustPanelHeight(this.ctrl.height);
   }
+  this.adjustPanelHeight(this.ctrl.height);
 };
 
 export {
