@@ -10,7 +10,7 @@ let getTooltipMessage = function(template: String, row_name : String, col_name :
     tooltip = tooltip.replace(new RegExp("_value_", "g"), String(value));
     return tooltip;
 };
-let buildHTML = function(elem: any, hide_headers: boolean, hide_first_column: boolean, text_align_table_header: any, cols_found: any, output: any[], text_align_first_column: any, text_align_table_cells: any, default_title_for_rows: any ): void {
+let buildHTML = function(elem: any, hide_headers: boolean, hide_first_column: boolean, show_footers: boolean, text_align_table_header: any, cols_found: any, output: any[], text_align_first_column: any, text_align_table_cells: any, default_title_for_rows: any ): void {
     let boomtable_output_body_headers = elem.find("#boomtable_output_body_headers");
     let boomtable_output_body_headers_output = `<br/>`;
     if (hide_headers !== true) {
@@ -48,6 +48,19 @@ let buildHTML = function(elem: any, hide_headers: boolean, hide_first_column: bo
         boomtable_output_body_output += "</tr>";
     });
     boomtable_output_body.html(boomtable_output_body_output);
+    let boomtable_output_body_footers = elem.find("#boomtable_output_body_footers");
+    let boomtable_output_body_footers_output = ``;
+    if (show_footers === true) {
+        boomtable_output_body_footers_output += "<tr>";
+        if (hide_first_column !== true) {
+            boomtable_output_body_footers_output += `<th style="padding:4px;text-align:${text_align_table_header}">${default_title_for_rows}</th>`;
+        }
+        _.each(_.uniq(cols_found), c => {
+            boomtable_output_body_footers_output += `<th style="padding:4px;text-align:${text_align_table_header}">${c}</th>`;
+        });
+        boomtable_output_body_footers_output += "</tr>";
+    }
+    boomtable_output_body_footers.html(boomtable_output_body_footers_output);
     elem.find("[data-toggle='tooltip']").tooltip();
 };
 let buildDebugHTML = function(elem: any, dataComputed: any): void {

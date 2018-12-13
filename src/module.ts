@@ -291,6 +291,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           this.elem,
           this.getOptionOverride("HIDE_HEADERS") === "true",
           this.getOptionOverride("HIDE_FIRST_COLUMN") === "true",
+          this.getOptionOverride("SHOW_FOOTERS") === "true",
           this.getOptionOverride("TEXT_ALIGN_TABLE_HEADER"),
           cols_found,
           output,

@@ -88,11 +88,12 @@ const config: Config = {
     ],
 };
 
-config.optionOverrides.push(buildOptionOverride(["Text alignment header", "TEXT_ALIGN_TABLE_HEADER", ["left", "right", "center"], "left"], 0));
+config.optionOverrides.push(buildOptionOverride(["Text alignment header & footer ", "TEXT_ALIGN_TABLE_HEADER", ["left", "right", "center"], "left"], 0));
 config.optionOverrides.push(buildOptionOverride(["Text alignment first column", "TEXT_ALIGN_FIRST_COLUMN", ["left", "right", "center"], "left"], 1));
-config.optionOverrides.push(buildOptionOverride(["Text alignment table cells", "TEXT_ALIGN_TABLE_CELLS", ["left", "right", "center"], "left"], 2));
+config.optionOverrides.push(buildOptionOverride(["Text alignment cells / Metrics", "TEXT_ALIGN_TABLE_CELLS", ["left", "right", "center"], "left"], 2));
 config.optionOverrides.push(buildOptionOverride(["Hide Headers", "HIDE_HEADERS", ["false", "true"], "false"], 3));
 config.optionOverrides.push(buildOptionOverride(["Hide first column", "HIDE_FIRST_COLUMN", ["false", "true"], "false"], 4));
+config.optionOverrides.push(buildOptionOverride(["Show Footers", "SHOW_FOOTERS", ["false", "true"], "false"], 5));
 
 export {
     plugin_id,
