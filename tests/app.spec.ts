@@ -2,6 +2,7 @@ jest.mock("app/core/utils/kbn");
 jest.mock("app/core/time_series2");
 
 import { config, computeRenderingData } from "./../src/app/app";
+import _ from "lodash";
 
 let get_input_default = function () {
     return {
@@ -41,46 +42,47 @@ describe("Check Output", () => {
             expect(input_data.output_html.footer).toBe(``);
         });
     });
-    describe("Sample data", () => {
-        let input = get_input_default();
-        let METRIC_NAME = "dev.server_stats.web_1.cpu.usage";
-        let METRIC_VALUE = 8885;
-        input.data.push({
-            target: METRIC_NAME,
-            datapoints: [[METRIC_VALUE, 1544715580]]
-        })
-        let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options);
-        it("Check Error", () => {
-            expect(input_data.error).toBe(undefined);
-        });
-        it("Check Header", () => {
-            expect(input_data.output_html.header).toBe(`<br/><tr><th style=\"padding:4px;text-align:left\">${input.rendering_options.default_title_for_rows}</th><th style=\"padding:4px;text-align:left\">Value</th></tr>`);
-        });
-        it("Check Body", () => {
-            expect(input_data.output_html.body).toBe(`<tr><td style=\"padding:4px;text-align:left\">${METRIC_NAME}</td><td
+    _.each([8885, 1, 0, -321, 1024000000], METRIC_VALUE => {
+        describe(`Data without decimals - ${METRIC_VALUE}`, () => {
+            let input = get_input_default();
+            let METRIC_NAME = "dev.server_stats.web_1.cpu.usage";
+            input.data = [{
+                target: METRIC_NAME,
+                datapoints: [[METRIC_VALUE, 1544715580]]
+            }];
+            let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options);
+            it("Check Error", () => {
+                expect(input_data.error).toBe(undefined);
+            });
+            it("Check Header", () => {
+                expect(input_data.output_html.header).toBe(`<br/><tr><th style=\"padding:4px;text-align:left\">${input.rendering_options.default_title_for_rows}</th><th style=\"padding:4px;text-align:left\">Value</th></tr>`);
+            });
+            it("Check Body", () => {
+                expect(input_data.output_html.body).toBe(`<tr><td style=\"padding:4px;text-align:left\">${METRIC_NAME}</td><td
             style=\"padding:4px;background-color:transparent;text-align:left;color:white\"
           >
             <div
             data-toggle=\"tooltip\"
             data-html=\"true\"
             data-placement=\"left\"
-            title=\"Row Name : ${METRIC_NAME} <br/>Col Name : Value <br/>Value : ${METRIC_VALUE}.00\"
+            title=\"Row Name : ${METRIC_NAME} <br/>Col Name : Value <br/>Value : ${METRIC_VALUE}${METRIC_VALUE === 0 ? "" : ".00"}\"
             style=\"padding-left:10px\">
-                ${METRIC_VALUE}.00
+                ${METRIC_VALUE}${METRIC_VALUE === 0 ? "" : ".00"}
             </div>
           </td></tr>`);
-        });
-        it("Check Footer", () => {
-            expect(input_data.output_html.footer).toBe(``);
+            });
+            it("Check Footer", () => {
+                expect(input_data.output_html.footer).toBe(``);
+            });
         });
     });
     describe("Null data", () => {
-        let input = get_input_default();        
+        let input = get_input_default();
         let METRIC_NAME = "dev.server_stats.web_1.cpu.usage";
-        input.data.push({
+        input.data = [{
             target: METRIC_NAME,
             datapoints: [[null, 1544715580]]
-        })
+        }];
         let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options);
         it("Check Error", () => {
             expect(input_data.error).toBe(undefined);
