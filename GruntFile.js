@@ -1,3 +1,5 @@
+const sass = require('node-sass');
+
 module.exports = grunt => {
 
   require("load-grunt-tasks")(grunt);
@@ -7,14 +9,20 @@ module.exports = grunt => {
 
   grunt.initConfig({
 
-    clean: ["dist"],
+    clean: ["dist", ".tmp"],
 
     copy: {
       src_to_dist: {
         cwd: "src",
         expand: true,
-        src: ["partials/*.html", "css/*.css"],
+        src: ["partials/*.html"],
         dest: "dist"
+      },
+      stylesheets: {
+        cwd: ".tmp/compile_output/css/",
+        expand: true,
+        src: ["*.css"],
+        dest: "dist/css"
       },
       pluginDef: {
         expand: true,
@@ -44,6 +52,21 @@ module.exports = grunt => {
         options: {
           debounceDelay: 250,
           spawn: false
+        }
+      }
+    },
+
+    sass: {
+      build: {
+        options: {
+          debugInfo: true,
+          check: true,
+          implementation: sass,
+          sourceMap: false
+        },
+        files: {
+          '.tmp/compile_output/css/default.dark.css': 'src/css/default.dark.scss',
+          '.tmp/compile_output/css/default.light.css': 'src/css/default.light.scss'
         }
       }
     },
@@ -110,20 +133,15 @@ Built on : <%= grunt.template.today("yyyy-mm-dd HH:MM") %>
     "tslint",
     "ts:build",
     "uglify:ts",
+    "sass:build",
     "copy:src_to_dist",
+    "copy:stylesheets",
     "copy:pluginDef",
     "copy:img_to_dist"
   ]);
 
   grunt.registerTask("release", [
-    "clean",
-    "run:tests",
-    "tslint",
-    "ts:build",
-    "uglify:ts",
-    "copy:src_to_dist",
-    "copy:pluginDef",
-    "copy:img_to_dist"
+    "default"
   ]);
 
 };

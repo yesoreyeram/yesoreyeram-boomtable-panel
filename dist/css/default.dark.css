@@ -1,32 +1,31 @@
-.boom-table .debug{
-    margin-top :30px;
-}
-.boom-table .debug table tr{
-    border: 2px solid red;
-}
-.boom-table .inline-form-control {
-    display: inline-block;
-    margin: 10px 20px 10px 0px;
-    padding:5px;
-}
-.boom-table .btn-small {
-    margin-left: 20px;
-}
-.boom-table .btn-small .fa{
-    margin-right: 5px;
-}
 .boom-table .split {
-    margin-right: 20px;
-}
+  margin-right: 20px; }
+
+.boom-table .btn-small {
+  margin-left: 20px; }
+  .boom-table .btn-small .fa {
+    margin-right: 5px; }
+
+.boom-table .boom-label {
+  padding-left: 10px; }
+
+.boom-table .inline-form-control {
+  display: inline-block;
+  margin: 10px 20px 10px 0px;
+  padding: 5px; }
+
 .boom-table h6.text-header {
-    padding: 0 0 10px 0;
-    color: cadetblue;
-    font-weight: bolder;
-}
-.boom-table h6.text-header i{
-    font-weight: 100;
-    color: darksalmon;
-}
-.boom-table .boom-label{
-    padding-left: 10px;
-}
+  padding: 0 0 10px 0;
+  font-weight: bolder; }
+  .boom-table h6.text-header i {
+    font-weight: 100; }
+
+.boom-table .debug {
+  margin-top: 30px; }
+  .boom-table .debug table tr {
+    border: 2px solid red; }
+
+.boom-table h6.text-header {
+  color: cadetblue; }
+  .boom-table h6.text-header i {
+    color: darkcyan; }
