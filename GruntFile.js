@@ -1,4 +1,3 @@
-let fs = require("fs")
 module.exports = grunt => {
 
   require("load-grunt-tasks")(grunt);
