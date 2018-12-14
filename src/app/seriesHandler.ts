@@ -6,7 +6,7 @@ import TimeSeries from "app/core/time_series2";
 import * as utils from "./utils";
 import { Series, Pattern } from "./../interfaces/interfaces";
 
-let ___transformValue = function (thresholds: Number[], transform_values: String[], value: Number, displayValue: String, row_name: String, col_name: String): String {
+let ___computeDisplayValueFromThresholds = function (thresholds: Number[], transform_values: String[], value: Number, displayValue: String, row_name: String, col_name: String): String {
     let t = value;
     if (thresholds && transform_values && typeof value === "number" && thresholds.length + 1 <= transform_values.length) {
         transform_values = _.dropRight(transform_values, transform_values.length - thresholds.length - 1);
@@ -63,11 +63,9 @@ let defaultHandler = function (seriesData: Series): Series {
     series.flotpairs = series.getFlotPairs("connected");
     return series;
 };
-let getPattern = function (patterns: Pattern[], defaultPattern: Pattern, alias: String) {
+let findMatchingPattern = function (patterns: Pattern[], defaultPattern: Pattern, alias: String) {
     let activePatterns = patterns.filter(p => { return p.disabled !== true; });
-    let matchingPattern = _.find(activePatterns, function (p) {
-        return alias.match(p.pattern);
-    });
+    let matchingPattern = _.find(activePatterns, p => { return alias.match(p.pattern); });
     return matchingPattern || defaultPattern;
 };
 let getRowName = function (alias: String, pattern: Pattern, defaultPattern: Pattern, row_col_wrapper: String): String {
@@ -108,19 +106,11 @@ let getThresholds = function (pattern: Pattern, defaultPattern: Pattern, current
     return thresholds;
 };
 let assignValue = function (series: Series, defaultPattern: Pattern): Series {
-    if (series.stats) {
-        series.value = series.stats[String(series.pattern.valueName) || String(defaultPattern.valueName)];
+    if (!isNaN(series.value)) {
         let decimalInfo: any = utils.getDecimalsForValue(series.value, +(series.decimals));
         let formatFunc = kbn.valueFormats[String(series.pattern.format) || String(defaultPattern.format)];
-        if (series.value === null) {
-            series.displayValue = series.pattern.null_value || defaultPattern.null_value || "Null";
-        } else if (!isNaN(series.value)) {
-            series.valueFormatted = formatFunc(series.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
-            series.valueRounded = kbn.roundValue(series.value, decimalInfo.decimals);
-            series.displayValue = series.valueFormatted;
-        } else {
-            series.displayValue = series.pattern.null_value || defaultPattern.null_value || "Null";
-        }
+        series.valueFormatted = formatFunc(series.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
+        series.displayValue = series.valueFormatted;
     }
     return series;
 };
@@ -150,13 +140,6 @@ let getDisplayValueOverride = function (transform_values_overrides: String, valu
     }
     return displayValue;
 };
-let getBgColor = function (pattern: Pattern, defaultPattern: Pattern, enable_bgColor: Boolean, thresholds: Number[], bgColors: String[], value: Number, displayValue: any): String {
-    let bgColor = enable_bgColor === true ? ___computeColorFromThresholds(thresholds, bgColors, value, "transparent") : "transparent";
-    if (displayValue === (pattern.null_value || defaultPattern.null_value || "Null")) {
-        bgColor = pattern.null_color || defaultPattern.null_color || "transparent";
-    }
-    return bgColor;
-};
 let getOverridedBGColor = function (bgColors_overrides: String, value: Number, defaultBGColor: String): String {
     let bgColor = defaultBGColor;
     let _bgColors_overrides = bgColors_overrides.split("|").filter(con => con.indexOf("->") > -1).map(con => con.split("->")).filter(con => +(con[0]) === value).map(con => con[1]);
@@ -164,13 +147,6 @@ let getOverridedBGColor = function (bgColors_overrides: String, value: Number, d
         bgColor = utils.normalizeColor(("" + _bgColors_overrides[0]).trim());
     }
     return bgColor;
-};
-let getTextColor = function (pattern: Pattern, defaultPattern: Pattern, enable_TextColors: Boolean, thresholds: Number[], textColors: String[], value: Number, displayValue: any): String {
-    let textColor = enable_TextColors === true ? ___computeColorFromThresholds(thresholds, textColors, value, "white") : "white";
-    if (displayValue === (pattern.null_value || defaultPattern.null_value || "Null")) {
-        textColor = pattern.null_text_color || defaultPattern.null_text_color || "white";
-    }
-    return textColor;
 };
 let getOverridedTextColor = function (textColors_overrides: String, value: Number, defaulttextColor: String): String {
     let textColor = defaulttextColor;
@@ -207,64 +183,60 @@ let applyImageTransform = function (series: Series): Series {
     }
     return series;
 };
-let assignClickableLinks = function (series: Series): Series {
-    if (series.pattern.enable_clickable_cells) {
-        let targetLink = series.pattern.clickable_cells_link || "#";
-        targetLink = targetLink.replace(new RegExp("_row_name_", "g"), utils.getActualNameWithoutTransformSign(series.actual_row_name).trim());
-        targetLink = targetLink.replace(new RegExp("_col_name_", "g"), utils.getActualNameWithoutTransformSign(series.actual_col_name).trim());
-        targetLink = targetLink.replace(new RegExp("_value_", "g"), utils.getActualNameWithoutTransformSign(series.value).trim());
-        series.displayValue = `<a href="${targetLink}" target="_blank">${series.displayValue}</a>`;
-    }
-    return series;
-};
 let compute = function (dataComputed: Series[], defaultPattern: Pattern, patterns: Pattern[], row_col_wrapper: String): Series[] {
     dataComputed = dataComputed.map(series => {
-        series.pattern = getPattern(patterns, defaultPattern, series.alias);
+        series.pattern = findMatchingPattern(patterns, defaultPattern, series.alias);
         series.decimals = series.pattern.decimals || defaultPattern.decimals;
+        series.value = series.stats ? series.stats[String(series.pattern.valueName) || String(defaultPattern.valueName)] : null;
         return series;
     });
     dataComputed = dataComputed.map(series => assignValue(series, defaultPattern));
-    dataComputed = dataComputed.filter(series => filterValues(series));
     dataComputed = dataComputed.map(series => {
+        let thresholds = getThresholds(series.pattern, defaultPattern, ___getServerTimestamp(series));
         series.row_name = getRowName(series.alias, series.pattern, defaultPattern, row_col_wrapper);
         series.col_name = getColName(series.alias, series.row_name, series.pattern, defaultPattern, row_col_wrapper);
         series.key_name = series.row_name + "#" + series.col_name;
-        series.thresholds = getThresholds(series.pattern, defaultPattern, ___getServerTimestamp(series));
-        series.enable_bgColor = series.pattern.enable_bgColor;
-        series.bgColors = (series.pattern.bgColors || defaultPattern.bgColors || "").split("|");
-        series.bgColor = getBgColor(series.pattern, defaultPattern, series.enable_bgColor, series.thresholds, series.bgColors, series.value, series.displayValue);
-        series.enable_bgColor_overrides = series.pattern.enable_bgColor_overrides;
-        series.bgColors_overrides = series.pattern.bgColors_overrides || "";
-        if (series.enable_bgColor_overrides && series.bgColors_overrides !== "") {
-            series.bgColor = getOverridedBGColor(series.bgColors_overrides, series.value, series.bgColor);
+        series.tooltipTemplate = series.pattern.tooltipTemplate || defaultPattern.tooltipTemplate || "Series : _series_ | Value : _value_";
+        if (thresholds.length > 0) {
+            if (series.pattern.enable_bgColor) {
+                let bgColors = (series.pattern.bgColors || defaultPattern.bgColors || "").split("|");
+                series.bgColor = ___computeColorFromThresholds(thresholds, bgColors, series.value, "transparent");
+            }
+            if (series.pattern.enable_TextColors) {
+                let textColors = (series.pattern.textColors || defaultPattern.textColors || "").split("|");
+                series.textColor = ___computeColorFromThresholds(thresholds, textColors, series.value, "white");
+            }
+            if (series.pattern.enable_transform) {
+                let transform_values = (series.pattern.transform_values || defaultPattern.transform_values).split("|");
+                series.displayValue = ___computeDisplayValueFromThresholds(thresholds, transform_values, series.value, series.displayValue, series.row_name, series.col_name);
+            }
         }
-        series.enable_TextColors = series.pattern.enable_TextColors;
-        series.textColors = (series.pattern.textColors || defaultPattern.textColors || "").split("|");
-        series.textColor = getTextColor(series.pattern, defaultPattern, series.enable_TextColors, series.thresholds, series.textColors, series.value, series.displayValue);
-        series.enable_TextColor_overrides = series.pattern.enable_TextColor_overrides;
-        series.textColors_overrides = series.pattern.textColors_overrides || "";
-        if (series.enable_TextColor_overrides && series.textColors_overrides !== "") {
-            series.textColor = getOverridedTextColor(series.textColors_overrides, series.value, series.textColor);
+        if (series.pattern.enable_bgColor_overrides && series.pattern.bgColors_overrides) {
+            series.bgColor = getOverridedBGColor(series.pattern.bgColors_overrides, series.value, series.bgColor || "transparent");
         }
-        series.enable_transform = series.pattern.enable_transform;
-        series.transform_values = (series.pattern.transform_values || defaultPattern.transform_values).split("|");
-        series.displayValue = series.enable_transform === true ? ___transformValue(series.thresholds, series.transform_values, series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
-        if (series.displayValue === (series.pattern.null_value || defaultPattern.null_value || "Null")) {
-            series.displayValue = series.pattern.null_value || defaultPattern.null_value;
-        } else if (isNaN(series.value)) {
-            series.displayValue = series.pattern.null_value || defaultPattern.null_value;
+        if (series.pattern.enable_TextColor_overrides && series.pattern.textColors_overrides ) {
+            series.textColor = getOverridedTextColor(series.pattern.textColors_overrides, series.value, series.textColor || "white");
         }
-        series.enable_transform_overrides = series.pattern.enable_transform_overrides;
-        series.transform_values_overrides = series.pattern.transform_values_overrides || "";
-        if (series.enable_transform_overrides && series.transform_values_overrides !== "") {
-            series.displayValue = getDisplayValueOverride(series.transform_values_overrides, series.value, series.row_name, series.col_name, series.displayValue);
+        if (series.pattern.enable_transform_overrides && series.pattern.transform_values_overrides) {
+            series.displayValue = getDisplayValueOverride(series.pattern.transform_values_overrides, series.value, series.row_name, series.col_name, series.displayValue);
         }
-        series.tooltipTemplate = series.pattern.tooltipTemplate || defaultPattern.tooltipTemplate || "Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_";
+        if (_.isNaN(series.value) || series.value === null) {
+            series.bgColor = series.pattern.null_color || defaultPattern.null_color || "darkred";
+            series.textColor = series.pattern.null_text_color || defaultPattern.null_text_color || "white";
+            series.displayValue = series.pattern.null_value || defaultPattern.null_value || "No data";
+        }
+        if (series.pattern.enable_clickable_cells) {
+            let targetLink = series.pattern.clickable_cells_link || "#";
+            targetLink = targetLink.replace(new RegExp("_row_name_", "g"), utils.getActualNameWithoutTransformSign(series.actual_row_name).trim());
+            targetLink = targetLink.replace(new RegExp("_col_name_", "g"), utils.getActualNameWithoutTransformSign(series.actual_col_name).trim());
+            targetLink = targetLink.replace(new RegExp("_value_", "g"), utils.getActualNameWithoutTransformSign(series.value).trim());
+            series.displayValue = `<a href="${targetLink}" target="_blank">${series.displayValue}</a>`;
+        }
         return series;
     });
     dataComputed = dataComputed.map(series => applyFontAwesomeIcons(series));
     dataComputed = dataComputed.map(series => applyImageTransform(series));
-    dataComputed = dataComputed.map(series => assignClickableLinks(series));
+    dataComputed = dataComputed.filter(series => filterValues(series));
     return dataComputed;
 };
 export {

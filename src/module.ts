@@ -4,7 +4,8 @@ import _ from "lodash";
 import kbn from "app/core/utils/kbn";
 import { loadPluginCss, MetricsPanelCtrl } from "app/plugins/sdk";
 import { Pattern, TimeBaseThreshold, ValueNameOption } from "./interfaces/interfaces";
-import { plugin_id, config, computeRenderingData } from "./app/app";
+import { plugin_id, config } from "./app/config";
+import { computeRenderingData, getOptionOverride } from "./app/app";
 
 loadPluginCss({
   dark: `plugins/${plugin_id}/css/default.dark.css`,
@@ -17,8 +18,8 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   elem: any;
   $sce: any;
   dataReceived: any;
-  valueNameOptions: ValueNameOption[] = config.valueNameOptions;
   unitFormats: any = kbn.getUnitFormats();
+  valueNameOptions: ValueNameOption[] = config.valueNameOptions;
   optionOverrides: any = config.optionOverrides;
   constructor($scope, $injector, $sce) {
     super($scope, $injector);
@@ -70,7 +71,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       enable_transform_overrides: false,
       transform_values_overrides: "0->down|1->up",
       decimals: 2,
-      tooltipTemplate: "Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_",
+      tooltipTemplate: "Series : _series_ | Value : _value_",
       format: "none",
       null_color: "darkred",
       null_text_color: "white",
@@ -174,15 +175,6 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     return text;
   }
-  getOptionOverride(currentOptionOverrides, optionOverrides, propertyName: String) {
-    let option = _.find(currentOptionOverrides, o => o.propertyName === propertyName);
-    let default_option = _.find(optionOverrides, o => o.propertyName === propertyName);
-    if (option) {
-      return option.value;
-    } else {
-      return default_option.defaultValue;
-    }
-  }
   setOptionOverride(propertyName: String, value: String, text: String) {
     let newOverrides = [];
     if (_.filter(this.panel.currentOptionOverrides, o => o.propertyName === propertyName).length === 0) {
@@ -234,21 +226,23 @@ GrafanaBoomTableCtrl.prototype.render = function () {
   };
   let rendering_options = {
     default_title_for_rows: this.panel.default_title_for_rows,
-    show_footers: this.getOptionOverride(this.panel.currentOptionOverrides, config.optionOverrides, "SHOW_FOOTERS") === "true",
-    hide_headers: this.getOptionOverride(this.panel.currentOptionOverrides, config.optionOverrides, "HIDE_HEADERS") === "true",
-    hide_first_column: this.getOptionOverride(this.panel.currentOptionOverrides, config.optionOverrides, "HIDE_FIRST_COLUMN") === "true",
-    text_align_table_header: this.getOptionOverride(this.panel.currentOptionOverrides, config.optionOverrides, "TEXT_ALIGN_TABLE_HEADER"),
-    text_align_first_column: this.getOptionOverride(this.panel.currentOptionOverrides, config.optionOverrides, "TEXT_ALIGN_FIRST_COLUMN"),
-    text_align_table_cells: this.getOptionOverride(this.panel.currentOptionOverrides, config.optionOverrides, "TEXT_ALIGN_TABLE_CELLS"),
+    show_footers: getOptionOverride(this.panel.currentOptionOverrides, "SHOW_FOOTERS") === "true",
+    hide_headers: getOptionOverride(this.panel.currentOptionOverrides, "HIDE_HEADERS") === "true",
+    hide_first_column: getOptionOverride(this.panel.currentOptionOverrides, "HIDE_FIRST_COLUMN") === "true",
+    text_align_table_header: getOptionOverride(this.panel.currentOptionOverrides, "TEXT_ALIGN_TABLE_HEADER"),
+    text_align_first_column: getOptionOverride(this.panel.currentOptionOverrides, "TEXT_ALIGN_FIRST_COLUMN"),
+    text_align_table_cells: getOptionOverride(this.panel.currentOptionOverrides, "TEXT_ALIGN_TABLE_CELLS"),
   };
-  let output = computeRenderingData(this.dataReceived, this.panel.patterns, this.panel.defaultPattern || config.panelDefaults.defaultPattern, panelOptions, rendering_options);
+  let output = computeRenderingData(this.dataReceived, this.panel.patterns, this.panel.defaultPattern || config.panelDefaults.defaultPattern, panelOptions, rendering_options, this.panel.debug_mode);
   if (output.error) {
     this.panel.error = output.error;
   } else {
     this.elem.find("#boomtable_output_body_headers").html(output.output_html.header);
     this.elem.find("#boomtable_output_body").html(output.output_html.body);
     this.elem.find("#boomtable_output_body_footers").html(output.output_html.footer);
-    this.elem.find("[data-toggle='tooltip']").tooltip();
+    this.elem.find("[data-toggle='tooltip']").tooltip({
+      boundary: "scrollParent"
+    });
     if (this.panel.debug_mode === true) {
       this.elem.find("#boomtable_debug_table_holder").html(output.output_html.debug);
     }

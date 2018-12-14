@@ -270,11 +270,18 @@ Example : `https://mysite.com/_row_name_/_col_name_/?foo=bar`
 Tooltip
 -------
 
-Default tooltip is `Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_`
+Default tooltip is `Series : _series_ | Value : _value_`
 
 If left blank, default tooltip will be used.
 
 Tooltip can be disabled by specifying just `_` as tooltip template. 
+
+`_series_` will be repleaced in the tooltip with the actual series name.
+`_value_` will be repleaced in the tooltip with the actual value with units and decimals.
+`_row_name_` will be repleaced in the tooltip with the actual row name.
+`_col_name_` will be repleaced in the tooltip with the actual series name.
+
+If any font aweseome or image tokens prescent in the row name or col name, they will be ignored in the tooltip.
 
 Filter
 ------

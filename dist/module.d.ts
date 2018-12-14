@@ -6,8 +6,8 @@ declare class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     elem: any;
     $sce: any;
     dataReceived: any;
-    valueNameOptions: ValueNameOption[];
     unitFormats: any;
+    valueNameOptions: ValueNameOption[];
     optionOverrides: any;
     constructor($scope: any, $injector: any, $sce: any);
     onInitEditMode(): void;
@@ -24,7 +24,6 @@ declare class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     inverseTransformValues(index: number): void;
     setUnitFormat(subItem: any, index: number): void;
     limitText(text: String, maxlength: number): String;
-    getOptionOverride(currentOptionOverrides: any, optionOverrides: any, propertyName: String): any;
     setOptionOverride(propertyName: String, value: String, text: String): void;
     removeOptionOverride(option: String): void;
     adjustPanelHeight(panelHeight: number): void;
