@@ -13,7 +13,7 @@ module.exports = grunt => {
       src_to_dist: {
         cwd: "src",
         expand: true,
-        src: ["**/*", "css/*.css", "!**/*.ts", "!**/*.js", "!**/*.scss", "!img/**/*"],
+        src: ["partials/*.html", "css/*.css"],
         dest: "dist"
       },
       pluginDef: {
