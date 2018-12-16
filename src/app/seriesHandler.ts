@@ -225,6 +225,11 @@ let compute = function (dataComputed: Series[], defaultPattern: Pattern, pattern
             series.textColor = series.pattern.null_text_color || defaultPattern.null_text_color || "white";
             series.displayValue = series.pattern.null_value || defaultPattern.null_value || "No data";
         }
+        return series;
+    });
+    dataComputed = dataComputed.map(series => applyFontAwesomeIcons(series));
+    dataComputed = dataComputed.map(series => applyImageTransform(series));
+    dataComputed = dataComputed.map(series => {
         if (series.pattern.enable_clickable_cells) {
             let targetLink = series.pattern.clickable_cells_link || "#";
             targetLink = targetLink.replace(new RegExp("_row_name_", "g"), utils.getActualNameWithoutTransformSign(series.actual_row_name).trim());
@@ -234,8 +239,6 @@ let compute = function (dataComputed: Series[], defaultPattern: Pattern, pattern
         }
         return series;
     });
-    dataComputed = dataComputed.map(series => applyFontAwesomeIcons(series));
-    dataComputed = dataComputed.map(series => applyImageTransform(series));
     dataComputed = dataComputed.filter(series => filterValues(series));
     return dataComputed;
 };
