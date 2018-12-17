@@ -63,10 +63,10 @@ let defaultHandler = function (seriesData: Series): Series {
     series.flotpairs = series.getFlotPairs("connected");
     return series;
 };
-let findMatchingPattern = function (patterns: Pattern[], defaultPattern: Pattern, alias: String) {
+let findMatchingPattern = function (patterns: Pattern[], alias: String) {
     let activePatterns = patterns.filter(p => { return p.disabled !== true; });
     let matchingPattern = _.find(activePatterns, p => { return alias.match(p.pattern); });
-    return matchingPattern || defaultPattern;
+    return matchingPattern;
 };
 let getRowName = function (alias: String, pattern: Pattern, defaultPattern: Pattern, row_col_wrapper: String): String {
     let row_name: String = alias.split(String(pattern.delimiter) || ".").reduce((r, it, i) => {
@@ -104,15 +104,6 @@ let getThresholds = function (pattern: Pattern, defaultPattern: Pattern, current
         });
     }
     return thresholds;
-};
-let assignValue = function (series: Series, defaultPattern: Pattern): Series {
-    if (!isNaN(series.value)) {
-        let decimalInfo: any = utils.getDecimalsForValue(series.value, +(series.decimals));
-        let formatFunc = kbn.valueFormats[String(series.pattern.format) || String(defaultPattern.format)];
-        series.valueFormatted = formatFunc(series.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
-        series.displayValue = series.valueFormatted;
-    }
-    return series;
 };
 let filterValues = function (series: Series): Boolean {
     if (!series.pattern.filter) {
@@ -179,12 +170,22 @@ let getLink = function (seriesIdentifier: String, link: String, row_name: String
 };
 let compute = function (dataComputed: Series[], defaultPattern: Pattern, patterns: Pattern[], row_col_wrapper: String, no_match_text: String): Series[] {
     dataComputed = dataComputed.map(series => {
-        series.pattern = findMatchingPattern(patterns, defaultPattern, series.alias);
-        series.decimals = series.pattern.decimals || defaultPattern.decimals;
-        series.value = series.stats ? series.stats[String(series.pattern.valueName) || String(defaultPattern.valueName)] : null;
+        series.pattern = findMatchingPattern(patterns, series.alias) || defaultPattern;
         return series;
     });
-    dataComputed = dataComputed.map(series => assignValue(series, defaultPattern));
+    dataComputed = dataComputed.map(series => {
+        let decimals = series.pattern.decimals || defaultPattern.decimals;
+        series.value = series.stats ? series.stats[String(series.pattern.valueName) || String(defaultPattern.valueName)] : null;
+        if (!isNaN(series.value)) {
+            let decimalInfo: any = utils.getDecimalsForValue(series.value, +(decimals));
+            let formatFunc = kbn.valueFormats[String(series.pattern.format) || String(defaultPattern.format)];
+            series.valueFormatted = formatFunc(series.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
+            series.displayValue = series.valueFormatted;
+        } else {
+            series.displayValue = "NaN";
+        }
+        return series;
+    });
     dataComputed = dataComputed.map(series => {
         let thresholds = getThresholds(series.pattern, defaultPattern, ___getServerTimestamp(series));
         series.row_name = getRowName(series.alias, series.pattern, defaultPattern, row_col_wrapper);
@@ -218,52 +219,39 @@ let compute = function (dataComputed: Series[], defaultPattern: Pattern, pattern
             series.textColor = series.pattern.null_text_color || defaultPattern.null_text_color || "white";
             series.displayValue = series.pattern.null_value || defaultPattern.null_value || "No data";
         }
-        series.actual_displayvalue = series.displayValue;
-        series.actual_row_name = series.row_name;
-        series.actual_col_name = series.col_name;
-        if (series.displayValue && series.displayValue.indexOf("_fa-") > -1) {
-            series.displayValue = utils.replaceFontAwesomeIcons(series.displayValue);
-        }
-        if (series.row_name && series.row_name.indexOf("_fa-") > -1) {
-            series.row_name = utils.replaceFontAwesomeIcons(series.row_name);
-        }
-        if (series.col_name && series.col_name.indexOf("_fa-") > -1) {
-            series.col_name = utils.replaceFontAwesomeIcons(series.col_name);
-        }
-        if (series.displayValue && series.displayValue.indexOf("_img-") > -1) {
-            series.displayValue = utils.replaceWithImages(series.displayValue);
-        }
-        if (series.row_name && series.row_name.indexOf("_img-") > -1) {
-            series.row_name = utils.replaceWithImages(series.row_name);
-        }
-        if (series.col_name && series.col_name.indexOf("_img-") > -1) {
-            series.col_name = utils.replaceWithImages(series.col_name);
-        }
+        let actual_row_name = series.row_name;
+        let actual_col_name = series.col_name;
+        series.row_name = utils.replaceTokens(series.row_name);
+        series.col_name = utils.replaceTokens(series.col_name);
+        series.displayValue = series.pattern.enable_transform || series.pattern.enable_transform_overrides ? utils.replaceTokens(series.displayValue) : series.displayValue;
         if (series.pattern.enable_clickable_cells) {
             let targetLink = getLink(
                 series.alias || series.aliasEscaped || series.label || series.id || "-",
                 series.pattern.clickable_cells_link || "#",
-                utils.getActualNameWithoutTransformSign(series.actual_row_name).trim(),
-                utils.getActualNameWithoutTransformSign(series.actual_col_name).trim(),
+                utils.getActualNameWithoutTransformSign(actual_row_name).trim(),
+                utils.getActualNameWithoutTransformSign(actual_col_name).trim(),
                 series.value || NaN
             );
             series.displayValue = `<a href="${targetLink}" target="_blank">${series.displayValue}</a>`;
         }
+        let tooltip = getTooltipMessage(
+            series.alias || series.aliasEscaped || series.label || series.id || "-",
+            series.pattern.tooltipTemplate || defaultPattern.tooltipTemplate || "Series : _series_ | Value : _value_",
+            utils.getActualNameWithoutTransformSign(actual_row_name || series.row_name),
+            utils.getActualNameWithoutTransformSign(actual_col_name || series.col_name),
+            series.valueFormatted || no_match_text
+        );
         series.output = {
             bgColor: series.bgColor,
             textColor: series.textColor,
             displayValue: series.displayValue,
-            tooltip: getTooltipMessage(
-                series.alias || series.aliasEscaped || series.label || series.id || "-",
-                series.pattern.tooltipTemplate || defaultPattern.tooltipTemplate || "Series : _series_ | Value : _value_",
-                utils.getActualNameWithoutTransformSign(series.actual_row_name || series.row_name),
-                utils.getActualNameWithoutTransformSign(series.actual_col_name || series.col_name),
-                series.valueFormatted || no_match_text
-            )
+            tooltip
         };
         return series;
     });
-    dataComputed = dataComputed.filter(series => filterValues(series));
+    dataComputed = dataComputed.filter(series => {
+        return filterValues(series) === true;
+    });
     return dataComputed;
 };
 export {

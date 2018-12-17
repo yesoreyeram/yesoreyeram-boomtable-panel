@@ -5,7 +5,7 @@ export interface TimeBaseThreshold {
     enabledDays: String;
     threshold: String;
 }
-export interface Series {
+export interface SeriesBasic {
     datapoints: any[];
     target: String;
     label: String;
@@ -17,23 +17,20 @@ export interface Series {
     valueFormatted: String;
     valueRounded: Number;
     stats: any;
-    displayValue: String;
-    actual_displayvalue: String;
-    actual_row_name: String;
-    actual_col_name: String;
+}
+export interface Series extends SeriesBasic {
     pattern: Pattern;
-    delimiter: String;
     row_name: String;
     col_name: String;
-    decimals: Number;
+    key_name: String;
     bgColor: String;
     textColor: String;
-    key_name: String;
+    displayValue: String;
     output: {
         bgColor: String;
         textColor: String;
-        displayValue : String;
-        tooltip : String;
+        displayValue: String;
+        tooltip: String;
     };
     getFlotPairs: (String) => any[];
 }
