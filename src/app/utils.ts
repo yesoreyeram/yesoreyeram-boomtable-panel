@@ -1,5 +1,4 @@
 import _ from "lodash";
-import { OptionOverride } from "../interfaces/interfaces";
 
 const COLORS = {
     GREEN: "rgba(50, 172, 45, 0.97)",
@@ -132,16 +131,6 @@ const getDecimalsForValue = function (value: number, _decimals: number): Object 
 
     return result;
 };
-const buildOptionOverride = function (o: any[], i: Number): OptionOverride {
-    return {
-        text: String(o[0]),
-        propertyName: String(o[1]),
-        index: i,
-        defaultValue: String(o[3]),
-        values: [].concat(o[2]).map(value => { return String[value]; }),
-        submenu: [].concat(o[2]).map(value => { return { text: String(value), value: value }; })
-    };
-};
 export {
     COLORS,
     hasDuplicates,
@@ -151,7 +140,6 @@ export {
     getUniqueFields,
     getDecimalsForValue,
     getActualNameWithoutTransformSign,
-    buildOptionOverride,
     normalizeColor,
     replaceFontAwesomeIcons,
     replaceWithImages,

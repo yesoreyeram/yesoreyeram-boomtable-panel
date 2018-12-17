@@ -3,10 +3,21 @@
 import _ from "lodash";
 import * as utils from "./utils";
 import { config } from "./config";
-import { Pattern } from "../interfaces/interfaces";
 import { compute, defaultHandler } from "./seriesHandler";
 import * as renderer from "./renderer";
+import { Pattern , OptionOverride} from "../interfaces/interfaces";
 
+
+const buildOptionOverride = function (o: any[], i: Number): OptionOverride {
+    return {
+        text: String(o[0]),
+        propertyName: String(o[1]),
+        index: i,
+        defaultValue: String(o[3]),
+        values: [].concat(o[2]).map(value => { return String[value]; }),
+        submenu: [].concat(o[2]).map(value => { return { text: String(value), value: value }; })
+    };
+};
 
 const computeRenderingData = function (data: any, patterns: Pattern[], defaultPattern: Pattern, panelOptions, rendering_options, debug_mode: boolean) {
     let returnData = {
@@ -30,7 +41,7 @@ const computeRenderingData = function (data: any, patterns: Pattern[], defaultPa
         } else {
             returnData.error = undefined;
             let mydata = data.map(defaultHandler.bind(data));
-            let dataComputed = compute(mydata, defaultPattern, patterns, panelOptions.row_col_wrapper);
+            let dataComputed = compute(mydata, defaultPattern, patterns, panelOptions.row_col_wrapper, panelOptions.no_match_text);
             let rows_found = utils.getFields(dataComputed, "row_name");
             let cols_found = utils.getFields(dataComputed, "col_name");
             let keys_found = utils.getFields(dataComputed, "key_name");
@@ -66,6 +77,7 @@ const getOptionOverride = function (currentOptionOverrides, propertyName: String
     }
 };
 export {
+    buildOptionOverride,
     computeRenderingData,
     getOptionOverride
 };

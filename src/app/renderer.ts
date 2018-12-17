@@ -1,5 +1,4 @@
 import _ from "lodash";
-import { getActualNameWithoutTransformSign } from "./utils";
 import { Series } from "./../interfaces/interfaces";
 
 let buildOutputData = function (dataComputed: Series[], rows_found: String[], cols_found: String[], options: any): any[] {
@@ -16,28 +15,10 @@ let buildOutputData = function (dataComputed: Series[], rows_found: String[], co
             let mycol: any = {};
             mycol.name = col_name;
             mycol.value = matched_value ? matched_value.value || NaN : NaN;
-            mycol.displayValue = matched_value ? matched_value.displayValue || matched_value.value || "N/A" : no_match_text || "N/A";
-            mycol.bgColor = matched_value && matched_value.bgColor ? matched_value.bgColor : "transparent";
-            mycol.textColor = matched_value && matched_value.textColor ? matched_value.textColor : "white";
-            let tooltipTemplate = matched_value && matched_value.tooltipTemplate ? matched_value.tooltipTemplate : "No matching series found";
-            if (matched_value) {
-                mycol.tooltip = getTooltipMessage(
-                    matched_value.alias || matched_value.aliasEscaped || matched_value.label || matched_value.id || "-" ,
-                    tooltipTemplate,
-                    getActualNameWithoutTransformSign(matched_value.actual_row_name || row_name),
-                    getActualNameWithoutTransformSign(matched_value.actual_col_name || col_name),
-                    matched_value.valueFormatted || no_match_text
-                );
-            } else {
-                mycol.tooltip = getTooltipMessage(
-                    "-",
-                    tooltipTemplate,
-                    getActualNameWithoutTransformSign(row_name),
-                    getActualNameWithoutTransformSign(col_name),
-                    "NaN" || no_match_text
-                );
-            }
-            mycol.tooltip = mycol.tooltip;
+            mycol.displayValue = matched_value && matched_value.output && matched_value.output.displayValue ? matched_value.output.displayValue : no_match_text || "N/A";
+            mycol.bgColor = matched_value && matched_value.output && matched_value.output.bgColor ? matched_value.output.bgColor : "transparent";
+            mycol.textColor = matched_value && matched_value.output && matched_value.output.textColor ? matched_value.output.textColor : "white";
+            mycol.tooltip = matched_value && matched_value.output && matched_value.output.tooltip ? matched_value.output.tooltip : "No matching series found";
             o.cols.push(mycol);
         });
         output.push(o);
@@ -118,19 +99,7 @@ let output_debug = function (dataComputed: Series[]): String {
     `;
     return debug_output;
 };
-let getTooltipMessage = function (seriesIdentifier: String, template: String, row_name: String, col_name: String, value: Number): String {
-    if (template === "_") {
-        return "";
-    }
-    let tooltip = template;
-    tooltip = tooltip.replace(new RegExp("_series_", "g"), String(seriesIdentifier));
-    tooltip = tooltip.replace(new RegExp("_row_name_", "g"), String(row_name));
-    tooltip = tooltip.replace(new RegExp("_col_name_", "g"), String(col_name));
-    tooltip = tooltip.replace(new RegExp("_value_", "g"), String(value));
-    return tooltip;
-};
 export {
-    getTooltipMessage,
     buildOutputData,
     output as buildOutput,
     output_debug as buildDebugOutput
