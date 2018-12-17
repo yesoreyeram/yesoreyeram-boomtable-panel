@@ -49,6 +49,8 @@ describe("Check Metrics Ouput", () => {
         input.defaultPattern.thresholds = "20,30";
         input.defaultPattern.enable_bgColor = true;
         input.defaultPattern.bgColors = "green|yellow|pink";
+        input.defaultPattern.enable_bgColor_overrides = true;
+        input.defaultPattern.bgColors_overrides = "421->navyblue|420->darkgreen";
         input.defaultPattern.decimals = 4;
         let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options, false);
         it("Check Error", () => {
@@ -73,7 +75,7 @@ describe("Check Metrics Ouput", () => {
             expect(input_data.output_html.body).toContain('web_1 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i>');
         });
         it("Check BG Color based on threshold", ()=>{
-            expect(input_data.output_html.body).toContain(`<td style="padding:4px;text-align:left">web_1 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i> </td><td
+            expect(input_data.output_html.body.replace(/\ /g,"")).toContain(`<td style="padding:4px;text-align:left">web_1 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i> </td><td
             style="padding:4px;background-color:pink;text-align:left;color:white"
           >
             <div
@@ -84,7 +86,32 @@ describe("Check Metrics Ouput", () => {
             style="padding-left:10px">
                 40.0000%
             </div>
-          </td>`)
+          </td>`.replace(/\ /g,""))
+        });
+        it("Check BG Color based on overrides", ()=>{
+            expect(input_data.output_html.body.replace(/\ /g,"")).toContain(`<td style="padding:4px;text-align:left">web_2 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i> </td><td
+            style="padding:4px;background-color:pink;text-align:left;color:white"
+          >
+            <div
+            data-toggle="tooltip"
+            data-html="true"
+            data-placement="auto"
+            title="Series : dev.server_stats.web_2.cpu.usage | Value : 400.0000%"
+            style="padding-left:10px">
+                400.0000%
+            </div>
+          </td> <td
+          style="padding:4px;background-color:darkgreen;text-align:left;color:white"
+        >
+          <div
+          data-toggle="tooltip"
+          data-html="true"
+          data-placement="auto"
+          title="Series : dev.server_stats.web_2.mem.usage | Value : 420.0000%"
+          style="padding-left:10px">
+              420.0000%
+          </div>
+        </td>`.replace(/\ /g,""))
         });
     })
 });
