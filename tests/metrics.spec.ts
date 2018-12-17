@@ -85,6 +85,6 @@ describe("Check Metrics Ouput", () => {
                 40.0000%
             </div>
           </td>`)
-        })
+        });
     })
 });
