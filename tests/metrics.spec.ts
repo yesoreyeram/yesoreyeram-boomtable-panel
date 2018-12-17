@@ -53,6 +53,9 @@ describe("Check Metrics Ouput", () => {
         }, {
             target: "dev.server_stats.web_4.mem.usage",
             datapoints: [[320, 1544715580], [320, 1544715590], [620, 1544715600]]
+        }, {
+            target: "dev.server_stats.web_5.mem.usage",
+            datapoints: [[320, 1544715580], [320, 1544715590], [620, 1544715600]]
         }];
         input.rendering_options.default_title_for_rows = "Server Name";
         input.defaultPattern.row_name = "_2_ _fa-circle,green_";
@@ -184,6 +187,16 @@ describe("Check Metrics Ouput", () => {
                 </td>
                 <td style="padding:4px;background-color:darkgreen;text-align:left;color:skyblue">
                     <div data-toggle="tooltip" data-html="true" data-placement="auto" title="Series : dev.server_stats.web_4.mem.usage | Value : 420.0000%" style="padding-left:10px">Something really wrong</div>
+                </td>
+            `.replace(/\ /g, "").replace(/\n/g, ""))
+        });        
+        it("Not matching pairs", () => {
+            expect(input_data.output_html.body.replace(/\ /g, "").replace(/\n/g, "")).toContain(`
+                <td style="padding:4px;text-align:left">
+                    web_5 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i>
+                </td>
+                <td style="padding:4px;background-color:transparent;text-align:left;color:white">
+                    <div data-toggle="tooltip" data-html="true" data-placement="auto" title="No matching series found" style="padding-left:10px">No match found</div>
                 </td>
             `.replace(/\ /g, "").replace(/\n/g, ""))
         });
