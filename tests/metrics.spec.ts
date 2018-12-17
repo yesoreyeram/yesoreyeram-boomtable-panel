@@ -26,7 +26,6 @@ let get_input_default = function () {
     }
 };
 
-
 describe("Check Metrics Ouput", () => {
     describe("E2E", () => {
         let input = get_input_default();
@@ -48,7 +47,7 @@ describe("Check Metrics Ouput", () => {
         input.defaultPattern.col_name = "_3_ _fa-circle,white,2_";
         input.defaultPattern.format = "percent";
         input.defaultPattern.decimals = 4;
-        let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options, false);        
+        let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options, false);
         console.log(input_data.output_html.header);
         it("Check Error", () => {
             expect(input_data.error).toBe(undefined);
@@ -65,7 +64,7 @@ describe("Check Metrics Ouput", () => {
         it("Check Value is formatted", () => {
             expect(input_data.output_html.body).toContain('title="Series : dev.server_stats.web_2.mem.usage | Value : 420.0000%"');
         });
-        it("Check Font Awesome transformation in col name", ()=>{            
+        it("Check Font Awesome transformation in col name", () => {
             expect(input_data.output_html.header).toContain(`cpu <i class="fa fa-circle" style="color:white"></i> <i class="fa fa-circle" style="color:white"></i>`);
         })
         it("Check Font Awesome transformation in row name", () => {
