@@ -72,12 +72,12 @@ describe("Check Metrics Ouput", () => {
         input.defaultPattern.enable_transform_overrides = true;
         input.defaultPattern.transform_values_overrides = "421->Something wrong|420->Something really wrong";
         input.defaultPattern.decimals = 4;        
-        let newPattern = {
+        let pattern_cpu_4 = {
             name: "Web 4",
             pattern: "web_4.cpu",
             disabled: false,
             delimiter: ".",
-            valueName: "avg",
+            valueName: "max",
             row_name: "_2_ _fa-circle,green_",
             col_name:  "_3_ _fa-circle,white,2_",
             thresholds: "70,90",
@@ -108,7 +108,7 @@ describe("Check Metrics Ouput", () => {
                 value_above: "",
             }
         };
-        input.patterns.push(newPattern);
+        input.patterns.push(pattern_cpu_4);
         let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options, false);
         it("Check Error", () => {
             expect(input_data.error).toBe(undefined);
@@ -178,9 +178,9 @@ describe("Check Metrics Ouput", () => {
             data-toggle="tooltip"
             data-html="true"
             data-placement="auto"
-            title="Series : dev.server_stats.web_4.cpu.usage | Value : 400.00"
+            title="Series : dev.server_stats.web_4.cpu.usage | Value : 600.00"
             style="padding-left:10px">
-                400.00
+                600.00
             </div>
           </td><td
           style="padding:4px;background-color:darkgreen;text-align:left;color:skyblue"
