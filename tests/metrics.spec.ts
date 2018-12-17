@@ -46,9 +46,11 @@ describe("Check Metrics Ouput", () => {
         input.defaultPattern.row_name = "_2_ _fa-circle,green_";
         input.defaultPattern.col_name = "_3_ _fa-circle,white,2_";
         input.defaultPattern.format = "percent";
+        input.defaultPattern.thresholds = "20,30";
+        input.defaultPattern.enable_bgColor = true;
+        input.defaultPattern.bgColors = "green|yellow|pink";
         input.defaultPattern.decimals = 4;
         let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options, false);
-        console.log(input_data.output_html.header);
         it("Check Error", () => {
             expect(input_data.error).toBe(undefined);
         });
@@ -70,5 +72,19 @@ describe("Check Metrics Ouput", () => {
         it("Check Font Awesome transformation in row name", () => {
             expect(input_data.output_html.body).toContain('web_1 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i>');
         });
+        it("Check BG Color based on threshold", ()=>{
+            expect(input_data.output_html.body).toContain(`<td style="padding:4px;text-align:left">web_1 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i> </td><td
+            style="padding:4px;background-color:pink;text-align:left;color:white"
+          >
+            <div
+            data-toggle="tooltip"
+            data-html="true"
+            data-placement="auto"
+            title="Series : dev.server_stats.web_1.cpu.usage | Value : 40.0000%"
+            style="padding-left:10px">
+                40.0000%
+            </div>
+          </td>`)
+        })
     })
 });
