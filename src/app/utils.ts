@@ -60,7 +60,7 @@ const replaceFontAwesomeIcons = function (value: String): String {
         .map(a => {
             if (a.startsWith("_fa-") && a.endsWith("_")) {
                 let icon = a.replace(/\_/g, "").split(",")[0];
-                let color = a.indexOf(",") > -1 ? ` style="color:${normalizeColor(a.replace(/\_/g, "").split(",")[1])}" ` : "";
+                let color = a.indexOf(",") > -1 ? `style="color:${normalizeColor(a.replace(/\_/g, "").split(",")[1])}"` : "";
                 let repeatCount = a.split(",").length > 2 ? +(a.replace(/\_/g, "").split(",")[2]) : 1;
                 a = `<i class="fa ${icon}" ${color}></i> `.repeat(repeatCount);
             }
