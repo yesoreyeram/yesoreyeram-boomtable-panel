@@ -55,6 +55,10 @@ describe("Check Metrics Ouput", () => {
         input.defaultPattern.textColors = "darkgreen|darkwhite|purple";
         input.defaultPattern.enable_TextColor_overrides = true;
         input.defaultPattern.textColors_overrides = "421->yellowishred|420->skyblue";
+        input.defaultPattern.enable_transform = true;
+        input.defaultPattern.transform_values = "OK _value_|Better _value_|Bad _value_";
+        input.defaultPattern.enable_transform_overrides = true;
+        input.defaultPattern.transform_values_overrides = "421->Something wrong|420->Something really wrong";
         input.defaultPattern.decimals = 4;
         let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options, false);
         it("Check Error", () => {
@@ -88,7 +92,7 @@ describe("Check Metrics Ouput", () => {
             data-placement="auto"
             title="Series : dev.server_stats.web_1.cpu.usage | Value : 40.0000%"
             style="padding-left:10px">
-                40.0000%
+                Bad 40.0000%
             </div>
           </td>`.replace(/\ /g, ""))
         });
@@ -102,7 +106,7 @@ describe("Check Metrics Ouput", () => {
             data-placement="auto"
             title="Series : dev.server_stats.web_2.cpu.usage | Value : 400.0000%"
             style="padding-left:10px">
-                400.0000%
+                Bad 400.0000%
             </div>
           </td> <td
           style="padding:4px;background-color:darkgreen;text-align:left;color:skyblue"
@@ -113,7 +117,7 @@ describe("Check Metrics Ouput", () => {
           data-placement="auto"
           title="Series : dev.server_stats.web_2.mem.usage | Value : 420.0000%"
           style="padding-left:10px">
-              420.0000%
+                Something really wrong
           </div>
         </td>`.replace(/\ /g, ""))
         });
