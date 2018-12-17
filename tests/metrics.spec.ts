@@ -51,6 +51,10 @@ describe("Check Metrics Ouput", () => {
         input.defaultPattern.bgColors = "green|yellow|pink";
         input.defaultPattern.enable_bgColor_overrides = true;
         input.defaultPattern.bgColors_overrides = "421->navyblue|420->darkgreen";
+        input.defaultPattern.enable_TextColors = true;
+        input.defaultPattern.textColors = "darkgreen|darkwhite|purple";
+        input.defaultPattern.enable_TextColor_overrides = true;
+        input.defaultPattern.textColors_overrides = "421->yellowishred|420->skyblue";
         input.defaultPattern.decimals = 4;
         let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options, false);
         it("Check Error", () => {
@@ -74,9 +78,9 @@ describe("Check Metrics Ouput", () => {
         it("Check Font Awesome transformation in row name", () => {
             expect(input_data.output_html.body).toContain('web_1 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i>');
         });
-        it("Check BG Color based on threshold", ()=>{
+        it("Check BG Color, Text Color based on threshold", ()=>{
             expect(input_data.output_html.body.replace(/\ /g,"")).toContain(`<td style="padding:4px;text-align:left">web_1 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i> </td><td
-            style="padding:4px;background-color:pink;text-align:left;color:white"
+            style="padding:4px;background-color:pink;text-align:left;color:purple"
           >
             <div
             data-toggle="tooltip"
@@ -88,9 +92,9 @@ describe("Check Metrics Ouput", () => {
             </div>
           </td>`.replace(/\ /g,""))
         });
-        it("Check BG Color based on overrides", ()=>{
+        it("Check BG Color, Text Color based on overrides", ()=>{
             expect(input_data.output_html.body.replace(/\ /g,"")).toContain(`<td style="padding:4px;text-align:left">web_2 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i> </td><td
-            style="padding:4px;background-color:pink;text-align:left;color:white"
+            style="padding:4px;background-color:pink;text-align:left;color:purple"
           >
             <div
             data-toggle="tooltip"
@@ -101,7 +105,7 @@ describe("Check Metrics Ouput", () => {
                 400.0000%
             </div>
           </td> <td
-          style="padding:4px;background-color:darkgreen;text-align:left;color:white"
+          style="padding:4px;background-color:darkgreen;text-align:left;color:skyblue"
         >
           <div
           data-toggle="tooltip"
