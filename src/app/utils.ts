@@ -86,12 +86,6 @@ const replaceWithImages = function (value: String): String {
         })
         .join(" ");
 };
-const replaceTokens = function (value: String): String {
-    let o = value;
-    o = value.indexOf("_fa-") > -1 ? replaceFontAwesomeIcons(o) : o;
-    o = value.indexOf("_img-") > -1 ? replaceWithImages(o) : o;
-    return o;
-};
 const getDecimalsForValue = function (value: number, _decimals: number): Object {
     if (_.isNumber(+_decimals)) {
         let o: Object = {
@@ -147,6 +141,7 @@ export {
     getDecimalsForValue,
     getActualNameWithoutTransformSign,
     normalizeColor,
-    replaceTokens,
+    replaceFontAwesomeIcons,
+    replaceWithImages,
     buildError
 };
