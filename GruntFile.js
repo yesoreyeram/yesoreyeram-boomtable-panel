@@ -1,11 +1,8 @@
 module.exports = grunt => {
   require("load-grunt-tasks")(grunt);
 
-  grunt.loadNpmTasks("grunt-execute");
-  grunt.loadNpmTasks("grunt-contrib-clean");
-  grunt.loadNpmTasks('grunt-typescript');
-
   grunt.initConfig({
+
     clean: ["dist"],
 
     copy: {
@@ -40,7 +37,7 @@ module.exports = grunt => {
 
     typescript: {
       build: {
-        src: ['src/**/*.ts', '!**/*.d.ts'],
+        src: ['src/**/*.ts'],
         dest: 'dist/',
         options: {
           module: 'system',
