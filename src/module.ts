@@ -553,13 +553,13 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         boomtable_output_body.html(boomtable_output_body_output);
         //endregion
       } else {
-        var duplicateKeys = _.uniq(keys_found.filter(v => {
+        var duplicateKeyValues = _.uniq(keys_found.filter(v => {
           return keys_found.filter(t => t === v).length > 1
         }));
-        var err = new Error();
-        err.name = "Duplicate keys found";
-        err.message = "Duplicate key values : <br/>" + duplicateKeys.join("<br/> ");
-        this.panel.error = err;
+        var err_duplicateKeys = new Error();
+        err_duplicateKeys.name = "Duplicate keys found";
+        err_duplicateKeys.message = "Duplicate key values : <br/>" + duplicateKeyValues.join("<br/> ");
+        this.panel.error = err_duplicateKeys;
       }
 
       //region Debug table body construction
