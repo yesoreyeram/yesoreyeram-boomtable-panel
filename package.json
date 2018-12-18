@@ -1,6 +1,6 @@
 {
   "name": "yesoreyeram-boomtable-panel",
-  "version": "0.5.1",
+  "version": "1.0.0-wip",
   "description": "Boom table panel for Graphite, InfluxDB, Prometheus",
   "main": "dist/module.js",
   "scripts": {
