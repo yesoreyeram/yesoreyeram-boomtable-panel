@@ -99,6 +99,7 @@ Plugin ID : ${pkg.name}
 Plugin URL : ${plugin.info.links.map(l => l.url).join(", ")}
 Plugin Author : ${ plugin.info.author.name + " " + plugin.info.author.url}
 Plugin Version : v${ pkg.version}
+Built on : <%= grunt.template.today("yyyy-mm-dd HH:MM") %>
 */
 `
         },
