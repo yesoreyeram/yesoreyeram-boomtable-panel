@@ -35,6 +35,15 @@ module.exports = grunt => {
       }
     },
 
+    tslint : {
+      options: {
+        configuration: "tslint.json"
+      },
+      files: {
+        src: ['src/**/*.ts'],
+      },
+    },
+
     ts: {
       default: {
         tsconfig: './tsconfig.json'
@@ -45,9 +54,10 @@ module.exports = grunt => {
 
   grunt.registerTask("default", [
     "clean",
+    "tslint",
+    "ts:default",
     "copy:src_to_dist",
     "copy:pluginDef",
-    "copy:img_to_dist",
-    "ts:default"
+    "copy:img_to_dist"
   ]);
 };
