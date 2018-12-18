@@ -1,3 +1,5 @@
+const sass = require('node-sass');
+
 module.exports = grunt => {
   require("load-grunt-tasks")(grunt);
 
@@ -9,7 +11,7 @@ module.exports = grunt => {
       src_to_dist: {
         cwd: "src",
         expand: true,
-        src: ["**/*", "css/*.css", "!**/*.ts", "!**/*.js", "!**/*.scss", "!img/**/*"],
+        src: ["**/*", "!**/*.ts", "!**/*.js", "!**/*.scss", "!img/**/*"],
         dest: "dist"
       },
       pluginDef: {
@@ -35,6 +37,21 @@ module.exports = grunt => {
       }
     },
 
+    sass: {
+      build: {
+        options: {
+          debugInfo: true,
+          check: true,
+          implementation: sass,
+          sourceMap: false
+        },
+        files: {
+          'dist/css/default.dark.css': 'src/css/default.dark.scss',
+          'dist/css/default.light.css': 'src/css/default.light.scss'
+        }
+      }
+    },
+
     tslint : {
       options: {
         configuration: "tslint.json"
@@ -56,6 +73,7 @@ module.exports = grunt => {
     "clean",
     "tslint",
     "ts:default",
+    "sass:build",
     "copy:src_to_dist",
     "copy:pluginDef",
     "copy:img_to_dist"
