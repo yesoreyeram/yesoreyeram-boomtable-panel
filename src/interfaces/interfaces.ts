@@ -26,15 +26,10 @@ export interface Series {
     row_name: String;
     col_name: String;
     decimals: Number;
+    tooltipTemplate: String;
     bgColor: String;
     textColor: String;
     key_name: String;
-    output: {
-        bgColor: String;
-        textColor: String;
-        displayValue : String;
-        tooltip : String;
-    };
     getFlotPairs: (String) => any[];
 }
 export interface Pattern {

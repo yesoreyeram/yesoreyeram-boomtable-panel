@@ -156,28 +156,34 @@ let getOverridedTextColor = function (textColors_overrides: String, value: Numbe
     }
     return textColor;
 };
-let getTooltipMessage = function (seriesIdentifier: String, template: String, row_name: String, col_name: String, valueFormatted: String): String {
-    if (template === "_") {
-        return "";
+let applyFontAwesomeIcons = function (series: Series): Series {
+    series.actual_displayvalue = series.displayValue;
+    series.actual_row_name = series.row_name;
+    series.actual_col_name = series.col_name;
+    if (series.displayValue && series.displayValue.indexOf("_fa-") > -1) {
+        series.displayValue = utils.replaceFontAwesomeIcons(series.displayValue);
     }
-    let tooltip = template;
-    tooltip = tooltip.replace(new RegExp("_series_", "g"), String(seriesIdentifier));
-    tooltip = tooltip.replace(new RegExp("_row_name_", "g"), String(row_name));
-    tooltip = tooltip.replace(new RegExp("_col_name_", "g"), String(col_name));
-    tooltip = tooltip.replace(new RegExp("_value_", "g"), String(valueFormatted));
-    return tooltip;
-};
-let getLink = function (seriesIdentifier: String, link: String, row_name: String, col_name: String, value: Number): String {
-    if (link === "#") {
-        return "#";
+    if (series.row_name && series.row_name.indexOf("_fa-") > -1) {
+        series.row_name = utils.replaceFontAwesomeIcons(series.row_name);
     }
-    link = link.replace(new RegExp("_series_", "g"), String(seriesIdentifier));
-    link = link.replace(new RegExp("_row_name_", "g"), String(row_name));
-    link = link.replace(new RegExp("_col_name_", "g"), String(col_name));
-    link = link.replace(new RegExp("_value_", "g"), String(value));
-    return link;
+    if (series.col_name && series.col_name.indexOf("_fa-") > -1) {
+        series.col_name = utils.replaceFontAwesomeIcons(series.col_name);
+    }
+    return series;
 };
-let compute = function (dataComputed: Series[], defaultPattern: Pattern, patterns: Pattern[], row_col_wrapper: String, no_match_text: String): Series[] {
+let applyImageTransform = function (series: Series): Series {
+    if (series.displayValue && series.displayValue.indexOf("_img-") > -1) {
+        series.displayValue = utils.replaceWithImages(series.displayValue);
+    }
+    if (series.row_name && series.row_name.indexOf("_img-") > -1) {
+        series.row_name = utils.replaceWithImages(series.row_name);
+    }
+    if (series.col_name && series.col_name.indexOf("_img-") > -1) {
+        series.col_name = utils.replaceWithImages(series.col_name);
+    }
+    return series;
+};
+let compute = function (dataComputed: Series[], defaultPattern: Pattern, patterns: Pattern[], row_col_wrapper: String): Series[] {
     dataComputed = dataComputed.map(series => {
         series.pattern = findMatchingPattern(patterns, defaultPattern, series.alias);
         series.decimals = series.pattern.decimals || defaultPattern.decimals;
@@ -190,6 +196,7 @@ let compute = function (dataComputed: Series[], defaultPattern: Pattern, pattern
         series.row_name = getRowName(series.alias, series.pattern, defaultPattern, row_col_wrapper);
         series.col_name = getColName(series.alias, series.row_name, series.pattern, defaultPattern, row_col_wrapper);
         series.key_name = series.row_name + "#" + series.col_name;
+        series.tooltipTemplate = series.pattern.tooltipTemplate || defaultPattern.tooltipTemplate || "Series : _series_ | Value : _value_";
         if (thresholds.length > 0) {
             if (series.pattern.enable_bgColor) {
                 let bgColors = (series.pattern.bgColors || defaultPattern.bgColors || "").split("|");
@@ -207,7 +214,7 @@ let compute = function (dataComputed: Series[], defaultPattern: Pattern, pattern
         if (series.pattern.enable_bgColor_overrides && series.pattern.bgColors_overrides) {
             series.bgColor = getOverridedBGColor(series.pattern.bgColors_overrides, series.value, series.bgColor || "transparent");
         }
-        if (series.pattern.enable_TextColor_overrides && series.pattern.textColors_overrides) {
+        if (series.pattern.enable_TextColor_overrides && series.pattern.textColors_overrides ) {
             series.textColor = getOverridedTextColor(series.pattern.textColors_overrides, series.value, series.textColor || "white");
         }
         if (series.pattern.enable_transform_overrides && series.pattern.transform_values_overrides) {
@@ -218,49 +225,18 @@ let compute = function (dataComputed: Series[], defaultPattern: Pattern, pattern
             series.textColor = series.pattern.null_text_color || defaultPattern.null_text_color || "white";
             series.displayValue = series.pattern.null_value || defaultPattern.null_value || "No data";
         }
-        series.actual_displayvalue = series.displayValue;
-        series.actual_row_name = series.row_name;
-        series.actual_col_name = series.col_name;
-        if (series.displayValue && series.displayValue.indexOf("_fa-") > -1) {
-            series.displayValue = utils.replaceFontAwesomeIcons(series.displayValue);
-        }
-        if (series.row_name && series.row_name.indexOf("_fa-") > -1) {
-            series.row_name = utils.replaceFontAwesomeIcons(series.row_name);
-        }
-        if (series.col_name && series.col_name.indexOf("_fa-") > -1) {
-            series.col_name = utils.replaceFontAwesomeIcons(series.col_name);
-        }
-        if (series.displayValue && series.displayValue.indexOf("_img-") > -1) {
-            series.displayValue = utils.replaceWithImages(series.displayValue);
-        }
-        if (series.row_name && series.row_name.indexOf("_img-") > -1) {
-            series.row_name = utils.replaceWithImages(series.row_name);
-        }
-        if (series.col_name && series.col_name.indexOf("_img-") > -1) {
-            series.col_name = utils.replaceWithImages(series.col_name);
-        }
+        return series;
+    });
+    dataComputed = dataComputed.map(series => applyFontAwesomeIcons(series));
+    dataComputed = dataComputed.map(series => applyImageTransform(series));
+    dataComputed = dataComputed.map(series => {
         if (series.pattern.enable_clickable_cells) {
-            let targetLink = getLink(
-                series.alias || series.aliasEscaped || series.label || series.id || "-",
-                series.pattern.clickable_cells_link || "#",
-                utils.getActualNameWithoutTransformSign(series.actual_row_name).trim(),
-                utils.getActualNameWithoutTransformSign(series.actual_col_name).trim(),
-                series.value || NaN
-            );
+            let targetLink = series.pattern.clickable_cells_link || "#";
+            targetLink = targetLink.replace(new RegExp("_row_name_", "g"), utils.getActualNameWithoutTransformSign(series.actual_row_name).trim());
+            targetLink = targetLink.replace(new RegExp("_col_name_", "g"), utils.getActualNameWithoutTransformSign(series.actual_col_name).trim());
+            targetLink = targetLink.replace(new RegExp("_value_", "g"), utils.getActualNameWithoutTransformSign(series.value).trim());
             series.displayValue = `<a href="${targetLink}" target="_blank">${series.displayValue}</a>`;
         }
-        series.output = {
-            bgColor: series.bgColor,
-            textColor: series.textColor,
-            displayValue: series.displayValue,
-            tooltip: getTooltipMessage(
-                series.alias || series.aliasEscaped || series.label || series.id || "-",
-                series.pattern.tooltipTemplate || defaultPattern.tooltipTemplate || "Series : _series_ | Value : _value_",
-                utils.getActualNameWithoutTransformSign(series.actual_row_name || series.row_name),
-                utils.getActualNameWithoutTransformSign(series.actual_col_name || series.col_name),
-                series.valueFormatted || no_match_text
-            )
-        };
         return series;
     });
     dataComputed = dataComputed.filter(series => filterValues(series));

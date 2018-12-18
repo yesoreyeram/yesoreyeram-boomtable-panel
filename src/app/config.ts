@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { buildOptionOverride } from "./app";
+import * as utils from "./utils";
 import { Config, Pattern } from "../interfaces/interfaces";
 
 const plugin_id: String = "yesoreyeram-boomtable-panel";
@@ -76,12 +76,12 @@ const config: Config = {
     ],
 };
 config.optionOverrides = [
-    buildOptionOverride(["Text alignment header & footer ", "TEXT_ALIGN_TABLE_HEADER", ["left", "right", "center"], "left"], 0),
-    buildOptionOverride(["Text alignment first column", "TEXT_ALIGN_FIRST_COLUMN", ["left", "right", "center"], "left"], 1),
-    buildOptionOverride(["Text alignment cells / Metrics", "TEXT_ALIGN_TABLE_CELLS", ["left", "right", "center"], "left"], 2),
-    buildOptionOverride(["Hide Headers", "HIDE_HEADERS", ["false", "true"], "false"], 3),
-    buildOptionOverride(["Hide first column", "HIDE_FIRST_COLUMN", ["false", "true"], "false"], 4),
-    buildOptionOverride(["Show Footers", "SHOW_FOOTERS", ["false", "true"], "false"], 5)
+    utils.buildOptionOverride(["Text alignment header & footer ", "TEXT_ALIGN_TABLE_HEADER", ["left", "right", "center"], "left"], 0),
+    utils.buildOptionOverride(["Text alignment first column", "TEXT_ALIGN_FIRST_COLUMN", ["left", "right", "center"], "left"], 1),
+    utils.buildOptionOverride(["Text alignment cells / Metrics", "TEXT_ALIGN_TABLE_CELLS", ["left", "right", "center"], "left"], 2),
+    utils.buildOptionOverride(["Hide Headers", "HIDE_HEADERS", ["false", "true"], "false"], 3),
+    utils.buildOptionOverride(["Hide first column", "HIDE_FIRST_COLUMN", ["false", "true"], "false"], 4),
+    utils.buildOptionOverride(["Show Footers", "SHOW_FOOTERS", ["false", "true"], "false"], 5)
 ];
 export {
     plugin_id,
