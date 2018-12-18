@@ -13,6 +13,7 @@
             "dom",
             "es6"
         ],
+        "esModuleInterop": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "noImplicitAny": false,

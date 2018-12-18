@@ -354,7 +354,8 @@ Same as other time series data sources. You need to properly format your legend 
 
 | Version | Changes |
 | --------|-----------|
-| 1.0.0   | Typescript & TSLint implementation |
+| 1.0.0   | Jest testcases implemented |
+|         | Typescript & TSLint implementation |
 |         | SASS implementation for stylesheets |
 | 0.5.1   | Images as values based on thresholds |
 | 0.5.0   | Background Color & Transform value overrides |
