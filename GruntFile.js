@@ -1,10 +1,6 @@
-let fs = require("fs")
 module.exports = grunt => {
 
   require("load-grunt-tasks")(grunt);
-
-  let plugin = grunt.file.readJSON('plugin.json');
-  let pkg = grunt.file.readJSON('package.json');
 
   grunt.initConfig({
 
@@ -30,10 +26,10 @@ module.exports = grunt => {
       }
     },
 
-    run: {
+    run : {
       options: {
       },
-      tests: {
+      tests : {
         exec: "npm run test"
       }
     },
@@ -64,32 +60,6 @@ module.exports = grunt => {
       }
     },
 
-    uglify: {
-      options: {
-        mangle: false
-      },
-      ts: {
-        options: {
-          sourceMap: false,
-          banner: `/*! 
-Plugin Name : ${plugin.name}
-Plugin ID : ${pkg.name}
-Plugin URL : ${plugin.info.links.map(l => l.url).join(", ")}
-Plugin Author : ${ plugin.info.author.name + " " + plugin.info.author.url}
-Plugin Version : v${ pkg.version}
-Built on : <%= grunt.template.today("yyyy-mm-dd HH:MM") %>
-*/
-`
-        },
-        files: [{
-          expand: true,
-          cwd: '.tmp/compile_output/typescript',
-          src: '**/*.js',
-          dest: 'dist/'
-        }]
-      }
-    }
-
   });
 
   grunt.registerTask("dev", [
@@ -109,7 +79,6 @@ Built on : <%= grunt.template.today("yyyy-mm-dd HH:MM") %>
     "run:tests",
     "tslint",
     "ts:build",
-    "uglify:ts",
     "copy:src_to_dist",
     "copy:pluginDef",
     "copy:img_to_dist"
