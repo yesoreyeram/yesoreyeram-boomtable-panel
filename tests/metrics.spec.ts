@@ -78,8 +78,8 @@ describe("Check Metrics Ouput", () => {
         it("Check Font Awesome transformation in row name", () => {
             expect(input_data.output_html.body).toContain('web_1 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i>');
         });
-        it("Check BG Color, Text Color based on threshold", () => {
-            expect(input_data.output_html.body.replace(/\ /g, "")).toContain(`<td style="padding:4px;text-align:left">web_1 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i> </td><td
+        it("Check BG Color, Text Color based on threshold", ()=>{
+            expect(input_data.output_html.body.replace(/\ /g,"")).toContain(`<td style="padding:4px;text-align:left">web_1 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i> </td><td
             style="padding:4px;background-color:pink;text-align:left;color:purple"
           >
             <div
@@ -90,10 +90,10 @@ describe("Check Metrics Ouput", () => {
             style="padding-left:10px">
                 40.0000%
             </div>
-          </td>`.replace(/\ /g, ""))
+          </td>`.replace(/\ /g,""))
         });
-        it("Check BG Color, Text Color based on overrides", () => {
-            expect(input_data.output_html.body.replace(/\ /g, "")).toContain(`<td style="padding:4px;text-align:left">web_2 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i> </td><td
+        it("Check BG Color, Text Color based on overrides", ()=>{
+            expect(input_data.output_html.body.replace(/\ /g,"")).toContain(`<td style="padding:4px;text-align:left">web_2 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i> </td><td
             style="padding:4px;background-color:pink;text-align:left;color:purple"
           >
             <div
@@ -115,7 +115,7 @@ describe("Check Metrics Ouput", () => {
           style="padding-left:10px">
               420.0000%
           </div>
-        </td>`.replace(/\ /g, ""))
+        </td>`.replace(/\ /g,""))
         });
     })
 });
