@@ -175,7 +175,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     return t;
   }
   replaceFontAwesomeIcons(value) {
-    if (!value) return value;
+    if (!value) { return value; }
     return (value + "")
       .split(" ")
       .map(a => {
@@ -190,7 +190,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       .join(" ");
   }
   replaceWithImages(value) {
-    if (!value) return value;
+    if (!value) { return value; }
     return (value + "")
       .split(" ")
       .map(a => {
@@ -465,16 +465,16 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         series.actual_displayvalue = series.displayValue
         series.actual_row_name = series.row_name
         series.actual_col_name = series.col_name
-        if (series.displayValue && series.displayValue.indexOf("_fa-") > -1) series.displayValue = this.replaceFontAwesomeIcons(series.displayValue)
-        if (series.row_name && series.row_name.indexOf("_fa-") > -1) series.row_name = this.replaceFontAwesomeIcons(series.row_name)
-        if (series.col_name && series.col_name.indexOf("_fa-") > -1) series.col_name = this.replaceFontAwesomeIcons(series.col_name)
+        if (series.displayValue && series.displayValue.indexOf("_fa-") > -1) { series.displayValue = this.replaceFontAwesomeIcons(series.displayValue) }
+        if (series.row_name && series.row_name.indexOf("_fa-") > -1) { series.row_name = this.replaceFontAwesomeIcons(series.row_name) }
+        if (series.col_name && series.col_name.indexOf("_fa-") > -1) { series.col_name = this.replaceFontAwesomeIcons(series.col_name) }
         return series;
       });
       // Image transforms
       this.dataComputed = this.dataComputed.map(series => {
-        if (series.displayValue && series.displayValue.indexOf("_img-") > -1) series.displayValue = this.replaceWithImages(series.displayValue)
-        if (series.row_name && series.row_name.indexOf("_img-") > -1) series.row_name = this.replaceWithImages(series.row_name)
-        if (series.col_name && series.col_name.indexOf("_img-") > -1) series.col_name = this.replaceWithImages(series.col_name)
+        if (series.displayValue && series.displayValue.indexOf("_img-") > -1) { series.displayValue = this.replaceWithImages(series.displayValue) }
+        if (series.row_name && series.row_name.indexOf("_img-") > -1) { series.row_name = this.replaceWithImages(series.row_name) }
+        if (series.col_name && series.col_name.indexOf("_img-") > -1) { series.col_name = this.replaceWithImages(series.col_name) }
         return series;
       });
       // Cell Links
@@ -504,10 +504,12 @@ GrafanaBoomTableCtrl.prototype.render = function () {
             var matched_value = (_.find(this.dataComputed, (e) => {
               return e.row_name === row_name && e.col_name === col_name
             }));
-            if (!matched_value) matched_value = {
-              value: NaN,
-              displayValue: "N/A"
-            };
+            if (!matched_value) {
+              matched_value = {
+                value: NaN,
+                displayValue: "N/A"
+              };
+            }
             o.cols.push({
               "name": col_name,
               "value": matched_value.value,
