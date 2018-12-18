@@ -1,8 +1,8 @@
 import _ from "lodash";
 import { getActualNameWithoutTransformSign } from "./utils";
-import { Series } from "./../interfaces/interfaces";
+import { Series, Pattern } from "./../interfaces/interfaces";
 
-let buildOutputData = function (dataComputed: Series[], rows_found: String[], cols_found: String[], options: any): any[] {
+let buildOutputData = function (dataComputed: Series[], rows_found: String[], cols_found: String[], defaultPattern: Pattern, options: any): any[] {
     let no_match_text = options && options.no_match_text ? options.no_match_text : "N/A";
     let output = [];
     _.each(_.uniq(rows_found), (row_name) => {
@@ -19,7 +19,7 @@ let buildOutputData = function (dataComputed: Series[], rows_found: String[], co
             mycol.displayValue = matched_value ? matched_value.displayValue || matched_value.value || "N/A" : no_match_text || "N/A";
             mycol.bgColor = matched_value && matched_value.bgColor ? matched_value.bgColor : "transparent";
             mycol.textColor = matched_value && matched_value.textColor ? matched_value.textColor : "white";
-            let tooltipTemplate = matched_value && matched_value.tooltipTemplate ? matched_value.tooltipTemplate : "No matching series found";
+            let tooltipTemplate = matched_value && matched_value.tooltipTemplate ? matched_value.tooltipTemplate : defaultPattern.tooltipTemplate || "No matching series found for _row_name_ & _col_name_";
             if (matched_value) {
                 mycol.tooltip = getTooltipMessage(
                     matched_value.alias || matched_value.aliasEscaped || matched_value.label || matched_value.id || "-" ,

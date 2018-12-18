@@ -41,7 +41,7 @@ const computeRenderingData = function (data: any, patterns: Pattern[], defaultPa
                 returnData.error = utils.buildError(`Duplicate keys found`, `Duplicate key values : <br/> ${duplicateKeys.join("<br/> ")}`);
             } else if (utils.isUniqueArray(keys_found)) {
                 returnData.error = undefined;
-                let output = renderer.buildOutputData(dataComputed, rows_found, cols_found, {
+                let output = renderer.buildOutputData(dataComputed, rows_found, cols_found, defaultPattern, {
                     no_match_text: panelOptions.no_match_text
                 });
                 let { header, body, footer } = renderer.buildOutput(output, cols_found, rendering_options);
