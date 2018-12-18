@@ -10,7 +10,7 @@ import _ from "lodash";
 loadPluginCss(config.list_of_stylesheets);
 
 class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
-  static templateUrl: string = "partials/module.html";
+  static templateUrl = "partials/module.html";
   unitFormats: any = kbn.getUnitFormats();
   valueNameOptions: Object = config.valueNameOptions;
   dataReceived: any;

@@ -34,7 +34,7 @@
     "no-duplicate-variable": true,
     "no-empty": true,
     "no-eval": true,
-    "no-inferrable-types": false,
+    "no-inferrable-types": true,
     "no-shadowed-variable": false,
     "no-string-literal": false,
     "no-switch-case-fall-through": false,
