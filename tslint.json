@@ -7,7 +7,7 @@
     ],
     "curly": true,
     "eofline": true,
-    "forin": false,
+    "forin": true,
     "indent": [
       true,
       "spaces"
