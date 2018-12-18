@@ -22,7 +22,6 @@ let buildOutputData = function (dataComputed: Series[], rows_found: String[], co
             let tooltipTemplate = matched_value && matched_value.tooltipTemplate ? matched_value.tooltipTemplate : defaultPattern.tooltipTemplate || "No matching series found for _row_name_ & _col_name_";
             if (matched_value) {
                 mycol.tooltip = getTooltipMessage(
-                    matched_value.alias || matched_value.aliasEscaped || matched_value.label || matched_value.id || "-" ,
                     tooltipTemplate,
                     getActualNameWithoutTransformSign(matched_value.actual_row_name || row_name),
                     getActualNameWithoutTransformSign(matched_value.actual_col_name || col_name),
@@ -30,7 +29,6 @@ let buildOutputData = function (dataComputed: Series[], rows_found: String[], co
                 );
             } else {
                 mycol.tooltip = getTooltipMessage(
-                    "-",
                     tooltipTemplate,
                     getActualNameWithoutTransformSign(row_name),
                     getActualNameWithoutTransformSign(col_name),
@@ -74,7 +72,7 @@ let output = function (output: any[], cols_found: any, options: any): { header: 
             <div
             data-toggle="tooltip"
             data-html="true"
-            data-placement="auto"
+            data-placement="left"
             title="${c.tooltip}"
             style="padding-left:10px">
                 ${c.displayValue}
@@ -118,12 +116,11 @@ let output_debug = function (dataComputed: Series[]): String {
     `;
     return debug_output;
 };
-let getTooltipMessage = function (seriesIdentifier: String, template: String, row_name: String, col_name: String, value: Number): String {
+let getTooltipMessage = function (template: String, row_name: String, col_name: String, value: Number): String {
     if (template === "_") {
         return "";
     }
     let tooltip = template;
-    tooltip = tooltip.replace(new RegExp("_series_", "g"), String(seriesIdentifier));
     tooltip = tooltip.replace(new RegExp("_row_name_", "g"), String(row_name));
     tooltip = tooltip.replace(new RegExp("_col_name_", "g"), String(col_name));
     tooltip = tooltip.replace(new RegExp("_value_", "g"), String(value));

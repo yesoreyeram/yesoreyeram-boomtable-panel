@@ -6,5 +6,5 @@ declare let output: (output: any[], cols_found: any, options: any) => {
     footer: String;
 };
 declare let output_debug: (dataComputed: Series[]) => String;
-declare let getTooltipMessage: (seriesIdentifier: String, template: String, row_name: String, col_name: String, value: Number) => String;
+declare let getTooltipMessage: (template: String, row_name: String, col_name: String, value: Number) => String;
 export { getTooltipMessage, buildOutputData, output as buildOutput, output_debug as buildDebugOutput };

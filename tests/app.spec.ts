@@ -1,9 +1,8 @@
 jest.mock("app/core/utils/kbn");
 jest.mock("app/core/time_series2");
 
+import { config, computeRenderingData } from "./../src/app/app";
 import _ from "lodash";
-import { config } from "./../src/app/config";
-import { computeRenderingData } from "./../src/app/app";
 
 let get_input_default = function () {
     return {
@@ -29,7 +28,7 @@ let get_input_default = function () {
 describe("Check Output", () => {
     describe("No data", () => {
         let input = get_input_default();
-        let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options,false);
+        let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options);
         it("Check Error", () => {
             expect(input_data.error).toBe(undefined);
         });
@@ -51,7 +50,7 @@ describe("Check Output", () => {
                 target: METRIC_NAME,
                 datapoints: [[METRIC_VALUE, 1544715580]]
             }];
-            let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options,false);
+            let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options);
             it("Check Error", () => {
                 expect(input_data.error).toBe(undefined);
             });
@@ -65,8 +64,8 @@ describe("Check Output", () => {
             <div
             data-toggle=\"tooltip\"
             data-html=\"true\"
-            data-placement=\"auto\"
-            title=\"Series : ${METRIC_NAME} | Value : ${METRIC_VALUE}${METRIC_VALUE === 0 ? "" : ".00"}\"
+            data-placement=\"left\"
+            title=\"Row Name : ${METRIC_NAME} <br/>Col Name : Value <br/>Value : ${METRIC_VALUE}${METRIC_VALUE === 0 ? "" : ".00"}\"
             style=\"padding-left:10px\">
                 ${METRIC_VALUE}${METRIC_VALUE === 0 ? "" : ".00"}
             </div>
@@ -84,7 +83,7 @@ describe("Check Output", () => {
             target: METRIC_NAME,
             datapoints: [[null, 1544715580]]
         }];
-        let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options,false);
+        let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options);
         it("Check Error", () => {
             expect(input_data.error).toBe(undefined);
         });
@@ -98,8 +97,8 @@ describe("Check Output", () => {
             <div
             data-toggle=\"tooltip\"
             data-html=\"true\"
-            data-placement=\"auto\"
-            title=\"Series : ${METRIC_NAME} | Value : No match found\"
+            data-placement=\"left\"
+            title=\"Row Name : ${METRIC_NAME} <br/>Col Name : Value <br/>Value : No match found\"
             style=\"padding-left:10px\">
                 No data
             </div>
@@ -112,7 +111,7 @@ describe("Check Output", () => {
     describe("No data with footer enabled", () => {
         let input = get_input_default();
         input.rendering_options.show_footers = true;
-        let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options, false);
+        let input_data = computeRenderingData(input.data, input.patterns, input.defaultPattern, input.panelOptions, input.rendering_options);
         it("Check Footer", () => {
             expect(input_data.output_html.footer).toBe(`<tr><th style="padding:4px;text-align:left">Server</th></tr>`);
         });

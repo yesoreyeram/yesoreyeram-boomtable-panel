@@ -1,5 +1,7 @@
-import { Pattern } from "../interfaces/interfaces";
-declare const computeRenderingData: (data: any, patterns: Pattern[], defaultPattern: Pattern, panelOptions: any, rendering_options: any, debug_mode: boolean) => {
+import { Config, Pattern } from "../interfaces/interfaces";
+declare const plugin_id: String;
+declare const config: Config;
+declare const computeRenderingData: (data: any, patterns: Pattern[], defaultPattern: Pattern, panelOptions: any, rendering_options: any) => {
     error: any;
     output_html: {
         header: string;
@@ -8,5 +10,4 @@ declare const computeRenderingData: (data: any, patterns: Pattern[], defaultPatt
         debug: string;
     };
 };
-declare const getOptionOverride: (currentOptionOverrides: any, propertyName: String) => any;
-export { computeRenderingData, getOptionOverride };
+export { plugin_id, config, computeRenderingData };

@@ -27,8 +27,22 @@ export interface Series {
     col_name: String;
     decimals: Number;
     tooltipTemplate: String;
+    enable_transform: Boolean;
+    transform_values: String[];
+    enable_transform_overrides: Boolean;
+    transform_values_overrides: String;
+    thresholds: Number[];
+    enable_bgColor: Boolean;
+    bgColors: String[];
     bgColor: String;
+    enable_TextColors: Boolean;
+    textColors: String[];
     textColor: String;
+    enable_bgColor_overrides: Boolean;
+    bgColors_overrides: String;
+    enable_TextColor_overrides: Boolean;
+    textColors_overrides: String;
+    enable_clickable_cells: Boolean;
     key_name: String;
     getFlotPairs: (String: any) => any[];
 }
@@ -97,6 +111,7 @@ export interface PanelDefault {
     default_title_for_rows: String;
 }
 export interface Config {
+    plugin_id: String;
     debug_mode: Boolean;
     error: Error;
     optionOverrides: OptionOverride[];
