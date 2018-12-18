@@ -423,7 +423,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         }
         return series;
       });
-      // BG Colors overrides 
+      // BG Colors overrides
       this.dataComputed = this.dataComputed.map(series => {
         series.enable_bgColor_overrides = series.pattern.enable_bgColor_overrides;
         series.bgColors_overrides = series.pattern.bgColors_overrides || "";
@@ -543,8 +543,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
             boomtable_output_body_output += `<td style="padding:4px;">${o.row}</td>`;
           }
           _.each(o.cols, c => {
-            boomtable_output_body_output += `<td 
-              style="padding:4px;background-color:${c.bgColor}" 
+            boomtable_output_body_output += `<td
+              style="padding:4px;background-color:${c.bgColor}"
               title="${ "Row Name : " + this.getActualNameWithoutTransformSign(c.actual_row_name) + "\nCol Name : " + this.getActualNameWithoutTransformSign(c.actual_col_name) + "\nValue : " + c.value}"
             >${c.displayValue}</td>`;
           })
