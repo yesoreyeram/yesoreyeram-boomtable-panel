@@ -93,7 +93,6 @@ Built on : <%= grunt.template.today("yyyy-mm-dd HH:MM") %>
 
   grunt.registerTask("dev", [
     "ts:build",
-    "uglify:ts",
     "copy:src_to_dist",
     "copy:pluginDef",
     "copy:img_to_dist"
@@ -114,16 +113,4 @@ Built on : <%= grunt.template.today("yyyy-mm-dd HH:MM") %>
     "copy:pluginDef",
     "copy:img_to_dist"
   ]);
-
-  grunt.registerTask("release", [
-    "clean",
-    "run:tests",
-    "tslint",
-    "ts:build",
-    "uglify:ts",
-    "copy:src_to_dist",
-    "copy:pluginDef",
-    "copy:img_to_dist"
-  ]);
-
 };
