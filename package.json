@@ -1,11 +1,10 @@
 {
   "name": "yesoreyeram-boomtable-panel",
-  "version": "0.6.0",
+  "version": "0.5.1",
   "description": "Boom table panel for Graphite, InfluxDB, Prometheus",
   "main": "dist/module.js",
   "scripts": {
-    "build": "grunt",
-    "test": "jest"
+    "test": "echo \"Warning: no test specified\" && exit 0"
   },
   "repository": {
     "type": "git",
@@ -30,26 +29,18 @@
   "homepage": "https://github.com/yesoreyeram/yesoreyeram-boomtable-panel#readme",
   "devDependencies": {
     "@types/lodash": "^4.14.74",
-    "@types/jest": "^23.3.10",
     "grafana-sdk-mocks": "github:grafana/grafana-sdk-mocks",
-    "grunt": "^1.0.3",
-    "load-grunt-tasks": "^3.2.0",
+    "grunt": "^0.4.5",
     "grunt-babel": "^6.0.0",
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-copy": "^0.8.2",
     "grunt-contrib-uglify": "^0.11.1",
-    "grunt-contrib-watch": "^1.1.0",
+    "grunt-contrib-watch": "^0.6.1",
     "grunt-execute": "^0.2.2",
-    "grunt-run": "^0.8.1",
     "grunt-systemjs-builder": "^0.2.7",
-    "grunt-ts": "^6.0.0-beta.21",
-    "grunt-tslint": "^5.0.2",
-    "tslint": "^5.11.0",
-    "typescript": "^3.2.2",
-    "plugin-typescript": "^8.0.0",
-    "jest": "^23.6.0",
-    "babel-jest": "^23.6.0",
-    "ts-jest": "^23.10.5"
+    "load-grunt-tasks": "^3.2.0",
+    "grunt-typescript": "^0.8.0",
+    "plugin-typescript": "^7.1.0"
   },
   "dependencies": {
     "lodash": "^4.17.4"

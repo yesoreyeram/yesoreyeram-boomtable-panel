@@ -1,9 +1,11 @@
 module.exports = grunt => {
-
   require("load-grunt-tasks")(grunt);
 
-  grunt.initConfig({
+  grunt.loadNpmTasks("grunt-execute");
+  grunt.loadNpmTasks("grunt-contrib-clean");
+  grunt.loadNpmTasks('grunt-typescript');
 
+  grunt.initConfig({
     clean: ["dist"],
 
     copy: {
@@ -26,61 +28,39 @@ module.exports = grunt => {
       }
     },
 
-    run : {
-      options: {
-      },
-      tests : {
-        exec: "npm run test"
-      }
-    },
-
     watch: {
       rebuild_all: {
         files: ["src/**/*", "plugin.json", "README.md"],
-        tasks: ["dev"],
+        tasks: ["default"],
         options: {
-          debounceDelay: 250,
           spawn: false
         }
       }
     },
 
-    tslint: {
-      options: {
-        configuration: "tslint.json"
-      },
-      files: {
-        src: ['src/**/*.ts'],
-      },
-    },
-
-    ts: {
+    typescript: {
       build: {
-        tsconfig: './tsconfig.json'
+        src: ['src/**/*.ts', '!**/*.d.ts'],
+        dest: 'dist/',
+        options: {
+          module: 'system',
+          target: 'es5',
+          declaration: false,
+          emitDecoratorMetadata: true,
+          experimentalDecorators: true,
+          sourceMap: true,
+          noImplicitAny: false,
+        }
       }
-    },
+    }
 
   });
 
-  grunt.registerTask("dev", [
-    "ts:build",
-    "copy:src_to_dist",
-    "copy:pluginDef",
-    "copy:img_to_dist"
-  ]);
-
-  grunt.registerTask("test", [
-    "run:tests",
-    "tslint",
-  ]);
-
   grunt.registerTask("default", [
     "clean",
-    "run:tests",
-    "tslint",
-    "ts:build",
     "copy:src_to_dist",
     "copy:pluginDef",
-    "copy:img_to_dist"
+    "copy:img_to_dist",
+    "typescript"
   ]);
 };

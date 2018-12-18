@@ -9,6 +9,7 @@ Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for G
 
 ![Boom Table - Panel with Font Awesome icons](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panels-fa.png)
 
+![Image transform](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/img-transform-example.png)
 
 Features :
 ----------
@@ -92,17 +93,17 @@ Sample graphite series / Influx / Prometheus metrics
     alias(carbon.agents.a.cache.queries, 'Carbon A usage')
     alias(carbon.agents.b.cache.queries, 'Carbon B usage')
 
-| Pattern                                | Matching Metric        |
-| ---------------------------------------|------------------------|
-| `usage$`   |   All the CPU, Memory metrics from prod and dev and also requests_per_sec metrics and also carbon usage |
-| `cpu.usage$`   |   All the CPU metrics |
-| `free`   |   All the disk freespace metrics |
-| `^prod`   |   All the prod metrics |
-| `^dev.*.usage$`   |   All the cpu, mem metrics of dev servers |
-| `^prod.*.cpu.usage$`   |   All the cpu metrics of prod servers |
-| `dev.server.my-app-01.sys.cpu.usage`   |   only dev.server.my-app-01.sys.cpu.usage |
-| ` usage$`   |   Carbon usage(Note the space before the pattern) |
-| `A usage$`   |   Only carbon A usage |
+patterns and matching metrics
+
+    usage$ --> All the CPU, Memory metrics from prod and dev and also requests_per_sec metrics and also carbon usage
+    cpu.usage$ --> All the CPU metrics
+    free --> All the disk freespace metrics
+    ^prod --> All the prod metrics
+    ^dev.*.usage$ --> All the cpu, mem metrics of dev servers
+    ^prod.*.cpu.usage$ --> All the cpu metrics of prod servers
+    dev.server.my-app-01.sys.cpu.usage --> only dev.server.my-app-01.sys.cpu.usage
+     usage$ --> Carbon usage(Note the space before the pattern)
+    A usage$ --> Only carbon A usage
 
 Row and Column name guidelines
 ------------------------------
@@ -113,17 +114,16 @@ Sample graphite series / Influx / Prometheus Metrics
 
     prod.server.my-app-01.sys.cpu.usage
 
+Pattern & Output
 
-| Pattern                                | Output        |
-| ---------------------------------------|---------------|
-| `_4_`                                  | cpu           |
-| `_4_ _5_`                              | cpu usage     |
-| `_4_ 2 _5_`                            | cpu 2 usage   |
-| `_4_ use`                              | cpu use       |
-| `Production _4_ usage`                 | Production cpu usage |
-| `_series_`                             | prod.server.my-app-01.sys.cpu.usage |
-| `_1_ _1_`                              | server server |
-| `_4_ __5_`                             | cpu _usage |
+    _4_                         --> cpu
+    _4_ _5_                     --> cpu usage
+    _4_ 2 _5_                   --> cpu 2 usage
+    _4_ use                     --> cpu use
+    Production _4_ usage        --> Production cpu usage
+    _series_                    --> prod.server.my-app-01.sys.cpu.usage
+    _1_ _1_                     --> server server
+    _4_ __5_                    --> cpu _usage
 
 **Note** : If you prefer to change the wrapper from "_" to somthing like "~" or "__", you can do it through the option "Row / Column indentification wrapper" in options tab.
 
@@ -266,16 +266,6 @@ Note : If the row_name / col_name contains font awesome keywords like `_fa-circl
 
 Example : `https://mysite.com/_row_name_/_col_name_/?foo=bar`
 
-
-Tooltip
--------
-
-Default tooltip is `Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_`
-
-If left blank, default tooltip will be used.
-
-Tooltip can be disabled by specifying just `_` as tooltip template. 
-
 Filter
 ------
 
@@ -297,12 +287,13 @@ Using Font Awesome icons in row /column / metric fields
 
 If your row name / col name / transform metrics contains strings that starts with `_fa-` and ends with `_`, then they will be replaced with corresponding font awesome icons grafana supported. Example usage given below.
 
-| Transform Value | Output    |
-| ----------------|-----------|
-| ` _fa-arrow-up_ `           |  UP ARROW icon in default color |
-| ` _fa-arrow-up,green_ `     |  UP ARROW icon in green color |
-| ` _fa-arrow-down,red,5_ `   |  DOWN ARROW icon in red color repeated 5 times |
-| ` _fa-apple,,5_ `           |  APPLE icon in default color repeated 5 times |
+` _fa-arrow-up_ `           ->  UP ARROW icon in default color
+
+` _fa-arrow-up,green_ `     ->  UP ARROW icon in green color
+
+` _fa-arrow-down,red,5_ `   ->  DOWN ARROW icon in red color repeated 5 times
+
+` _fa-apple,,5_ `           ->  APPLE icon in default color repeated 5 times
 
 **Example implementations of icons in metrics:** (Unlimited possibilites like heatmap)
 
@@ -326,17 +317,17 @@ Using images as transform values
 
 If your row name / col name / transform metrics contains strings that starts with `_img-` and ends with `_`, then they will be replaced with images. Example usage given below.
 
-| Transform Value | Output    |
-| ----------------|-----------|
-|` _img-https://example.com/happy.gif_ `               |  happy.gif with 20px width, 20px height |
-|` _img-https://example.com/happy.gif,30px_ `          |  happy.gif with 30px width, 20px height |
-|` _img-https://example.com/happy.gif,30px,40px_ `     |  happy.gif with 30px width, 40px height |
-|` _img-https://example.com/happy.gif,30px,40px,3_ `   |  happy.gif with 30px width, 40px height repeated 3 times |
+` _img-https://example.com/happy.gif_ `               ->  happy.gif with 20px width, 20px height
+
+` _img-https://example.com/happy.gif,30px_ `          ->  happy.gif with 30px width, 20px height
+
+` _img-https://example.com/happy.gif,30px,40px_ `     ->  happy.gif with 30px width, 40px height
+
+` _img-https://example.com/happy.gif,30px,40px,3_ `   ->  happy.gif with 30px width, 40px height repeated 3 times
 
 ![Image transform](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/img-transform-example.png)
 
 Note : When using images from other domains, please take care of CORS policy, legal and copyright polices.
-
 
 Prometheus Guidelines
 ---------------------
@@ -361,16 +352,8 @@ Same as other time series data sources. You need to properly format your legend 
 
 # ChangeLog
 
-| Version | Changes   |
+| Version | Changes |
 | --------|-----------|
-| 0.6.0   | Patterns Editor UI redesign |
-|         | Text color based on threshold |
-|         | Tooltip template & HTML / Bootstrap tooltip |
-|         | Code refractoring, Typescript Lint error fixes |
-|         | Unit tests added |
-|         | Bug fixes (#48,#52,#53,#55) |
-| 0.5.3   | Advanced options implementation |
-|         | BREAKING : Hide first column, Hide header options are moved to advanced options |
 | 0.5.1   | Images as values based on thresholds |
 | 0.5.0   | Background Color & Transform value overrides |
 |         | Bug fixes #43 #44 #45 |
@@ -387,3 +370,4 @@ Same as other time series data sources. You need to properly format your legend 
 |         | Assign series alias as row to the default pattern |
 |         | Bug fixes |
 | 0.1.0   | First working Version |
+

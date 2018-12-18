@@ -1,49 +1,15 @@
 {
-    "compileOnSave": false,
-    "compilerOptions": {
-        "allowJs": false,
-        "allowSyntheticDefaultImports": true,
-        "alwaysStrict": true,
-        "declaration": true,
-        "emitDecoratorMetadata": true,
-        "esModuleInterop": true,
-        "experimentalDecorators": true,
-        "inlineSourceMap": true,
-        "inlineSources": true,
-        "jsx": "react",
-        "lib": [
-            "dom",
-            "es6"
-        ],
-        "module": "system",
-        "moduleResolution": "node",
-        "noEmitOnError": false,
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitAny": false,
-        "noImplicitReturns": true,
-        "noImplicitThis": true,
-        "noImplicitUseStrict": false,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "outDir": "dist",
-        "rootDir": "src/",
-        "skipLibCheck": true,
-        "strictFunctionTypes": true,
-        "strictNullChecks": false,
-        "strictPropertyInitialization": false,
-        "target": "es5",
-        "typeRoots": [
-            "node_modules/@types/"
-        ]
-    },
-    "include": [
-        "src/**/*.ts",
-        "src/**/*.tsx",
-        "node_modules/grafana-sdk-mocks/app/headers/common.d.ts",
-        "node_modules/@types/grafana/index.d.ts",
-        "node_modules/@types/lodash/index.d.ts"
-    ],
-    "exclude": [
-        "node_modules"
-    ]
+  "compileOnSave": false,
+  "compilerOptions": {
+      "target": "ES5",
+      "module": "system",
+      "sourceMap": true,
+      "declaration": false,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "noImplicitAny": false
+  },
+  "exclude": [
+      "node_modules"
+  ]
 }
