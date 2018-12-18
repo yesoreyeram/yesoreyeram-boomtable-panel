@@ -1,15 +1,27 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-      "target": "ES5",
-      "module": "system",
-      "sourceMap": true,
-      "declaration": false,
-      "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
-      "noImplicitAny": false
-  },
-  "exclude": [
-      "node_modules"
-  ]
+    "compileOnSave": false,
+    "compilerOptions": {        
+        "rootDir": "src",
+        "outDir": "dist",        
+        "declaration": false,
+        "sourceMap": false,
+        "inlineSourceMap": true,
+        "inlineSources": true,
+        "target": "ES5",
+        "module": "system",
+        "lib": [
+            "dom",
+            "es6"
+        ],
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "noImplicitAny": false,
+        "skipLibCheck": true
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
 }

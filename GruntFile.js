@@ -35,19 +35,9 @@ module.exports = grunt => {
       }
     },
 
-    typescript: {
-      build: {
-        src: ['src/**/*.ts'],
-        dest: 'dist/',
-        options: {
-          module: 'system',
-          target: 'es5',
-          declaration: false,
-          emitDecoratorMetadata: true,
-          experimentalDecorators: true,
-          sourceMap: true,
-          noImplicitAny: false,
-        }
+    ts: {
+      default: {
+        tsconfig: './tsconfig.json'
       }
     }
 
@@ -58,6 +48,6 @@ module.exports = grunt => {
     "copy:src_to_dist",
     "copy:pluginDef",
     "copy:img_to_dist",
-    "typescript"
+    "ts:default"
   ]);
 };
