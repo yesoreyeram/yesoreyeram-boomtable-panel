@@ -83,8 +83,8 @@ describe("Check Metrics Ouput", () => {
             thresholds: "70,90",
             time_based_thresholds: [],
             enable_time_based_thresholds: false,
-            enable_bgColor: true,
-            bgColors: "white|darkerwhite|darkwhite",
+            enable_bgColor: false,
+            bgColors: "green|orange|red",
             enable_bgColor_overrides: false,
             bgColors_overrides: "0->green|2->red|1->yellow",
             enable_TextColors: false,
@@ -93,8 +93,8 @@ describe("Check Metrics Ouput", () => {
             textColors_overrides: "0->green|2->red|1->yellow",
             enable_transform: false,
             transform_values: "_value_|_value_|_value_",
-            enable_transform_overrides: true,
-            transform_values_overrides: "600->What's up?",
+            enable_transform_overrides: false,
+            transform_values_overrides: "0->down|1->up",
             decimals: 2,
             tooltipTemplate: "Series : _series_ | Value : _value_",
             format: "none",
@@ -166,21 +166,8 @@ describe("Check Metrics Ouput", () => {
                 <td style="padding:4px;text-align:left">
                     web_4 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i>
                 </td>
-                <td style="padding:4px;background-color:darkwhite;text-align:left;color:white">
-                    <div data-toggle="tooltip" data-html="true" data-placement="auto" title="Series : dev.server_stats.web_4.cpu.usage | Value : 600.00" style="padding-left:10px">What's up?</div>
-                </td>
-                <td style="padding:4px;background-color:darkgreen;text-align:left;color:skyblue">
-                    <div data-toggle="tooltip" data-html="true" data-placement="auto" title="Series : dev.server_stats.web_4.mem.usage | Value : 420.0000%" style="padding-left:10px">Something really wrong</div>
-                </td>
-            `.replace(/\ /g, "").replace(/\n/g, ""))
-        });
-        it("Check BG Color, Text Color based on overrides for override pattern", () => {
-            expect(input_data.output_html.body.replace(/\ /g, "").replace(/\n/g, "")).toContain(`
-                <td style="padding:4px;text-align:left">
-                    web_4 <i class="fa fa-circle" style="color:rgba(50, 172, 45, 0.97)"></i>
-                </td>
-                <td style="padding:4px;background-color:darkwhite;text-align:left;color:white">
-                    <div data-toggle="tooltip" data-html="true" data-placement="auto" title="Series : dev.server_stats.web_4.cpu.usage | Value : 600.00" style="padding-left:10px">What's up?</div>
+                <td style="padding:4px;background-color:transparent;text-align:left;color:white">
+                    <div data-toggle="tooltip" data-html="true" data-placement="auto" title="Series : dev.server_stats.web_4.cpu.usage | Value : 600.00" style="padding-left:10px">600.00</div>
                 </td>
                 <td style="padding:4px;background-color:darkgreen;text-align:left;color:skyblue">
                     <div data-toggle="tooltip" data-html="true" data-placement="auto" title="Series : dev.server_stats.web_4.mem.usage | Value : 420.0000%" style="padding-left:10px">Something really wrong</div>
