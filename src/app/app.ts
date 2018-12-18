@@ -12,8 +12,8 @@ const plugin_id = "yesoreyeram-boomtable-panel";
 const config: any = {
     plugin_id: plugin_id,
     debug_mode: false,
-    hide_first_column : false,
-    hide_headers : false,
+    hide_first_column: false,
+    hide_headers: false,
     error: undefined,
     groupedData: undefined,
     panelDefaults: {
@@ -26,29 +26,29 @@ const config: any = {
             row_name: "_series_",
             col_name: "Value",
             thresholds: "70,90",
-            time_based_thresholds:[],
+            time_based_thresholds: [],
             enable_time_based_thresholds: false,
             enable_bgColor: false,
             bgColors: "green|orange|red",
-            enable_bgColor_overrides : false,
+            enable_bgColor_overrides: false,
             bgColors_overrides: "0->green|2->red|1->yellow",
             enable_transform: false,
             transform_values: "_value_|_value_|_value_",
-            enable_transform_overrides : false,
+            enable_transform_overrides: false,
             transform_values_overrides: "0->down|1->up",
             decimals: 2,
             format: "none",
             null_color: "darkred",
             null_value: "No data",
-            enable_clickable_cells : false,
-            clickable_cells_link : "",
-            filter : {
-                value_below : "",
-                value_above : ""
+            enable_clickable_cells: false,
+            clickable_cells_link: "",
+            filter: {
+                value_below: "",
+                value_above: ""
             }
         },
         activePatternIndex: -1,
-        row_col_wrapper:"_",
+        row_col_wrapper: "_",
         default_title_for_rows: "Metric"
     },
     list_of_stylesheets: {
