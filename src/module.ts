@@ -19,7 +19,6 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   public unitFormats: any = kbn.getUnitFormats();
   public valueNameOptions: Object = value_name_options;
   public dataReceived: any;
-  public dataComputed: any;
   public ctrl: any;
   public elem: any;
   public attrs: any;
@@ -182,9 +181,9 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
 GrafanaBoomTableCtrl.prototype.render = function () {
   if (this.dataReceived) {
     // Copying the data received
-    this.dataComputed = this.dataReceived;
+    let dataComputed = this.dataReceived;
     this.panel.default_title_for_rows = this.panel.default_title_for_rows || config.default_title_for_rows;
-    const metricsReceived = utils.getFields(this.dataComputed, "target");
+    const metricsReceived = utils.getFields(dataComputed, "target");
     if (metricsReceived.length !== _.uniq(metricsReceived).length) {
       let duplicateKeys = _.uniq(metricsReceived.filter(v => {
         return metricsReceived.filter(t => t === v).length > 1;
@@ -197,9 +196,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     } else {
       this.panel.error = undefined;
       // Binding the grafana computations to the metrics received
-      this.dataComputed = this.dataReceived.map(this.seriesHandler.bind(this));
+      dataComputed = dataComputed.map(this.seriesHandler.bind(this));
       // Get Server Time Stamp of the Series for time based thresholds.
-      this.dataComputed = this.dataComputed.map(series => {
+      dataComputed = dataComputed.map(series => {
         series.current_servertimestamp = new Date();
         if (series && series.datapoints && series.datapoints.length > 0) {
           if (_.last(series.datapoints).length === 2) {
@@ -209,7 +208,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // Assign pattern
-      this.dataComputed = this.dataComputed.map(series => {
+      dataComputed = dataComputed.map(series => {
         series.pattern = _.find(this.panel.patterns.filter(p => { return p.disabled !== true; }), function (p) {
           return series.alias.match(p.pattern);
         });
@@ -219,12 +218,12 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // Assign Decimal Values
-      this.dataComputed = this.dataComputed.map(series => {
+      dataComputed = dataComputed.map(series => {
         series.decimals = (series.pattern.decimals) || defaultPattern.decimals;
         return series;
       });
       // Assign value
-      this.dataComputed = this.dataComputed.map(series => {
+      dataComputed = dataComputed.map(series => {
         if (series.stats) {
           series.value = series.stats[series.pattern.valueName];
           let decimalInfo: any = this.getDecimalsForValue(series.value, series.decimals);
@@ -242,7 +241,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // Filter Values
-      this.dataComputed = this.dataComputed.filter(series => {
+      dataComputed = dataComputed.filter(series => {
         if (!series.pattern.filter) {
           series.pattern.filter = {};
           series.pattern.filter.value_below = "";
@@ -261,7 +260,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         }
       });
       // Assign Row Name
-      this.dataComputed = this.dataComputed.map(series => {
+      dataComputed = dataComputed.map(series => {
         series.row_name = series.pattern.row_name || defaultPattern.row_name;
         series.row_name = series.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias);
         series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
@@ -273,7 +272,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // Assign Col Name
-      this.dataComputed = this.dataComputed.map(series => {
+      dataComputed = dataComputed.map(series => {
         series.col_name = series.pattern.col_name || defaultPattern.col_name;
         series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
           return r.replace(new RegExp(this.panel.row_col_wrapper + i + this.panel.row_col_wrapper, "g"), it);
@@ -284,12 +283,12 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // Assign RowCol Key
-      this.dataComputed = this.dataComputed.map(series => {
+      dataComputed = dataComputed.map(series => {
         series.key_name = series.row_name + "#" + series.col_name;
         return series;
       });
       // Assign Thresholds
-      this.dataComputed = this.dataComputed.map(series => {
+      dataComputed = dataComputed.map(series => {
         series.thresholds = (series.pattern.thresholds || defaultPattern.thresholds).split(",").map(d => +d);
         if (series.pattern.enable_time_based_thresholds) {
           let metricrecivedTimeStamp = series.current_servertimestamp || new Date();
@@ -309,7 +308,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // Assign BG Colors
-      this.dataComputed = this.dataComputed.map(series => {
+      dataComputed = dataComputed.map(series => {
         series.enable_bgColor = series.pattern.enable_bgColor;
         series.bgColors = (series.pattern.bgColors || defaultPattern.bgColors).split("|");
         series.bgColor = series.enable_bgColor === true ? this.computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
@@ -319,7 +318,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // BG Colors overrides
-      this.dataComputed = this.dataComputed.map(series => {
+      dataComputed = dataComputed.map(series => {
         series.enable_bgColor_overrides = series.pattern.enable_bgColor_overrides;
         series.bgColors_overrides = series.pattern.bgColors_overrides || "";
         if (series.enable_bgColor_overrides && series.bgColors_overrides !== "") {
@@ -331,7 +330,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // Value Transform
-      this.dataComputed = this.dataComputed.map(series => {
+      dataComputed = dataComputed.map(series => {
         series.enable_transform = series.pattern.enable_transform;
         series.transform_values = (series.pattern.transform_values || defaultPattern.transform_values).split("|");
         series.displayValue = series.enable_transform === true ? this.transformValue(series.thresholds, series.transform_values, series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
@@ -343,7 +342,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // Value Transform Overrides
-      this.dataComputed = this.dataComputed.map(series => {
+      dataComputed = dataComputed.map(series => {
         series.enable_transform_overrides = series.pattern.enable_transform_overrides;
         series.transform_values_overrides = series.pattern.transform_values_overrides || "";
         if (series.enable_transform_overrides && series.transform_values_overrides !== "") {
@@ -355,7 +354,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // Font awesome icons & Images in value
-      this.dataComputed = this.dataComputed.map(series => {
+      dataComputed = dataComputed.map(series => {
         series.actual_displayvalue = series.displayValue;
         series.actual_row_name = series.row_name;
         series.actual_col_name = series.col_name;
@@ -365,7 +364,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // Cell Links
-      this.dataComputed = this.dataComputed.map(series => {
+      dataComputed = dataComputed.map(series => {
         if (series.pattern.enable_clickable_cells) {
           let targetLink = series.pattern.clickable_cells_link || "#";
           targetLink = targetLink.replace(new RegExp("_row_name_", "g"), utils.getActualNameWithoutTokens(series.actual_row_name).trim());
@@ -376,7 +375,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // Handle Null Value
-      this.dataComputed = this.dataComputed.map(series => {
+      dataComputed = dataComputed.map(series => {
         if (_.isNaN(series.value) || series.value === null) {
           series.bgColor = series.pattern.null_color || defaultPattern.null_color || "darkred";
           series.displayValue = series.pattern.null_value || defaultPattern.null_value || "No data";
@@ -384,9 +383,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         return series;
       });
       // Grouping
-      const rows_found = utils.getFields(this.dataComputed, "row_name");
-      const cols_found = utils.getFields(this.dataComputed, "col_name");
-      const keys_found = utils.getFields(this.dataComputed, "key_name");
+      const rows_found = utils.getFields(dataComputed, "row_name");
+      const cols_found = utils.getFields(dataComputed, "col_name");
+      const keys_found = utils.getFields(dataComputed, "key_name");
       const is_unique_keys = (keys_found.length === _.uniq(keys_found).length);
       if (is_unique_keys) {
         this.panel.error = undefined; ////
@@ -396,7 +395,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           o.row = row_name;
           o.cols = [];
           _.each(_.uniq(cols_found), (col_name) => {
-            let matched_value = (_.find(this.dataComputed, (e) => {
+            let matched_value = (_.find(dataComputed, (e) => {
               return e.row_name === row_name && e.col_name === col_name;
             }));
             if (!matched_value) {
@@ -460,7 +459,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       // region Debug table body construction
       let boomtable_output_body_debug = this.elem.find('#boomtable_output_body_debug');
       let boomtable_output_body_debug_output = ``;
-      _.each(this.dataComputed, d => {
+      _.each(dataComputed, d => {
         boomtable_output_body_debug_output += `
         <tr>
           <td style="padding:4px;" width="40%">${d.alias}</td>
