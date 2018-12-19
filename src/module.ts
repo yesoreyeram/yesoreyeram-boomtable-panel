@@ -319,10 +319,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       });
       // BG Colors overrides
       dataComputed = dataComputed.map(series => {
-        series.enable_bgColor_overrides = series.pattern.enable_bgColor_overrides;
-        series.bgColors_overrides = series.pattern.bgColors_overrides || "";
-        if (series.enable_bgColor_overrides && series.bgColors_overrides !== "") {
-          let _bgColors_overrides = series.bgColors_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1]);
+        if (series.pattern.enable_bgColor_overrides && series.pattern.bgColors_overrides  !== "") {
+          let _bgColors_overrides = series.pattern.bgColors_overrides .split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1]);
           if (_bgColors_overrides.length > 0 && _bgColors_overrides[0] !== "") {
             series.bgColor = utils.normalizeColor(("" + _bgColors_overrides[0]).trim());
           }
@@ -331,14 +329,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       });
       // Value Transform
       dataComputed = dataComputed.map(series => {
-        series.enable_transform = series.pattern.enable_transform;
-        series.transform_values = (series.pattern.transform_values || defaultPattern.transform_values).split("|");
-        series.displayValue = series.enable_transform === true ? this.transformValue(series.thresholds, series.transform_values, series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
-        if (series.displayValue === (series.pattern.null_value || defaultPattern.null_value || "Null")) {
-          series.displayValue = series.pattern.null_value || defaultPattern.null_value;
-        } else if (isNaN(series.value)) {
-          series.displayValue = series.pattern.null_value || defaultPattern.null_value;
-        }
+        let transform_values = (series.pattern.transform_values || defaultPattern.transform_values).split("|");
+        series.displayValue = series.pattern.enable_transform === true ? this.transformValue(series.thresholds, transform_values , series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
         return series;
       });
       // Value Transform Overrides
