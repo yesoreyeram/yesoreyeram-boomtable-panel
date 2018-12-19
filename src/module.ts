@@ -7,6 +7,7 @@ import {
   config
 } from "./app/app";
 import _ from "lodash";
+import { BoomTablePattern } from "./app/BoomTablePattern";
 loadPluginCss(config.list_of_stylesheets);
 
 class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
@@ -21,6 +22,11 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   constructor($scope, $injector) {
     super($scope, $injector);
     _.defaults(this.panel, config.panelDefaults);
+    Object.setPrototypeOf(this.panel.defaultPattern, BoomTablePattern.prototype);
+    this.panel.patterns.map(pattern => {
+      Object.setPrototypeOf(pattern, BoomTablePattern.prototype);
+      return pattern;
+    });
     this.events.on("data-received", this.onDataReceived.bind(this));
     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
   }
@@ -42,35 +48,9 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     return series;
   }
   public addPattern() {
-    let newPattern = {
-      bgColors: "green|orange|red",
-      bgColors_overrides: "0->green|2->red|1->yellow",
-      clickable_cells_link: "",
-      col_name: this.panel.row_col_wrapper + "1" + this.panel.row_col_wrapper,
-      decimals: 2,
-      delimiter: ".",
-      enable_bgColor: false,
-      enable_bgColor_overrides: false,
-      enable_clickable_cells: false,
-      enable_time_based_thresholds: false,
-      enable_transform: false,
-      enable_transform_overrides: false,
-      filter: {
-        value_above: "",
-        value_below: "",
-      },
-      format: "none",
-      name: "New Pattern",
-      null_color: "darkred",
-      null_value: "No data",
-      pattern: "^server.*cpu$",
-      row_name: this.panel.row_col_wrapper + "0" + this.panel.row_col_wrapper,
-      thresholds: "70,90",
-      time_based_thresholds: [],
-      transform_values: "_value_|_value_|_value_",
-      transform_values_overrides: "0->down|1->up",
-      valueName: "avg"
-    };
+    let newPattern = new BoomTablePattern({
+      row_col_wrapper: this.panel.row_col_wrapper
+    });
     this.panel.patterns.push(newPattern);
     this.panel.activePatternIndex = this.panel.patterns.length - 1;
     this.render();
