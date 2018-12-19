@@ -22,13 +22,16 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   constructor($scope, $injector) {
     super($scope, $injector);
     _.defaults(this.panel, config.panelDefaults);
+    this.updatePrototypes();
+    this.events.on("data-received", this.onDataReceived.bind(this));
+    this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
+  }
+  private updatePrototypes() {
     Object.setPrototypeOf(this.panel.defaultPattern, BoomTablePattern.prototype);
     this.panel.patterns.map(pattern => {
       Object.setPrototypeOf(pattern, BoomTablePattern.prototype);
       return pattern;
     });
-    this.events.on("data-received", this.onDataReceived.bind(this));
-    this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
   }
   public onInitEditMode() {
     _.each(config.editorTabs, editor => {
