@@ -514,7 +514,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           });
           output.push(o);
         });
-        //region Output table construction
+        // region Output table construction
         let boomtable_output_body_headers = this.elem.find("#boomtable_output_body_headers");
         let boomtable_output_body_headers_output = `<br/>`;
         if (this.panel.hide_headers !== true) {
@@ -544,7 +544,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           boomtable_output_body_output += "</tr>";
         });
         boomtable_output_body.html(boomtable_output_body_output);
-        //endregion
+        // endregion
       } else {
         let duplicateKeyValues = _.uniq(keys_found.filter(v => {
           return keys_found.filter(t => t === v).length > 1;
@@ -555,7 +555,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         this.panel.error = err_duplicateKeys;
       }
 
-      //region Debug table body construction
+      // region Debug table body construction
       let boomtable_output_body_debug = this.elem.find('#boomtable_output_body_debug');
       let boomtable_output_body_debug_output = ``;
       _.each(this.dataComputed, d => {
@@ -571,7 +571,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         `;
       });
       boomtable_output_body_debug.html(boomtable_output_body_debug_output);
-      //endregion
+      // endregion
     }
     let rootElem = this.elem.find('.table-panel-scroll');
     let maxheightofpanel = this.panel.debug_mode ? this.ctrl.height - 71 : this.ctrl.height - 31;
