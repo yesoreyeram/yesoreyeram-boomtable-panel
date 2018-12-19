@@ -96,7 +96,7 @@
                             <label class="gf-form-label width-20">BG Colors for thresholds</label>
                             <input type="text" placeholder="green|orange|red" class="gf-form-input width-18" ng-model="pattern.bgColors" bs-tooltip="'BG Colors seperated by | (pipe)'"
                                 ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
-                            <button type="button" class="btn btn-primary btn-small" ng-click="ctrl.inverseBGColors($index)" title="Inverse" >Inverse</button>
+                            <button type="button" class="btn btn-primary btn-small" ng-click="pattern.inverseBGColors();ctrl.render();" title="Inverse" >Inverse</button>
                         </div>
                     </div>                    
                     <div class="gr-form-inline">
@@ -288,7 +288,7 @@
                             <label class="gf-form-label width-20">BG Colors for thresholds</label>
                             <input type="text" placeholder="green|orange|red" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.bgColors"
                                 bs-tooltip="'BG Colors seperated by | (pipe)'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
-                            <button type="button" class="btn btn-primary btn-small" ng-click="ctrl.inverseBGColors(-1)" title="Inverse" >Inverse</button>
+                            <button type="button" class="btn btn-primary btn-small" ng-click="ctrl.panel.defaultPattern.inverseBGColors();ctrl.render();" title="Inverse" >Inverse</button>
                         </div>
                     </div>
                     <div class="gr-form-inline">

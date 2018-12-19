@@ -27,6 +27,7 @@ class BoomTablePattern {
     public transform_values: String;
     public transform_values_overrides: String;
     public valueName: String;
+    public inverseBGColors;
     constructor(options: any) {
         if (options && options.row_col_wrapper) {
             this.row_col_wrapper = options.row_col_wrapper;
@@ -60,6 +61,10 @@ class BoomTablePattern {
         this.valueName = options && options.valueName ? options.valueName : "avg";
     }
 }
+
+BoomTablePattern.prototype.inverseBGColors = function () {
+    this.bgColors = this.bgColors ? this.bgColors.split("|").reverse().join("|") : "";
+};
 
 export {
     BoomTablePattern
