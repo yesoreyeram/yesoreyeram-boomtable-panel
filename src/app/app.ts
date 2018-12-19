@@ -99,4 +99,4 @@ export {
     MetricsPanelCtrl,
     TimeSeries,
     utils,
-}
+};

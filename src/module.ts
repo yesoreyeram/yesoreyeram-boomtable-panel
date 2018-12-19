@@ -5,7 +5,7 @@ import {
   TimeSeries,
   utils,
   config
-} from "./app/app"
+} from "./app/app";
 import _ from "lodash";
 loadPluginCss(config.list_of_stylesheets);
 
@@ -25,7 +25,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   onInitEditMode() {
     _.each(config.editorTabs, editor => {
       this.addEditorTab(editor.name, "public/plugins/" + config.plugin_id + editor.template, editor.position);
-    })
+    });
   }
   onDataReceived(data) {
     this.dataReceived = data;
@@ -104,7 +104,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       name: "Early morning of everyday",
       threshold: "70,90",
       to: "0530"
-    }
+    };
     if (index === 'default') {
       this.panel.defaultPattern.time_based_thresholds = this.panel.defaultPattern.time_based_thresholds || [];
       this.panel.defaultPattern.time_based_thresholds.push(new_time_based_threshold);
@@ -289,7 +289,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     const metricsReceived = utils.getFields(this.dataComputed, "target");
     if (metricsReceived.length !== _.uniq(metricsReceived).length) {
       let duplicateKeys = _.uniq(metricsReceived.filter(v => {
-        return metricsReceived.filter(t => t === v).length > 1
+        return metricsReceived.filter(t => t === v).length > 1;
       }));
       let err = new Error();
       err.name = "Duplicate data received";
@@ -312,7 +312,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       });
       // Assign pattern
       this.dataComputed = this.dataComputed.map(series => {
-        series.pattern = _.find(this.panel.patterns.filter(p => { return p.disabled !== true }), function (p) {
+        series.pattern = _.find(this.panel.patterns.filter(p => { return p.disabled !== true; }), function (p) {
           return series.alias.match(p.pattern);
         });
         if (series.pattern === undefined) {
@@ -352,20 +352,20 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         }
         if (series.pattern && series.pattern.filter && (series.pattern.filter.value_below !== "" || series.pattern.filter.value_above !== "")) {
           if (series.pattern.filter.value_below !== "" && series.value < +(series.pattern.filter.value_below)) {
-            return false
+            return false;
           }
           if (series.pattern.filter.value_above !== "" && series.value > +(series.pattern.filter.value_above)) {
-            return false
+            return false;
           }
-          return true
+          return true;
         } else {
-          return true
-        };
-      })
+          return true;
+        }
+      });
       // Assign Row Name
       this.dataComputed = this.dataComputed.map(series => {
         series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
-          return r.replace(new RegExp(this.panel.row_col_wrapper + i + this.panel.row_col_wrapper, "g"), it)
+          return r.replace(new RegExp(this.panel.row_col_wrapper + i + this.panel.row_col_wrapper, "g"), it);
         }, series.pattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias) || config.panelDefaults.defaultPattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias));
         if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
           series.row_name = series.alias;
@@ -375,7 +375,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       // Assign Col Name
       this.dataComputed = this.dataComputed.map(series => {
         series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
-          return r.replace(new RegExp(this.panel.row_col_wrapper + i + this.panel.row_col_wrapper, "g"), it)
+          return r.replace(new RegExp(this.panel.row_col_wrapper + i + this.panel.row_col_wrapper, "g"), it);
         }, series.pattern.col_name || config.panelDefaults.defaultPattern.col_name);
         if (series.alias.split(series.pattern.delimiter || ".").length === 1 || series.row_name === series.alias) {
           series.col_name = series.pattern.col_name || "Value";
@@ -403,7 +403,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
             ) {
               series.thresholds = (tbtx.threshold + "").split(",").map(d => +d);
             }
-          })
+          });
         }
         return series;
       });
@@ -422,13 +422,13 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         series.enable_bgColor_overrides = series.pattern.enable_bgColor_overrides;
         series.bgColors_overrides = series.pattern.bgColors_overrides || "";
         if (series.enable_bgColor_overrides && series.bgColors_overrides !== "") {
-          let _bgColors_overrides = series.bgColors_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1])
+          let _bgColors_overrides = series.bgColors_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1]);
           if (_bgColors_overrides.length > 0 && _bgColors_overrides[0] !== "") {
             series.bgColor = utils.normalizeColor(("" + _bgColors_overrides[0]).trim());
           }
         }
         return series;
-      })
+      });
       // Value Transform
       this.dataComputed = this.dataComputed.map(series => {
         series.enable_transform = series.pattern.enable_transform;
@@ -446,28 +446,28 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         series.enable_transform_overrides = series.pattern.enable_transform_overrides;
         series.transform_values_overrides = series.pattern.transform_values_overrides || "";
         if (series.enable_transform_overrides && series.transform_values_overrides !== "") {
-          let _transform_values_overrides = series.transform_values_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1])
+          let _transform_values_overrides = series.transform_values_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1]);
           if (_transform_values_overrides.length > 0 && _transform_values_overrides[0] !== "") {
             series.displayValue = ("" + _transform_values_overrides[0]).trim().replace(new RegExp("_value_", "g"), series.displayValue).replace(new RegExp("_row_name_", "g"), series.row_name).replace(new RegExp("_col_name_", "g"), series.col_name);
           }
         }
         return series;
-      })
+      });
       // Font awesome icons
       this.dataComputed = this.dataComputed.map(series => {
-        series.actual_displayvalue = series.displayValue
-        series.actual_row_name = series.row_name
-        series.actual_col_name = series.col_name
-        if (series.displayValue && series.displayValue.indexOf("_fa-") > -1) { series.displayValue = this.replaceFontAwesomeIcons(series.displayValue) }
-        if (series.row_name && series.row_name.indexOf("_fa-") > -1) { series.row_name = this.replaceFontAwesomeIcons(series.row_name) }
-        if (series.col_name && series.col_name.indexOf("_fa-") > -1) { series.col_name = this.replaceFontAwesomeIcons(series.col_name) }
+        series.actual_displayvalue = series.displayValue;
+        series.actual_row_name = series.row_name;
+        series.actual_col_name = series.col_name;
+        if (series.displayValue && series.displayValue.indexOf("_fa-") > -1) { series.displayValue = this.replaceFontAwesomeIcons(series.displayValue); }
+        if (series.row_name && series.row_name.indexOf("_fa-") > -1) { series.row_name = this.replaceFontAwesomeIcons(series.row_name); }
+        if (series.col_name && series.col_name.indexOf("_fa-") > -1) { series.col_name = this.replaceFontAwesomeIcons(series.col_name); }
         return series;
       });
       // Image transforms
       this.dataComputed = this.dataComputed.map(series => {
-        if (series.displayValue && series.displayValue.indexOf("_img-") > -1) { series.displayValue = this.replaceWithImages(series.displayValue) }
-        if (series.row_name && series.row_name.indexOf("_img-") > -1) { series.row_name = this.replaceWithImages(series.row_name) }
-        if (series.col_name && series.col_name.indexOf("_img-") > -1) { series.col_name = this.replaceWithImages(series.col_name) }
+        if (series.displayValue && series.displayValue.indexOf("_img-") > -1) { series.displayValue = this.replaceWithImages(series.displayValue); }
+        if (series.row_name && series.row_name.indexOf("_img-") > -1) { series.row_name = this.replaceWithImages(series.row_name); }
+        if (series.col_name && series.col_name.indexOf("_img-") > -1) { series.col_name = this.replaceWithImages(series.col_name); }
         return series;
       });
       // Cell Links
@@ -477,7 +477,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           targetLink = targetLink.replace(new RegExp("_row_name_", "g"), this.getActualNameWithoutTransformSign(series.actual_row_name).trim());
           targetLink = targetLink.replace(new RegExp("_col_name_", "g"), this.getActualNameWithoutTransformSign(series.actual_col_name).trim());
           targetLink = targetLink.replace(new RegExp("_value_", "g"), this.getActualNameWithoutTransformSign(series.value).trim());
-          series.displayValue = `<a href="${targetLink}" target="_blank">${series.displayValue}</a>`
+          series.displayValue = `<a href="${targetLink}" target="_blank">${series.displayValue}</a>`;
         }
         return series;
       });
@@ -495,7 +495,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           o.cols = [];
           _.each(_.uniq(cols_found), (col_name) => {
             let matched_value = (_.find(this.dataComputed, (e) => {
-              return e.row_name === row_name && e.col_name === col_name
+              return e.row_name === row_name && e.col_name === col_name;
             }));
             if (!matched_value) {
               matched_value = {
@@ -513,7 +513,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
             });
           });
           output.push(o);
-        })
+        });
         //region Output table construction
         let boomtable_output_body_headers = this.elem.find("#boomtable_output_body_headers");
         let boomtable_output_body_headers_output = `<br/>`;
@@ -524,14 +524,14 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           }
           _.each(_.uniq(cols_found), c => {
             boomtable_output_body_headers_output += `<th style="padding:4px;text-align:center">${c}</th>`;
-          })
+          });
           boomtable_output_body_headers_output += "</tr>";
         }
         boomtable_output_body_headers.html(boomtable_output_body_headers_output);
         let boomtable_output_body = this.elem.find('#boomtable_output_body');
         let boomtable_output_body_output = ``;
         _.each(output, o => {
-          boomtable_output_body_output += "<tr>"
+          boomtable_output_body_output += "<tr>";
           if (this.panel.hide_first_column !== true) {
             boomtable_output_body_output += `<td style="padding:4px;">${o.row}</td>`;
           }
@@ -540,14 +540,14 @@ GrafanaBoomTableCtrl.prototype.render = function () {
               style="padding:4px;background-color:${c.bgColor}"
               title="${ "Row Name : " + this.getActualNameWithoutTransformSign(c.actual_row_name) + "\nCol Name : " + this.getActualNameWithoutTransformSign(c.actual_col_name) + "\nValue : " + c.value}"
             >${c.displayValue}</td>`;
-          })
-          boomtable_output_body_output += "</tr>"
-        })
+          });
+          boomtable_output_body_output += "</tr>";
+        });
         boomtable_output_body.html(boomtable_output_body_output);
         //endregion
       } else {
         let duplicateKeyValues = _.uniq(keys_found.filter(v => {
-          return keys_found.filter(t => t === v).length > 1
+          return keys_found.filter(t => t === v).length > 1;
         }));
         let err_duplicateKeys = new Error();
         err_duplicateKeys.name = "Duplicate keys found";
@@ -568,8 +568,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           <td style="padding:4px;">${d.col_name}</td>
           <td style="padding:4px;">${d.thresholds}</td>
         </tr>
-        `
-      })
+        `;
+      });
       boomtable_output_body_debug.html(boomtable_output_body_debug_output);
       //endregion
     }

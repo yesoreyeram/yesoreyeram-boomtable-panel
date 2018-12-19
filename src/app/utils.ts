@@ -14,7 +14,7 @@ const normalizeColor = function (color) {
     } else if (color.toLowerCase() === "red") {
         return "rgba(245, 54, 54, 0.9)";
     } else { return color.toLowerCase(); }
-}
+};
 export {
     getFields,
     getUniqueFields,

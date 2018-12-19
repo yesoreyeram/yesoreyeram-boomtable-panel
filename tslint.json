@@ -52,7 +52,7 @@
       "check-else"
     ],
     "radix": false,
-    "semicolon": false,
+    "semicolon": true,
     "triple-equals": [
       false,
       "allow-null-check"
