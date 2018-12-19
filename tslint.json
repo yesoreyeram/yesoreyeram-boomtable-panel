@@ -54,7 +54,7 @@
     "radix": false,
     "semicolon": true,
     "triple-equals": [
-      false,
+      true,
       "allow-null-check"
     ],
     "typedef-whitespace": [
