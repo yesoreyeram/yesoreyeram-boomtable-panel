@@ -10,28 +10,30 @@ import _ from "lodash";
 loadPluginCss(config.list_of_stylesheets);
 
 class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
-  private static templateUrl = "partials/module.html";
-  private unitFormats: any = kbn.getUnitFormats();
-  private valueNameOptions: Object = config.valueNameOptions;
-  private dataReceived: any;
-  private ctrl: any;
-  private elem: any;
-  constructor($scope, $injector, $sce) {
+  public static templateUrl = "partials/module.html";
+  public unitFormats: any = kbn.getUnitFormats();
+  public valueNameOptions: Object = config.valueNameOptions;
+  public dataReceived: any;
+  public dataComputed: any;
+  public ctrl: any;
+  public elem: any;
+  public attrs: any;
+  constructor($scope, $injector) {
     super($scope, $injector);
     _.defaults(this.panel, config.panelDefaults);
     this.events.on("data-received", this.onDataReceived.bind(this));
     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
   }
-  private onInitEditMode() {
+  public onInitEditMode() {
     _.each(config.editorTabs, editor => {
       this.addEditorTab(editor.name, "public/plugins/" + config.plugin_id + editor.template, editor.position);
     });
   }
-  private onDataReceived(data) {
+  public onDataReceived(data) {
     this.dataReceived = data;
     this.render();
   }
-  private seriesHandler(seriesData) {
+  public seriesHandler(seriesData) {
     let series = new TimeSeries({
       alias: seriesData.target,
       datapoints: seriesData.datapoints || []
@@ -39,7 +41,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     series.flotpairs = series.getFlotPairs(this.panel.nullPointMode);
     return series;
   }
-  private addPattern() {
+  public addPattern() {
     let newPattern = {
       bgColors: "green|orange|red",
       bgColors_overrides: "0->green|2->red|1->yellow",
@@ -73,7 +75,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.activePatternIndex = this.panel.patterns.length - 1;
     this.render();
   }
-  private movePattern(direction, index) {
+  public movePattern(direction, index) {
     let tempElement = this.panel.patterns[index];
     if (direction === "UP") {
       this.panel.patterns[index] = this.panel.patterns[index - 1];
@@ -87,17 +89,17 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     this.render();
   }
-  private removePattern(index) {
+  public removePattern(index) {
     this.panel.patterns.splice(index, 1);
     this.panel.activePatternIndex = (this.panel.patterns && this.panel.patterns.length > 0) ? (this.panel.patterns.length - 1) : -1;
     this.render();
   }
-  private clonePattern(index) {
+  public clonePattern(index) {
     let copiedPattern = Object.assign({}, this.panel.patterns[index]);
     this.panel.patterns.push(copiedPattern);
     this.render();
   }
-  private add_time_based_thresholds(index) {
+  public add_time_based_thresholds(index) {
     let new_time_based_threshold = {
       enabledDays: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
       from: "0000",
@@ -114,14 +116,14 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     this.render();
   }
-  private remove_time_based_thresholds(patternIndex, index) {
+  public remove_time_based_thresholds(patternIndex, index) {
     if (patternIndex === 'default') {
       this.panel.defaultPattern.time_based_thresholds.splice(index, 1);
     } else {
       this.panel.patterns[patternIndex].time_based_thresholds.splice(index, 1);
     }
   }
-  private inverseBGColors(index) {
+  public inverseBGColors(index) {
     if (index === -1) {
       this.panel.defaultPattern.bgColors = this.panel.defaultPattern.bgColors.split("|").reverse().join("|");
     } else {
@@ -129,7 +131,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     this.render();
   }
-  private inverseTransformValues(index) {
+  public inverseTransformValues(index) {
     if (index === -1) {
       this.panel.defaultPattern.transform_values = this.panel.defaultPattern.transform_values.split("|").reverse().join("|");
     } else {
@@ -138,7 +140,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
 
     this.render();
   }
-  private computeBgColor(thresholds, bgColors, value) {
+  public computeBgColor(thresholds, bgColors, value) {
     let c = "transparent";
     if (thresholds && bgColors && typeof value === "number" && thresholds.length + 1 <= bgColors.length) {
       bgColors = _.dropRight(bgColors, bgColors.length - thresholds.length - 1);
@@ -154,7 +156,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     return c;
   }
-  private transformValue(thresholds, transform_values, value, displayValue, row_name, col_name) {
+  public transformValue(thresholds, transform_values, value, displayValue, row_name, col_name) {
     let t = value;
     if (thresholds && transform_values && typeof value === "number" && thresholds.length + 1 <= transform_values.length) {
       transform_values = _.dropRight(transform_values, transform_values.length - thresholds.length - 1);
@@ -170,7 +172,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     return t;
   }
-  private replaceFontAwesomeIcons(value) {
+  public replaceFontAwesomeIcons(value) {
     if (!value) { return value; }
     return (value + "")
       .split(" ")
@@ -185,7 +187,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       })
       .join(" ");
   }
-  private replaceWithImages(value) {
+  public replaceWithImages(value) {
     if (!value) { return value; }
     return (value + "")
       .split(" ")
@@ -202,7 +204,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       })
       .join(" ");
   }
-  private getActualNameWithoutTransformSign(value) {
+  public getActualNameWithoutTransformSign(value) {
     return (value + "")
       .split(" ")
       .map(a => {
@@ -216,7 +218,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       })
       .join(" ");
   }
-  private getDecimalsForValue(value, _decimals) {
+  public getDecimalsForValue(value, _decimals) {
     if (_.isNumber(+_decimals)) {
       let o: Object = {
         decimals: _decimals,
@@ -261,7 +263,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
 
     return result;
   }
-  private setUnitFormat(subItem, index) {
+  public setUnitFormat(subItem, index) {
     if (index === -1) {
       this.panel.defaultPattern.format = subItem.value;
     } else {
@@ -269,15 +271,17 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     this.render();
   }
-  private limitText(text, maxlength) {
+  public limitText(text, maxlength) {
     if (text.split('').length > maxlength) {
       text = text.substring(0, maxlength - 3) + "...";
     }
     return text;
   }
-  private link(scope, elem, attrs, ctrl) {
-    this.ctrl = ctrl;
+  public link(scope, elem, attrs, ctrl) {
+    this.scope = scope;
     this.elem = elem;
+    this.attrs = attrs;
+    this.ctrl = ctrl;
   }
 }
 
@@ -329,7 +333,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       this.dataComputed = this.dataComputed.map(series => {
         if (series.stats) {
           series.value = series.stats[series.pattern.valueName || config.panelDefaults.defaultPattern.valueName];
-          let decimalInfo = this.getDecimalsForValue(series.value, series.decimals);
+          let decimalInfo: any = this.getDecimalsForValue(series.value, series.decimals);
           let formatFunc = kbn.valueFormats[series.pattern.format || config.panelDefaults.defaultPattern.format];
           if (series.value === null) {
             series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null";
@@ -490,7 +494,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       const is_unique_keys = (keys_found.length === _.uniq(keys_found).length);
       if (is_unique_keys) {
         this.panel.error = undefined; ////
-        let output = [];
+        let output: any[] = [];
         _.each(_.uniq(rows_found), (row_name) => {
           let o: any = {};
           o.row = row_name;
