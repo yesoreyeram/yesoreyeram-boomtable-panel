@@ -16,8 +16,9 @@ loadPluginCss({
 
 class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   public static templateUrl = "partials/module.html";
-  public unitFormats: any = kbn.getUnitFormats();
-  public valueNameOptions: Object = value_name_options;
+  public limitText = utils.limitText;
+  public unitFormats = kbn.getUnitFormats();
+  public valueNameOptions = value_name_options;
   public dataReceived: any;
   public ctrl: any;
   public elem: any;
@@ -71,12 +72,6 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     Object.setPrototypeOf(copiedPattern, BoomTablePattern.prototype);
     this.panel.patterns.push(copiedPattern);
     this.render();
-  }
-  public limitText(text, maxlength) {
-    if (text.split('').length > maxlength) {
-      text = text.substring(0, maxlength - 3) + "...";
-    }
-    return text;
   }
   public link(scope, elem, attrs, ctrl) {
     this.scope = scope;

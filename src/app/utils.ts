@@ -48,10 +48,17 @@ const getActualNameWithoutTokens = function (value) {
         return a;
     }).join(" ");
 };
+const limitText = function (text, maxlength) {
+    if (text.split('').length > maxlength) {
+        text = text.substring(0, maxlength - 3) + "...";
+    }
+    return text;
+};
 export {
     getFields,
     getUniqueFields,
     normalizeColor,
     replaceTokens,
-    getActualNameWithoutTokens
+    getActualNameWithoutTokens,
+    limitText
 };
