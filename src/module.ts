@@ -309,9 +309,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       });
       // Assign BG Colors
       dataComputed = dataComputed.map(series => {
-        series.enable_bgColor = series.pattern.enable_bgColor;
-        series.bgColors = (series.pattern.bgColors || defaultPattern.bgColors).split("|");
-        series.bgColor = series.enable_bgColor === true ? this.computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
+        let bgColors = (series.pattern.bgColors || defaultPattern.bgColors).split("|");
+        series.bgColor = series.pattern.enable_bgColor === true ? this.computeBgColor(series.thresholds, bgColors, series.value) : "transparent";
         if (series.displayValue === (series.pattern.null_value || defaultPattern.null_value || "Null")) {
           series.bgColor = series.pattern.null_color || defaultPattern.null_color;
         }
@@ -335,10 +334,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       });
       // Value Transform Overrides
       dataComputed = dataComputed.map(series => {
-        series.enable_transform_overrides = series.pattern.enable_transform_overrides;
-        series.transform_values_overrides = series.pattern.transform_values_overrides || "";
-        if (series.enable_transform_overrides && series.transform_values_overrides !== "") {
-          let _transform_values_overrides = series.transform_values_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1]);
+        if (series.pattern.enable_transform_overrides && series.pattern.transform_values_overrides ) {
+          let _transform_values_overrides = series.pattern.transform_values_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1]);
           if (_transform_values_overrides.length > 0 && _transform_values_overrides[0] !== "") {
             series.displayValue = ("" + _transform_values_overrides[0]).trim().replace(new RegExp("_value_", "g"), series.displayValue).replace(new RegExp("_row_name_", "g"), series.row_name).replace(new RegExp("_col_name_", "g"), series.col_name);
           }
