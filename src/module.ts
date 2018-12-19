@@ -1,19 +1,23 @@
-import {
-  kbn,
-  loadPluginCss,
-  MetricsPanelCtrl,
-  TimeSeries,
-  utils,
-  config
-} from "./app/app";
+///<reference path="../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
+
 import _ from "lodash";
+import kbn from 'app/core/utils/kbn';
+import { loadPluginCss, MetricsPanelCtrl } from "app/plugins/sdk";
+import TimeSeries from "app/core/time_series2";
+import * as utils from "./app/utils";
+import { defaultPattern } from "./app/app";
+import { plugin_id, value_name_options, config } from "./app/config";
 import { BoomTablePattern } from "./app/BoomTablePattern";
-loadPluginCss(config.list_of_stylesheets);
+
+loadPluginCss({
+  dark: `plugins/${plugin_id}/css/default.dark.css`,
+  light: `plugins/${plugin_id}/css/default.light.css`
+});
 
 class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   public static templateUrl = "partials/module.html";
   public unitFormats: any = kbn.getUnitFormats();
-  public valueNameOptions: Object = config.valueNameOptions;
+  public valueNameOptions: Object = value_name_options;
   public dataReceived: any;
   public dataComputed: any;
   public ctrl: any;
@@ -22,33 +26,19 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   constructor($scope, $injector) {
     super($scope, $injector);
     _.defaults(this.panel, config.panelDefaults);
+    this.panel.defaultPattern = this.panel.defaultPattern || defaultPattern;
     this.updatePrototypes();
     this.events.on("data-received", this.onDataReceived.bind(this));
     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
   }
-  private updatePrototypes() {
-    Object.setPrototypeOf(this.panel.defaultPattern, BoomTablePattern.prototype);
-    this.panel.patterns.map(pattern => {
-      Object.setPrototypeOf(pattern, BoomTablePattern.prototype);
-      return pattern;
-    });
-  }
   public onInitEditMode() {
-    _.each(config.editorTabs, editor => {
-      this.addEditorTab(editor.name, "public/plugins/" + config.plugin_id + editor.template, editor.position);
-    });
+    this.addEditorTab("Patterns", `public/plugins/${plugin_id}/partials/patterns.html`, 2);
+    this.addEditorTab("Time based thresholds & Filters", `public/plugins/${plugin_id}/partials/patterns-advanced-options.html`, 3);
+    this.addEditorTab("Options", `public/plugins/${plugin_id}/partials/options.html`, 4);
   }
   public onDataReceived(data) {
     this.dataReceived = data;
     this.render();
-  }
-  public seriesHandler(seriesData) {
-    let series = new TimeSeries({
-      alias: seriesData.target,
-      datapoints: seriesData.datapoints || []
-    });
-    series.flotpairs = series.getFlotPairs(this.panel.nullPointMode);
-    return series;
   }
   public addPattern() {
     let newPattern = new BoomTablePattern({
@@ -82,6 +72,33 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     Object.setPrototypeOf(copiedPattern, BoomTablePattern.prototype);
     this.panel.patterns.push(copiedPattern);
     this.render();
+  }
+  public limitText(text, maxlength) {
+    if (text.split('').length > maxlength) {
+      text = text.substring(0, maxlength - 3) + "...";
+    }
+    return text;
+  }
+  public link(scope, elem, attrs, ctrl) {
+    this.scope = scope;
+    this.elem = elem;
+    this.attrs = attrs;
+    this.ctrl = ctrl;
+  }
+  private updatePrototypes() {
+    Object.setPrototypeOf(this.panel.defaultPattern, BoomTablePattern.prototype);
+    this.panel.patterns.map(pattern => {
+      Object.setPrototypeOf(pattern, BoomTablePattern.prototype);
+      return pattern;
+    });
+  }
+  public seriesHandler(seriesData) {
+    let series = new TimeSeries({
+      alias: seriesData.target,
+      datapoints: seriesData.datapoints || []
+    });
+    series.flotpairs = series.getFlotPairs(this.panel.nullPointMode);
+    return series;
   }
   public computeBgColor(thresholds, bgColors, value) {
     let c = "transparent";
@@ -213,18 +230,6 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       this.panel.patterns[index].format = subItem.value;
     }
     this.render();
-  }
-  public limitText(text, maxlength) {
-    if (text.split('').length > maxlength) {
-      text = text.substring(0, maxlength - 3) + "...";
-    }
-    return text;
-  }
-  public link(scope, elem, attrs, ctrl) {
-    this.scope = scope;
-    this.elem = elem;
-    this.attrs = attrs;
-    this.ctrl = ctrl;
   }
 }
 
