@@ -10,93 +10,93 @@ import * as utils from "./utils";
 
 const plugin_id = "yesoreyeram-boomtable-panel";
 const config: any = {
-    plugin_id: plugin_id,
     debug_mode: false,
-    hide_first_column: false,
-    hide_headers: false,
+    editorTabs: [{
+        name: "Patterns",
+        position: 2,
+        template: "/partials/patterns.html"
+    },
+    {
+        name: "Time based thresholds & Filters",
+        position: 3,
+        template: "/partials/patterns-advanced-options.html"
+    }, {
+        name: "Options",
+        position: 4,
+        template: "/partials/options.html"
+    }],
     error: undefined,
     groupedData: undefined,
-    panelDefaults: {
-        plugin_title: "Boom Table",
-        nullPointMode: "connected",
-        patterns: [],
-        defaultPattern: {
-            delimiter: ".",
-            valueName: "avg",
-            row_name: "_series_",
-            col_name: "Value",
-            thresholds: "70,90",
-            time_based_thresholds: [],
-            enable_time_based_thresholds: false,
-            enable_bgColor: false,
-            bgColors: "green|orange|red",
-            enable_bgColor_overrides: false,
-            bgColors_overrides: "0->green|2->red|1->yellow",
-            enable_transform: false,
-            transform_values: "_value_|_value_|_value_",
-            enable_transform_overrides: false,
-            transform_values_overrides: "0->down|1->up",
-            decimals: 2,
-            format: "none",
-            null_color: "darkred",
-            null_value: "No data",
-            enable_clickable_cells: false,
-            clickable_cells_link: "",
-            filter: {
-                value_below: "",
-                value_above: ""
-            }
-        },
-        activePatternIndex: -1,
-        row_col_wrapper: "_",
-        default_title_for_rows: "Metric"
-    },
+    hide_first_column: false,
+    hide_headers: false,
     list_of_stylesheets: {
         dark: "plugins/" + plugin_id + "/css/default.dark.css",
         light: "plugins/" + plugin_id + "/css/default.light.css"
     },
-    editorTabs: [{
-        name: "Patterns",
-        template: "/partials/patterns.html",
-        position: 2
+    panelDefaults: {
+        activePatternIndex: -1,
+        defaultPattern: {
+            bgColors: "green|orange|red",
+            bgColors_overrides: "0->green|2->red|1->yellow",
+            clickable_cells_link: "",
+            col_name: "Value",
+            decimals: 2,
+            delimiter: ".",
+            enable_bgColor: false,
+            enable_bgColor_overrides: false,
+            enable_clickable_cells: false,
+            enable_time_based_thresholds: false,
+            enable_transform: false,
+            enable_transform_overrides: false,
+            filter: {
+                value_above: "",
+                value_below: ""
+            },
+            format: "none",
+            null_color: "darkred",
+            null_value: "No data",
+            row_name: "_series_",
+            thresholds: "70,90",
+            time_based_thresholds: [],
+            transform_values: "_value_|_value_|_value_",
+            transform_values_overrides: "0->down|1->up",
+            valueName: "avg"
+        },
+        default_title_for_rows: "Metric",
+        nullPointMode: "connected",
+        patterns: [],
+        plugin_title: "Boom Table",
+        row_col_wrapper: "_",
     },
-    {
-        name: "Time based thresholds & Filters",
-        template: "/partials/patterns-advanced-options.html",
-        position: 3
-    }, {
-        name: "Options",
-        template: "/partials/options.html",
-        position: 4
-    }],
+    plugin_id: plugin_id,
     valueNameOptions: [{
+        text: "Min",
         value: "min",
-        text: "Min"
     },
     {
-        value: "max",
-        text: "Max"
+        text: "Max",
+        value: "max"
     },
     {
-        value: "avg",
-        text: "Average"
+        text: "Average",
+        value: "avg"
     },
     {
-        value: "current",
-        text: "Current"
+        text: "Current",
+        value: "current"
     },
     {
-        value: "total",
-        text: "Total"
+        text: "Total",
+        value: "total"
     }
-    ],
+    ]
 };
 
 export {
+    config,
     kbn,
     loadPluginCss,
     MetricsPanelCtrl,
     TimeSeries,
     utils,
-    config
 }

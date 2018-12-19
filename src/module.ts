@@ -33,41 +33,41 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   }
   seriesHandler(seriesData) {
     let series = new TimeSeries({
-      datapoints: seriesData.datapoints || [],
-      alias: seriesData.target
+      alias: seriesData.target,
+      datapoints: seriesData.datapoints || []
     });
     series.flotpairs = series.getFlotPairs(this.panel.nullPointMode);
     return series;
   }
   addPattern() {
     let newPattern = {
-      name: "New Pattern",
-      pattern: "^server.*cpu$",
-      delimiter: ".",
-      valueName: "avg",
-      row_name: this.panel.row_col_wrapper + "0" + this.panel.row_col_wrapper,
-      col_name: this.panel.row_col_wrapper + "1" + this.panel.row_col_wrapper,
-      thresholds: "70,90",
-      time_based_thresholds: [],
-      enable_time_based_thresholds: false,
-      enable_bgColor: false,
       bgColors: "green|orange|red",
-      enable_bgColor_overrides: false,
       bgColors_overrides: "0->green|2->red|1->yellow",
-      enable_transform: false,
-      transform_values: "_value_|_value_|_value_",
-      enable_transform_overrides: false,
-      transform_values_overrides: "0->down|1->up",
+      clickable_cells_link: "",
+      col_name: this.panel.row_col_wrapper + "1" + this.panel.row_col_wrapper,
       decimals: 2,
+      delimiter: ".",
+      enable_bgColor: false,
+      enable_bgColor_overrides: false,
+      enable_clickable_cells: false,
+      enable_time_based_thresholds: false,
+      enable_transform: false,
+      enable_transform_overrides: false,
+      filter: {
+        value_above: "",
+        value_below: "",
+      },
       format: "none",
+      name: "New Pattern",
       null_color: "darkred",
       null_value: "No data",
-      enable_clickable_cells: false,
-      clickable_cells_link: "",
-      filter: {
-        value_below: "",
-        value_above: "",
-      }
+      pattern: "^server.*cpu$",
+      row_name: this.panel.row_col_wrapper + "0" + this.panel.row_col_wrapper,
+      thresholds: "70,90",
+      time_based_thresholds: [],
+      transform_values: "_value_|_value_|_value_",
+      transform_values_overrides: "0->down|1->up",
+      valueName: "avg"
     };
     this.panel.patterns.push(newPattern);
     this.panel.activePatternIndex = this.panel.patterns.length - 1;
@@ -99,11 +99,11 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   }
   add_time_based_thresholds(index) {
     let new_time_based_threshold = {
-      name: "Early morning of everyday",
-      from: "0000",
-      to: "0530",
       enabledDays: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
-      threshold: "70,90"
+      from: "0000",
+      name: "Early morning of everyday",
+      threshold: "70,90",
+      to: "0530"
     }
     if (index === 'default') {
       this.panel.defaultPattern.time_based_thresholds = this.panel.defaultPattern.time_based_thresholds || [];
@@ -506,17 +506,17 @@ GrafanaBoomTableCtrl.prototype.render = function () {
             }));
             if (!matched_value) {
               matched_value = {
-                value: NaN,
-                displayValue: "N/A"
+                displayValue: "N/A",
+                value: NaN
               };
             }
             o.cols.push({
-              "name": col_name,
-              "value": matched_value.value,
               "actual_col_name": matched_value.actual_col_name,
               "actual_row_name": matched_value.actual_row_name,
+              "bgColor": matched_value.bgColor || "transparent",
               "displayValue": matched_value.displayValue || matched_value.value,
-              "bgColor": matched_value.bgColor || "transparent"
+              "name": col_name,
+              "value": matched_value.value
             });
           });
           output.push(o);
