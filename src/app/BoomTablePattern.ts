@@ -46,6 +46,7 @@ class BoomTablePattern {
     public inverseTransformValues;
     public add_time_based_thresholds;
     public remove_time_based_thresholds;
+    public setUnitFormat;
     constructor(options: any) {
         if (options && options.row_col_wrapper) {
             this.row_col_wrapper = options.row_col_wrapper;
@@ -98,6 +99,10 @@ BoomTablePattern.prototype.remove_time_based_thresholds = function (index) {
     if (this.time_based_thresholds.length > 0) {
         this.time_based_thresholds.splice(index, 1);
     }
+};
+
+BoomTablePattern.prototype.setUnitFormat = function (format) {
+    this.format = format && format.value ? format.value : "none";
 };
 
 export {

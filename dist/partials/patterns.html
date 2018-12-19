@@ -73,7 +73,7 @@
                     <div class="gr-form-inline">
                         <div class="gf-form">
                             <label class="gf-form-label width-20">Format</label>
-                            <div class="gf-form-dropdown-typeahead width-18" ng-model="pattern.format" dropdown-typeahead2="ctrl.unitFormats" dropdown-typeahead-on-select="ctrl.setUnitFormat($subItem,$index)"></div>
+                            <div class="gf-form-dropdown-typeahead width-18" ng-model="pattern.format" dropdown-typeahead2="ctrl.unitFormats" dropdown-typeahead-on-select="pattern.setUnitFormat($subItem);ctrl.render();"></div>
                         </div>
                     </div>
                 </div>
@@ -264,7 +264,7 @@
                         <div class="gf-form">
                             <label class="gf-form-label width-20">Format</label>
                             <div class="gf-form-dropdown-typeahead width-18" ng-model="ctrl.panel.defaultPattern.format" dropdown-typeahead2="ctrl.unitFormats"
-                                dropdown-typeahead-on-select="ctrl.setUnitFormat($subItem,-1)"></div>
+                                dropdown-typeahead-on-select="ctrl.panel.defaultPattern.setUnitFormat($subItem);ctrl.render();"></div>
                         </div>
                     </div>
                 </div>

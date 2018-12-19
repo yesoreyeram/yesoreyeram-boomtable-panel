@@ -223,14 +223,6 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
 
     return result;
   }
-  public setUnitFormat(subItem, index) {
-    if (index === -1) {
-      this.panel.defaultPattern.format = subItem.value;
-    } else {
-      this.panel.patterns[index].format = subItem.value;
-    }
-    this.render();
-  }
 }
 
 GrafanaBoomTableCtrl.prototype.render = function () {
@@ -268,29 +260,29 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           return series.alias.match(p.pattern);
         });
         if (series.pattern === undefined) {
-          series.pattern = this.panel.defaultPattern || config.panelDefaults.defaultPattern;
+          series.pattern = this.panel.defaultPattern || defaultPattern;
         }
         return series;
       });
       // Assign Decimal Values
       this.dataComputed = this.dataComputed.map(series => {
-        series.decimals = (series.pattern.decimals) || config.panelDefaults.defaultPattern.decimals;
+        series.decimals = (series.pattern.decimals) || defaultPattern.decimals;
         return series;
       });
       // Assign value
       this.dataComputed = this.dataComputed.map(series => {
         if (series.stats) {
-          series.value = series.stats[series.pattern.valueName || config.panelDefaults.defaultPattern.valueName];
+          series.value = series.stats[series.pattern.valueName];
           let decimalInfo: any = this.getDecimalsForValue(series.value, series.decimals);
-          let formatFunc = kbn.valueFormats[series.pattern.format || config.panelDefaults.defaultPattern.format];
+          let formatFunc = kbn.valueFormats[series.pattern.format];
           if (series.value === null) {
-            series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null";
+            series.displayValue = series.pattern.null_value || "Null";
           } else if (!isNaN(series.value)) {
             series.valueFormatted = formatFunc(series.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
             series.valueRounded = kbn.roundValue(series.value, decimalInfo.decimals);
             series.displayValue = series.valueFormatted;
           } else {
-            series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null";
+            series.displayValue = series.pattern.null_value || "Null";
           }
         }
         return series;
@@ -320,7 +312,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           return r.replace(new RegExp(this.panel.row_col_wrapper + i + this.panel.row_col_wrapper, "g"), it);
         },
           series.pattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias) ||
-          config.panelDefaults.defaultPattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias));
+          defaultPattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias));
         if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
           series.row_name = series.alias;
         }
@@ -330,7 +322,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       this.dataComputed = this.dataComputed.map(series => {
         series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
           return r.replace(new RegExp(this.panel.row_col_wrapper + i + this.panel.row_col_wrapper, "g"), it);
-        }, series.pattern.col_name || config.panelDefaults.defaultPattern.col_name);
+        }, series.pattern.col_name || defaultPattern.col_name);
         if (series.alias.split(series.pattern.delimiter || ".").length === 1 || series.row_name === series.alias) {
           series.col_name = series.pattern.col_name || "Value";
         }
@@ -343,7 +335,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       });
       // Assign Thresholds
       this.dataComputed = this.dataComputed.map(series => {
-        series.thresholds = (series.pattern.thresholds || config.panelDefaults.defaultPattern.thresholds).split(",").map(d => +d);
+        series.thresholds = (series.pattern.thresholds || defaultPattern.thresholds).split(",").map(d => +d);
         if (series.pattern.enable_time_based_thresholds) {
           let metricrecivedTimeStamp = series.current_servertimestamp || new Date();
           let metricrecivedTimeStamp_innumber = metricrecivedTimeStamp.getHours() * 100 + metricrecivedTimeStamp.getMinutes();
@@ -364,10 +356,10 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       // Assign BG Colors
       this.dataComputed = this.dataComputed.map(series => {
         series.enable_bgColor = series.pattern.enable_bgColor;
-        series.bgColors = (series.pattern.bgColors || config.panelDefaults.defaultPattern.bgColors).split("|");
+        series.bgColors = (series.pattern.bgColors || defaultPattern.bgColors).split("|");
         series.bgColor = series.enable_bgColor === true ? this.computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
-        if (series.displayValue === (series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null")) {
-          series.bgColor = series.pattern.null_color || config.panelDefaults.defaultPattern.null_color;
+        if (series.displayValue === (series.pattern.null_value || defaultPattern.null_value || "Null")) {
+          series.bgColor = series.pattern.null_color || defaultPattern.null_color;
         }
         return series;
       });
@@ -386,12 +378,12 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       // Value Transform
       this.dataComputed = this.dataComputed.map(series => {
         series.enable_transform = series.pattern.enable_transform;
-        series.transform_values = (series.pattern.transform_values || config.panelDefaults.defaultPattern.transform_values).split("|");
+        series.transform_values = (series.pattern.transform_values || defaultPattern.transform_values).split("|");
         series.displayValue = series.enable_transform === true ? this.transformValue(series.thresholds, series.transform_values, series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
-        if (series.displayValue === (series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null")) {
-          series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value;
+        if (series.displayValue === (series.pattern.null_value || defaultPattern.null_value || "Null")) {
+          series.displayValue = series.pattern.null_value || defaultPattern.null_value;
         } else if (isNaN(series.value)) {
-          series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value;
+          series.displayValue = series.pattern.null_value || defaultPattern.null_value;
         }
         return series;
       });
