@@ -58,7 +58,7 @@
       "allow-null-check"
     ],
     "typedef-whitespace": [
-      false,
+      true,
       {
         "call-signature": "nospace",
         "index-signature": "nospace",
