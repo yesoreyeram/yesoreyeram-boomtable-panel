@@ -32,7 +32,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.render();
   }
   seriesHandler(seriesData) {
-    var series = new TimeSeries({
+    let series = new TimeSeries({
       datapoints: seriesData.datapoints || [],
       alias: seriesData.target
     });
@@ -40,7 +40,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     return series;
   }
   addPattern() {
-    var newPattern = {
+    let newPattern = {
       name: "New Pattern",
       pattern: "^server.*cpu$",
       delimiter: ".",
@@ -98,7 +98,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.render();
   }
   add_time_based_thresholds(index) {
-    var new_time_based_threshold = {
+    let new_time_based_threshold = {
       name: "Early morning of everyday",
       from: "0000",
       to: "0530",
@@ -143,13 +143,13 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.render();
   }
   computeBgColor(thresholds, bgColors, value) {
-    var c = "transparent";
+    let c = "transparent";
     if (thresholds && bgColors && typeof value === "number" && thresholds.length + 1 <= bgColors.length) {
       bgColors = _.dropRight(bgColors, bgColors.length - thresholds.length - 1);
       if (bgColors[bgColors.length - 1] === "") {
         bgColors[bgColors.length - 1] = "transparent";
       }
-      for (var i = thresholds.length; i > 0; i--) {
+      for (let i = thresholds.length; i > 0; i--) {
         if (value >= thresholds[i - 1]) {
           return utils.normalizeColor(bgColors[i]);
         }
@@ -159,13 +159,13 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     return c;
   }
   transformValue(thresholds, transform_values, value, displayValue, row_name, col_name) {
-    var t = value;
+    let t = value;
     if (thresholds && transform_values && typeof value === "number" && thresholds.length + 1 <= transform_values.length) {
       transform_values = _.dropRight(transform_values, transform_values.length - thresholds.length - 1);
       if (transform_values[transform_values.length - 1] === "") {
         transform_values[transform_values.length - 1] = "_value_";
       }
-      for (var i = thresholds.length; i > 0; i--) {
+      for (let i = thresholds.length; i > 0; i--) {
         if (value >= thresholds[i - 1]) {
           return transform_values[i].replace(new RegExp("_value_", "g"), displayValue).replace(new RegExp("_row_name_", "g"), row_name).replace(new RegExp("_col_name_", "g"), col_name);
         }
@@ -222,17 +222,17 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   }
   getDecimalsForValue(value, _decimals) {
     if (_.isNumber(+_decimals)) {
-      var o: Object = {
+      let o: Object = {
         decimals: _decimals,
         scaledDecimals: null
       };
       return o;
     }
 
-    var delta = value / 2;
-    var dec = -Math.floor(Math.log(delta) / Math.LN10);
+    let delta = value / 2;
+    let dec = -Math.floor(Math.log(delta) / Math.LN10);
 
-    var magn = Math.pow(10, -dec),
+    let magn = Math.pow(10, -dec),
       norm = delta / magn, // norm is between 1.0 and 10.0
       size;
 
@@ -258,7 +258,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       dec = 0;
     }
 
-    var result: Object = {
+    let result: Object = {
       decimals: Math.max(0, dec),
       scaledDecimals: Math.max(0, dec) - Math.floor(Math.log(size) / Math.LN10) + 2
     };
@@ -292,10 +292,10 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     this.panel.default_title_for_rows = this.panel.default_title_for_rows || config.default_title_for_rows;
     const metricsReceived = utils.getFields(this.dataComputed, "target");
     if (metricsReceived.length !== _.uniq(metricsReceived).length) {
-      var duplicateKeys = _.uniq(metricsReceived.filter(v => {
+      let duplicateKeys = _.uniq(metricsReceived.filter(v => {
         return metricsReceived.filter(t => t === v).length > 1
       }));
-      var err = new Error();
+      let err = new Error();
       err.name = "Duplicate data received";
       err.message = "Duplicate keys : <br/>" + duplicateKeys.join("<br/> ");
       this.panel.error = err;
@@ -495,13 +495,13 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       const is_unique_keys = (keys_found.length === _.uniq(keys_found).length);
       if (is_unique_keys) {
         this.panel.error = undefined; ////
-        var output = [];
+        let output = [];
         _.each(_.uniq(rows_found), (row_name) => {
-          var o: any = {};
+          let o: any = {};
           o.row = row_name;
           o.cols = [];
           _.each(_.uniq(cols_found), (col_name) => {
-            var matched_value = (_.find(this.dataComputed, (e) => {
+            let matched_value = (_.find(this.dataComputed, (e) => {
               return e.row_name === row_name && e.col_name === col_name
             }));
             if (!matched_value) {
@@ -522,7 +522,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           output.push(o);
         })
         //region Output table construction
-        var boomtable_output_body_headers = this.elem.find("#boomtable_output_body_headers");
+        let boomtable_output_body_headers = this.elem.find("#boomtable_output_body_headers");
         let boomtable_output_body_headers_output = `<br/>`;
         if (this.panel.hide_headers !== true) {
           boomtable_output_body_headers_output += "<tr>";
@@ -535,7 +535,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           boomtable_output_body_headers_output += "</tr>";
         }
         boomtable_output_body_headers.html(boomtable_output_body_headers_output);
-        var boomtable_output_body = this.elem.find('#boomtable_output_body');
+        let boomtable_output_body = this.elem.find('#boomtable_output_body');
         let boomtable_output_body_output = ``;
         _.each(output, o => {
           boomtable_output_body_output += "<tr>"
@@ -553,17 +553,17 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         boomtable_output_body.html(boomtable_output_body_output);
         //endregion
       } else {
-        var duplicateKeyValues = _.uniq(keys_found.filter(v => {
+        let duplicateKeyValues = _.uniq(keys_found.filter(v => {
           return keys_found.filter(t => t === v).length > 1
         }));
-        var err_duplicateKeys = new Error();
+        let err_duplicateKeys = new Error();
         err_duplicateKeys.name = "Duplicate keys found";
         err_duplicateKeys.message = "Duplicate key values : <br/>" + duplicateKeyValues.join("<br/> ");
         this.panel.error = err_duplicateKeys;
       }
 
       //region Debug table body construction
-      var boomtable_output_body_debug = this.elem.find('#boomtable_output_body_debug');
+      let boomtable_output_body_debug = this.elem.find('#boomtable_output_body_debug');
       let boomtable_output_body_debug_output = ``;
       _.each(this.dataComputed, d => {
         boomtable_output_body_debug_output += `
@@ -580,8 +580,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       boomtable_output_body_debug.html(boomtable_output_body_debug_output);
       //endregion
     }
-    var rootElem = this.elem.find('.table-panel-scroll');
-    var maxheightofpanel = this.panel.debug_mode ? this.ctrl.height - 71 : this.ctrl.height - 31;
+    let rootElem = this.elem.find('.table-panel-scroll');
+    let maxheightofpanel = this.panel.debug_mode ? this.ctrl.height - 71 : this.ctrl.height - 31;
     rootElem.css({ 'max-height': maxheightofpanel + "px" });
   }
 };
