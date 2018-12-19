@@ -51,7 +51,7 @@
       "check-catch",
       "check-else"
     ],
-    "radix": false,
+    "radix": true,
     "semicolon": true,
     "triple-equals": [
       true,
