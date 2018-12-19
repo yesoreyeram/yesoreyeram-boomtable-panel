@@ -103,15 +103,6 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       this.panel.patterns[patternIndex].time_based_thresholds.splice(index, 1);
     }
   }
-  public inverseTransformValues(index) {
-    if (index === -1) {
-      this.panel.defaultPattern.transform_values = this.panel.defaultPattern.transform_values.split("|").reverse().join("|");
-    } else {
-      this.panel.patterns[index].transform_values = this.panel.patterns[index].transform_values.split("|").reverse().join("|");
-    }
-
-    this.render();
-  }
   public computeBgColor(thresholds, bgColors, value) {
     let c = "transparent";
     if (thresholds && bgColors && typeof value === "number" && thresholds.length + 1 <= bgColors.length) {

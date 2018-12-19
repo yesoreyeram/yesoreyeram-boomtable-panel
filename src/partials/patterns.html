@@ -124,7 +124,7 @@
                             <input type="text" placeholder="_value_|_value_|_value_" class="gf-form-input width-18" ng-model="pattern.transform_values"
                                 bs-tooltip="'value to be printed _value_ represent actual value; seperate by pipe symbol'" ng-blur="ctrl.render()"
                                 data-ng-change="ctrl.render();">
-                            <button type="button" class="btn btn-primary btn-small" ng-click="ctrl.inverseTransformValues($index)" title="Inverse">Inverse</button>
+                            <button type="button" class="btn btn-primary btn-small" ng-click="pattern.inverseTransformValues();ctrl.render();" title="Inverse">Inverse</button>
                         </div>
                     </div>                    
                     <div class="gr-form-inline">
@@ -317,7 +317,7 @@
                             <input type="text" placeholder="_value_|_value_|_value_" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.transform_values"
                                 bs-tooltip="'value to be printed _value_ represent actual value; seperate by pipe symbol'" ng-blur="ctrl.render()"
                                 data-ng-change="ctrl.render();">
-                            <button type="button" class="btn btn-primary btn-small" ng-click="ctrl.inverseTransformValues(-1)" title="Inverse">Inverse</button>
+                            <button type="button" class="btn btn-primary btn-small" ng-click="ctrl.panel.defaultPattern.inverseTransformValues(); ctrl.render();" title="Inverse">Inverse</button>
                         </div>
                     </div>                                      
                     <div class="gr-form-inline">
