@@ -80,23 +80,6 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.patterns.push(copiedPattern);
     this.render();
   }
-  public add_time_based_thresholds(index) {
-    let new_time_based_threshold = {
-      enabledDays: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
-      from: "0000",
-      name: "Early morning of everyday",
-      threshold: "70,90",
-      to: "0530"
-    };
-    if (index === 'default') {
-      this.panel.defaultPattern.time_based_thresholds = this.panel.defaultPattern.time_based_thresholds || [];
-      this.panel.defaultPattern.time_based_thresholds.push(new_time_based_threshold);
-    } else {
-      this.panel.patterns[index].time_based_thresholds = this.panel.patterns[index].time_based_thresholds || [];
-      this.panel.patterns[index].time_based_thresholds.push(new_time_based_threshold);
-    }
-    this.render();
-  }
   public remove_time_based_thresholds(patternIndex, index) {
     if (patternIndex === 'default') {
       this.panel.defaultPattern.time_based_thresholds.splice(index, 1);

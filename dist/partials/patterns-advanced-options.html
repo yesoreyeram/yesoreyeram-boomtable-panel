@@ -63,7 +63,7 @@
                         <br/>
                     </div>
                     <br/>
-                    <button type="button" class="btn btn-success btn-medium" ng-click="ctrl.add_time_based_thresholds($index)">Add Time based threshold for this pattern</button>
+                    <button type="button" class="btn btn-success btn-medium" ng-click="pattern.add_time_based_thresholds(); ctrl.render();">Add Time based threshold for this pattern</button>
 
                 </div>
             </div>
@@ -129,7 +129,7 @@
                         <br/>
                     </div>
                     <br/>
-                    <button type="button" class="btn btn-success btn-medium" ng-click="ctrl.add_time_based_thresholds('default')">Add Time based threshold for this pattern</button>
+                    <button type="button" class="btn btn-success btn-medium" ng-click="ctrl.panel.defaultPattern.add_time_based_thresholds(); ctrl.render();">Add Time based threshold for this pattern</button>
                 </div>
             </div>
         </div>

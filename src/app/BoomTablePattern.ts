@@ -1,3 +1,18 @@
+class BoomTableTimeBasedThreshold {
+    public enabledDays: String;
+    public from: String;
+    public name: String;
+    public threshold: String;
+    public to: String;
+    constructor() {
+        this.enabledDays = "Sun,Mon,Tue,Wed,Thu,Fri,Sat";
+        this.from = "0000";
+        this.name = "Early morning of everyday";
+        this.threshold = "70,90";
+        this.to = "0530";
+    }
+}
+
 class BoomTablePattern {
     private row_col_wrapper: String = "_";
     public bgColors: String;
@@ -23,12 +38,13 @@ class BoomTablePattern {
     public pattern: String;
     public row_name: String;
     public thresholds: String;
-    public time_based_thresholds: any[];
+    public time_based_thresholds: BoomTableTimeBasedThreshold[];
     public transform_values: String;
     public transform_values_overrides: String;
     public valueName: String;
     public inverseBGColors;
     public inverseTransformValues;
+    public add_time_based_thresholds;
     constructor(options: any) {
         if (options && options.row_col_wrapper) {
             this.row_col_wrapper = options.row_col_wrapper;
@@ -71,6 +87,14 @@ BoomTablePattern.prototype.inverseTransformValues = function () {
     this.transform_values = this.transform_values ? this.transform_values.split("|").reverse().join("|") : "";
 };
 
+BoomTablePattern.prototype.add_time_based_thresholds = function() {
+    console.log(`Adding time based threshold to ${this.name}`);
+    let new_time_based_threshold =  new BoomTableTimeBasedThreshold();
+    this.time_based_thresholds = this.time_based_thresholds || [];
+    this.time_based_thresholds.push(new_time_based_threshold);
+};
+
 export {
-    BoomTablePattern
+    BoomTablePattern,
+    BoomTableTimeBasedThreshold
 };
