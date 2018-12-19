@@ -176,11 +176,20 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
 
     return result;
   }
+  public throwError(title, message) {
+    let err = new Error();
+    err.name = title;
+    err.message = message;
+    this.panel.error = err;
+  }
+  public clearError() {
+    this.panel.error = undefined;
+  }
 }
 
 GrafanaBoomTableCtrl.prototype.render = function () {
+  this.clearError();
   if (this.dataReceived) {
-    // Copying the data received
     let dataComputed = this.dataReceived;
     this.panel.default_title_for_rows = this.panel.default_title_for_rows || config.default_title_for_rows;
     const metricsReceived = utils.getFields(dataComputed, "target");
@@ -188,13 +197,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       let duplicateKeys = _.uniq(metricsReceived.filter(v => {
         return metricsReceived.filter(t => t === v).length > 1;
       }));
-      let err = new Error();
-      err.name = "Duplicate data received";
-      err.message = "Duplicate keys : <br/>" + duplicateKeys.join("<br/> ");
-      this.panel.error = err;
-      this.panel.data = undefined;
+      this.throwError("Duplicate data received", "Duplicate keys : <br/>" + duplicateKeys.join("<br/> "));
     } else {
-      this.panel.error = undefined;
+      this.clearError();
       // Binding the grafana computations to the metrics received
       dataComputed = dataComputed.map(this.seriesHandler.bind(this));
       // Get Server Time Stamp of the Series for time based thresholds.
@@ -318,8 +323,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       });
       // BG Colors overrides
       dataComputed = dataComputed.map(series => {
-        if (series.pattern.enable_bgColor_overrides && series.pattern.bgColors_overrides  !== "") {
-          let _bgColors_overrides = series.pattern.bgColors_overrides .split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1]);
+        if (series.pattern.enable_bgColor_overrides && series.pattern.bgColors_overrides !== "") {
+          let _bgColors_overrides = series.pattern.bgColors_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1]);
           if (_bgColors_overrides.length > 0 && _bgColors_overrides[0] !== "") {
             series.bgColor = utils.normalizeColor(("" + _bgColors_overrides[0]).trim());
           }
@@ -329,12 +334,12 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       // Value Transform
       dataComputed = dataComputed.map(series => {
         let transform_values = (series.pattern.transform_values || defaultPattern.transform_values).split("|");
-        series.displayValue = series.pattern.enable_transform === true ? this.transformValue(series.thresholds, transform_values , series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
+        series.displayValue = series.pattern.enable_transform === true ? this.transformValue(series.thresholds, transform_values, series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
         return series;
       });
       // Value Transform Overrides
       dataComputed = dataComputed.map(series => {
-        if (series.pattern.enable_transform_overrides && series.pattern.transform_values_overrides ) {
+        if (series.pattern.enable_transform_overrides && series.pattern.transform_values_overrides) {
           let _transform_values_overrides = series.pattern.transform_values_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === series.value).map(con => con[1]);
           if (_transform_values_overrides.length > 0 && _transform_values_overrides[0] !== "") {
             series.displayValue = ("" + _transform_values_overrides[0]).trim().replace(new RegExp("_value_", "g"), series.displayValue).replace(new RegExp("_row_name_", "g"), series.row_name).replace(new RegExp("_col_name_", "g"), series.col_name);
@@ -368,6 +373,10 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         if (_.isNaN(series.value) || series.value === null) {
           series.bgColor = series.pattern.null_color || defaultPattern.null_color || "darkred";
           series.displayValue = series.pattern.null_value || defaultPattern.null_value || "No data";
+          series.displayValue = series.displayValue.replace(new RegExp("_series_", "g"), series.alias);
+          series.displayValue = series.displayValue.replace(new RegExp("_row_name_", "g"), series.row_name);
+          series.displayValue = series.displayValue.replace(new RegExp("_col_name_", "g"), series.col_name);
+          series.displayValue = utils.replaceTokens(series.displayValue);
         }
         return series;
       });
@@ -377,7 +386,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       const keys_found = utils.getFields(dataComputed, "key_name");
       const is_unique_keys = (keys_found.length === _.uniq(keys_found).length);
       if (is_unique_keys) {
-        this.panel.error = undefined; ////
+        this.clearError();
         let output: any[] = [];
         _.each(_.uniq(rows_found), (row_name) => {
           let o: any = {};
@@ -439,10 +448,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         let duplicateKeyValues = _.uniq(keys_found.filter(v => {
           return keys_found.filter(t => t === v).length > 1;
         }));
-        let err_duplicateKeys = new Error();
-        err_duplicateKeys.name = "Duplicate keys found";
-        err_duplicateKeys.message = "Duplicate key values : <br/>" + duplicateKeyValues.join("<br/> ");
-        this.panel.error = err_duplicateKeys;
+        this.throwError("Duplicate Keys found", "Duplicate keys : <br/>" + "Duplicate key values : <br/>" + duplicateKeyValues.join("<br/> "));
       }
 
       // region Debug table body construction

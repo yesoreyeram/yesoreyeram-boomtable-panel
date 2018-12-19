@@ -37,7 +37,7 @@ const replaceTokens = function (value) {
     return value;
 };
 const getActualNameWithoutTokens = function (value) {
-    if (!value) { return value; }
+    if (!value) { return value + ""; }
     value = value + "";
     return value.split(" ").map(a => {
         if (a.startsWith("_fa-") && a.endsWith("_")) {
