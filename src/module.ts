@@ -108,8 +108,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     if (index === 'default') {
       this.panel.defaultPattern.time_based_thresholds = this.panel.defaultPattern.time_based_thresholds || [];
       this.panel.defaultPattern.time_based_thresholds.push(new_time_based_threshold);
-    }
-    else {
+    } else {
       this.panel.patterns[index].time_based_thresholds = this.panel.patterns[index].time_based_thresholds || [];
       this.panel.patterns[index].time_based_thresholds.push(new_time_based_threshold);
     }
@@ -118,16 +117,14 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   remove_time_based_thresholds(patternIndex, index) {
     if (patternIndex === 'default') {
       this.panel.defaultPattern.time_based_thresholds.splice(index, 1);
-    }
-    else {
+    } else {
       this.panel.patterns[patternIndex].time_based_thresholds.splice(index, 1);
     }
   }
   inverseBGColors(index) {
     if (index === -1) {
       this.panel.defaultPattern.bgColors = this.panel.defaultPattern.bgColors.split("|").reverse().join("|");
-    }
-    else {
+    } else {
       this.panel.patterns[index].bgColors = this.panel.patterns[index].bgColors.split("|").reverse().join("|");
     }
     this.render();
@@ -135,8 +132,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   inverseTransformValues(index) {
     if (index === -1) {
       this.panel.defaultPattern.transform_values = this.panel.defaultPattern.transform_values.split("|").reverse().join("|");
-    }
-    else {
+    } else {
       this.panel.patterns[index].transform_values = this.panel.patterns[index].transform_values.split("|").reverse().join("|");
     }
 
@@ -337,8 +333,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           let formatFunc = kbn.valueFormats[series.pattern.format || config.panelDefaults.defaultPattern.format];
           if (series.value === null) {
             series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null";
-          }
-          else if (!isNaN(series.value)) {
+          } else if (!isNaN(series.value)) {
             series.valueFormatted = formatFunc(series.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
             series.valueRounded = kbn.roundValue(series.value, decimalInfo.decimals);
             series.displayValue = series.valueFormatted;
@@ -363,8 +358,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
             return false
           }
           return true
-        }
-        else {
+        } else {
           return true
         };
       })
@@ -442,8 +436,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         series.displayValue = series.enable_transform === true ? this.transformValue(series.thresholds, series.transform_values, series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
         if (series.displayValue === (series.pattern.null_value || config.panelDefaults.defaultPattern.null_value || "Null")) {
           series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value;
-        }
-        else if (isNaN(series.value)) {
+        } else if (isNaN(series.value)) {
           series.displayValue = series.pattern.null_value || config.panelDefaults.defaultPattern.null_value;
         }
         return series;
