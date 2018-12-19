@@ -72,7 +72,7 @@
       "ban-keywords"
     ],
     "whitespace": [
-      false,
+      true,
       "check-branch",
       "check-decl",
       "check-type"
