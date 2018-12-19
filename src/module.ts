@@ -76,6 +76,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   }
   public clonePattern(index) {
     let copiedPattern = Object.assign({}, this.panel.patterns[index]);
+    Object.setPrototypeOf(copiedPattern, BoomTablePattern.prototype);
     this.panel.patterns.push(copiedPattern);
     this.render();
   }
