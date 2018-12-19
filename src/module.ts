@@ -132,52 +132,6 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     return t;
   }
-  public replaceFontAwesomeIcons(value) {
-    if (!value) { return value; }
-    return (value + "")
-      .split(" ")
-      .map(a => {
-        if (a.startsWith("_fa-") && a.endsWith("_")) {
-          let icon = a.replace(/\_/g, "").split(",")[0];
-          let color = a.indexOf(",") > -1 ? ` style="color:${utils.normalizeColor(a.replace(/\_/g, "").split(",")[1])}" ` : "";
-          let repeatCount = a.split(",").length > 2 ? +(a.replace(/\_/g, "").split(",")[2]) : 1;
-          a = `<i class="fa ${icon}" ${color}></i> `.repeat(repeatCount);
-        }
-        return a;
-      })
-      .join(" ");
-  }
-  public replaceWithImages(value) {
-    if (!value) { return value; }
-    return (value + "")
-      .split(" ")
-      .map(a => {
-        if (a.startsWith("_img-") && a.endsWith("_")) {
-          a = a.slice(0, -1);
-          let imgUrl = a.replace("_img-", "").split(",")[0];
-          let imgWidth = a.split(",").length > 1 ? a.replace("_img-", "").split(",")[1] : "20px";
-          let imgHeight = a.split(",").length > 2 ? a.replace("_img-", "").split(",")[2] : "20px";
-          let repeatCount = a.split(",").length > 3 ? +(a.replace("_img-", "").split(",")[3]) : 1;
-          a = `<img width="${imgWidth}" height="${imgHeight}" src="${imgUrl}"/>`.repeat(repeatCount);
-        }
-        return a;
-      })
-      .join(" ");
-  }
-  public getActualNameWithoutTransformSign(value) {
-    return (value + "")
-      .split(" ")
-      .map(a => {
-        if (a.startsWith("_fa-") && a.endsWith("_")) {
-          a = ``;
-        }
-        if (a.startsWith("_img-") && a.endsWith("_")) {
-          a = ``;
-        }
-        return a;
-      })
-      .join(" ");
-  }
   public getDecimalsForValue(value, _decimals) {
     if (_.isNumber(+_decimals)) {
       let o: Object = {
@@ -308,11 +262,11 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       });
       // Assign Row Name
       this.dataComputed = this.dataComputed.map(series => {
+        series.row_name = series.pattern.row_name || defaultPattern.row_name;
+        series.row_name = series.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias);
         series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
           return r.replace(new RegExp(this.panel.row_col_wrapper + i + this.panel.row_col_wrapper, "g"), it);
-        },
-          series.pattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias) ||
-          defaultPattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias));
+        }, series.row_name);
         if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
           series.row_name = series.alias;
         }
@@ -320,9 +274,10 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       });
       // Assign Col Name
       this.dataComputed = this.dataComputed.map(series => {
+        series.col_name = series.pattern.col_name || defaultPattern.col_name;
         series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
           return r.replace(new RegExp(this.panel.row_col_wrapper + i + this.panel.row_col_wrapper, "g"), it);
-        }, series.pattern.col_name || defaultPattern.col_name);
+        }, series.col_name);
         if (series.alias.split(series.pattern.delimiter || ".").length === 1 || series.row_name === series.alias) {
           series.col_name = series.pattern.col_name || "Value";
         }
@@ -399,31 +354,32 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         }
         return series;
       });
-      // Font awesome icons
+      // Font awesome icons & Images in value
       this.dataComputed = this.dataComputed.map(series => {
         series.actual_displayvalue = series.displayValue;
         series.actual_row_name = series.row_name;
         series.actual_col_name = series.col_name;
-        if (series.displayValue && series.displayValue.indexOf("_fa-") > -1) { series.displayValue = this.replaceFontAwesomeIcons(series.displayValue); }
-        if (series.row_name && series.row_name.indexOf("_fa-") > -1) { series.row_name = this.replaceFontAwesomeIcons(series.row_name); }
-        if (series.col_name && series.col_name.indexOf("_fa-") > -1) { series.col_name = this.replaceFontAwesomeIcons(series.col_name); }
-        return series;
-      });
-      // Image transforms
-      this.dataComputed = this.dataComputed.map(series => {
-        if (series.displayValue && series.displayValue.indexOf("_img-") > -1) { series.displayValue = this.replaceWithImages(series.displayValue); }
-        if (series.row_name && series.row_name.indexOf("_img-") > -1) { series.row_name = this.replaceWithImages(series.row_name); }
-        if (series.col_name && series.col_name.indexOf("_img-") > -1) { series.col_name = this.replaceWithImages(series.col_name); }
+        series.displayValue = utils.replaceTokens(series.displayValue);
+        series.row_name = utils.replaceTokens(series.row_name);
+        series.col_name = utils.replaceTokens(series.col_name);
         return series;
       });
       // Cell Links
       this.dataComputed = this.dataComputed.map(series => {
         if (series.pattern.enable_clickable_cells) {
           let targetLink = series.pattern.clickable_cells_link || "#";
-          targetLink = targetLink.replace(new RegExp("_row_name_", "g"), this.getActualNameWithoutTransformSign(series.actual_row_name).trim());
-          targetLink = targetLink.replace(new RegExp("_col_name_", "g"), this.getActualNameWithoutTransformSign(series.actual_col_name).trim());
-          targetLink = targetLink.replace(new RegExp("_value_", "g"), this.getActualNameWithoutTransformSign(series.value).trim());
+          targetLink = targetLink.replace(new RegExp("_row_name_", "g"), utils.getActualNameWithoutTokens(series.actual_row_name).trim());
+          targetLink = targetLink.replace(new RegExp("_col_name_", "g"), utils.getActualNameWithoutTokens(series.actual_col_name).trim());
+          targetLink = targetLink.replace(new RegExp("_value_", "g"), utils.getActualNameWithoutTokens(series.value).trim());
           series.displayValue = `<a href="${targetLink}" target="_blank">${series.displayValue}</a>`;
+        }
+        return series;
+      });
+      // Handle Null Value
+      this.dataComputed = this.dataComputed.map(series => {
+        if (_.isNaN(series.value) || series.value === null) {
+          series.bgColor = series.pattern.null_color || defaultPattern.null_color || "darkred";
+          series.displayValue = series.pattern.null_value || defaultPattern.null_value || "No data";
         }
         return series;
       });
@@ -484,7 +440,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
           _.each(o.cols, c => {
             boomtable_output_body_output += `<td
               style="padding:4px;background-color:${c.bgColor}"
-              title="${ "Row Name : " + this.getActualNameWithoutTransformSign(c.actual_row_name) + "\nCol Name : " + this.getActualNameWithoutTransformSign(c.actual_col_name) + "\nValue : " + c.value}"
+              title="${ "Row Name : " + utils.getActualNameWithoutTokens(c.actual_row_name) + "\nCol Name : " + utils.getActualNameWithoutTokens(c.actual_col_name) + "\nValue : " + c.value}"
             >${c.displayValue}</td>`;
           });
           boomtable_output_body_output += "</tr>";
