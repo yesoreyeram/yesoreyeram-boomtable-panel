@@ -366,7 +366,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       this.dataComputed = this.dataComputed.map(series => {
         series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce((r, it, i) => {
           return r.replace(new RegExp(this.panel.row_col_wrapper + i + this.panel.row_col_wrapper, "g"), it);
-        }, series.pattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias) || config.panelDefaults.defaultPattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias));
+        },
+          series.pattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias) ||
+          config.panelDefaults.defaultPattern.row_name.replace(new RegExp(this.panel.row_col_wrapper + "series" + this.panel.row_col_wrapper, "g"), series.alias));
         if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
           series.row_name = series.alias;
         }
