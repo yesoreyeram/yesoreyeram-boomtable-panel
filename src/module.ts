@@ -83,13 +83,6 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.patterns.push(copiedPattern);
     this.render();
   }
-  public remove_time_based_thresholds(patternIndex, index) {
-    if (patternIndex === 'default') {
-      this.panel.defaultPattern.time_based_thresholds.splice(index, 1);
-    } else {
-      this.panel.patterns[patternIndex].time_based_thresholds.splice(index, 1);
-    }
-  }
   public computeBgColor(thresholds, bgColors, value) {
     let c = "transparent";
     if (thresholds && bgColors && typeof value === "number" && thresholds.length + 1 <= bgColors.length) {

@@ -45,6 +45,7 @@ class BoomTablePattern {
     public inverseBGColors;
     public inverseTransformValues;
     public add_time_based_thresholds;
+    public remove_time_based_thresholds;
     constructor(options: any) {
         if (options && options.row_col_wrapper) {
             this.row_col_wrapper = options.row_col_wrapper;
@@ -87,11 +88,16 @@ BoomTablePattern.prototype.inverseTransformValues = function () {
     this.transform_values = this.transform_values ? this.transform_values.split("|").reverse().join("|") : "";
 };
 
-BoomTablePattern.prototype.add_time_based_thresholds = function() {
-    console.log(`Adding time based threshold to ${this.name}`);
-    let new_time_based_threshold =  new BoomTableTimeBasedThreshold();
+BoomTablePattern.prototype.add_time_based_thresholds = function () {
+    let new_time_based_threshold = new BoomTableTimeBasedThreshold();
     this.time_based_thresholds = this.time_based_thresholds || [];
     this.time_based_thresholds.push(new_time_based_threshold);
+};
+
+BoomTablePattern.prototype.remove_time_based_thresholds = function (index) {
+    if (this.time_based_thresholds.length > 0) {
+        this.time_based_thresholds.splice(index, 1);
+    }
 };
 
 export {

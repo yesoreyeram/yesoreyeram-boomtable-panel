@@ -59,7 +59,7 @@
                             data-ng-change="ctrl.render();"> Threshold :
                         <input type="text" class="inline-form-control" placeholder="Threshold" ng-model="time_based_pattern.threshold" ng-blur="ctrl.render()"
                             data-ng-change="ctrl.render();">
-                        <button type="button" class="btn btn-danger btn-small" ng-click="ctrl.remove_time_based_thresholds( $parent.$index, $index)">X</button>
+                        <button type="button" class="btn btn-danger btn-small" ng-click="pattern.remove_time_based_thresholds($index); ctrl.render(); ">X</button>
                         <br/>
                     </div>
                     <br/>
@@ -125,7 +125,7 @@
                             data-ng-change="ctrl.render();"> Threshold :
                         <input type="text" class="inline-form-control" placeholder="Threshold" ng-model="time_based_pattern.threshold" ng-blur="ctrl.render()"
                             data-ng-change="ctrl.render();">
-                        <button type="button" class="btn btn-danger btn-small" ng-click="ctrl.remove_time_based_thresholds('default', $index)">X</button>
+                        <button type="button" class="btn btn-danger btn-small" ng-click="ctrl.panel.defaultPattern.remove_time_based_thresholds($index); ctrl.render();">X</button>
                         <br/>
                     </div>
                     <br/>
