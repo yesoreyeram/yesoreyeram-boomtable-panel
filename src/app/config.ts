@@ -15,9 +15,7 @@ const config: any = {
     panelDefaults: {
         activePatternIndex: -1,
         default_title_for_rows: "Metric",
-        nullPointMode: "connected",
         patterns: [],
-        plugin_title: "Boom Table",
         row_col_wrapper: "_",
     }
 };

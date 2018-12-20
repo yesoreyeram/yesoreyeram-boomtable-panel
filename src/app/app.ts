@@ -1,6 +1,8 @@
-import { BoomTablePattern } from './BoomTablePattern';
+import * as utils from "./utils";
+import _ from "lodash";
+import { BoomPattern, IBoomSeries } from './Boom';
 
-const defaultPattern = new BoomTablePattern({
+const defaultPattern = new BoomPattern({
     bgColors: "green|orange|red",
     bgColors_overrides: "0->green|2->red|1->yellow",
     clickable_cells_link: "",
@@ -19,7 +21,94 @@ const defaultPattern = new BoomTablePattern({
     transform_values_overrides: "0->down|1->up",
     valueName: "avg"
 });
+const seriesToTable = function (inputdata: IBoomSeries[]): any {
+    let rows_found = _.uniq(utils.getFields(inputdata, "row_name"));
+    let cols_found = _.uniq(utils.getFields(inputdata, "col_name"));
+    let output: any[] = [];
+    _.each(rows_found, row_name => {
+        let cols: any = [];
+        _.each(cols_found, col_name => {
+            let matched_items = _.filter(inputdata, o => {
+                return o.row_name === row_name && o.col_name === col_name;
+            });
+            if (!matched_items || matched_items.length === 0) {
+                cols.push({
+                    "col_name": col_name,
+                    "color_bg": "darkred",
+                    "display_value": "No match found",
+                    "hidden": false,
+                    "link": "-",
+                    "row_col_key": "",
+                    "row_name": row_name,
+                    "tooltip": "-"
+                });
+            } else if (matched_items && matched_items.length === 1) {
+                cols.push(matched_items[0]);
+            } else if (matched_items && matched_items.length > 1) {
+                cols.push({
+                    "col_name": col_name,
+                    "color_bg": "darkred",
+                    "display_value": "Duplicate matches",
+                    "hidden": false,
+                    "link": "-",
+                    "row_col_key": "",
+                    "row_name": row_name,
+                    "tooltip": "-"
+                });
+            }
+        });
+        output.push(cols);
+    });
+    return {
+        cols_found,
+        output,
+        rows_found,
+    };
+};
+const getRenderingData = function (data, options): any {
+    let output: any = {
+        body: "",
+        debug: "",
+        footer: "",
+        headers: "",
+    };
+    let { default_title_for_rows, hide_headers, hide_first_column } = options;
+    if (hide_headers !== true) {
+        output.headers += "<tr>";
+        if (hide_first_column !== true) {
+            output.headers += `<th style="padding:4px;text-align:center">${default_title_for_rows}</th>`;
+        }
+        _.each(data.cols_found, c => {
+            output.headers += `<th style="padding:4px;text-align:center">${c}</th>`;
+        });
+        output.body += "</tr>";
+    }
+    _.each(data.output, o => {
+        if (o.map(item => item.hidden.toString()).indexOf("false") > -1) {
+            output.body += "<tr>";
+            if (hide_first_column !== true) {
+                output.body += `
+                    <td style="padding:4px;">
+                        ${_.first(o.map(item => item.row_name))}
+                    </td>`;
+            }
+            _.each(o, item => {
+                let item_style = `padding:4px;background-color:${item.color_bg}`;
+                let item_display = item.link === "#" ? item.display_value : `<a href="${item.link}" target="_blank">${item.display_value}</a>`;
+                output.body += `
+                    <td style="${item_style}">
+                        ${item_display}
+                    </td>
+                `;
+            });
+            output.body += "</tr>";
+        }
+    });
+    return output;
+};
 
 export {
-    defaultPattern
+    defaultPattern,
+    getRenderingData,
+    seriesToTable
 };
