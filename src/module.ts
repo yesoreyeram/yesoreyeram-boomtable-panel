@@ -29,6 +29,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.updatePrototypes();
     this.events.on("data-received", this.onDataReceived.bind(this));
     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
+    this.panel.activePatternIndex = this.panel.activePatternIndex === -1 ? this.panel.patterns.length : this.panel.activePatternIndex;
   }
   private updatePrototypes() {
     Object.setPrototypeOf(this.panel.defaultPattern, BoomPattern.prototype);
