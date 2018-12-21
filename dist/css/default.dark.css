@@ -4,6 +4,12 @@
 .boom-table .split {
   margin-right: 20px; }
 
+.boom-table .boom-btn {
+  padding: 10px;
+  margin-right: 10px;
+  min-width: 200px;
+  text-transform: lowercase; }
+
 .boom-table h6.text-header {
   padding: 0 0 10px 0;
   font-weight: bolder; }

@@ -1,21 +1,9 @@
-///<reference path="../../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
+///<reference path="../../../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
 
 import kbn from 'app/core/utils/kbn';
 import TimeSeries from "app/core/time_series2";
 import _ from "lodash";
-import * as utils from "./utils";
-
-interface IBoomSeries {
-    hidden: Boolean;
-    col_name: string;
-    row_name: string;
-    display_value: string;
-    color_bg: string;
-    color_text: string;
-    tooltip: string;
-    value_formatted: string;
-    link: string;
-}
+import { IBoomSeries, replaceTokens, getActualNameWithoutTokens, getDecimalsForValue, getItemBasedOnThreshold, normalizeColor } from "./index";
 
 class BoomSeries implements IBoomSeries {
     private debug_mode: Boolean;
@@ -67,7 +55,7 @@ class BoomSeries implements IBoomSeries {
                 this.display_value = String(this.value);
             }
             if (!isNaN(this.value)) {
-                let decimalInfo: any = utils.getDecimalsForValue(this.value, this.decimals);
+                let decimalInfo: any = getDecimalsForValue(this.value, this.decimals);
                 let formatFunc = kbn.valueFormats[this.pattern.format];
                 this.value_formatted = formatFunc(this.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
                 this.display_value = String(this.value_formatted);
@@ -119,7 +107,7 @@ class BoomSeries implements IBoomSeries {
         } else {
             if (this.pattern.enable_bgColor && this.pattern.bgColors) {
                 let list_of_bgColors_based_on_thresholds = this.pattern.bgColors.split("|");
-                bgColor = utils.getItemBasedOnThreshold(this.thresholds, list_of_bgColors_based_on_thresholds, this.value, bgColor);
+                bgColor = getItemBasedOnThreshold(this.thresholds, list_of_bgColors_based_on_thresholds, this.value, bgColor);
 
             }
             if (this.pattern.enable_bgColor_overrides && this.pattern.bgColors_overrides !== "") {
@@ -129,7 +117,7 @@ class BoomSeries implements IBoomSeries {
                 }
             }
         }
-        return utils.normalizeColor(bgColor);
+        return normalizeColor(bgColor);
     }
     private getTextColor(): string {
         let textColor = "white";
@@ -138,7 +126,7 @@ class BoomSeries implements IBoomSeries {
         } else {
             if (this.pattern.enable_textColor && this.pattern.textColors) {
                 let list_of_textColors_based_on_thresholds = this.pattern.textColors.split("|");
-                textColor = utils.getItemBasedOnThreshold(this.thresholds, list_of_textColors_based_on_thresholds, this.value, textColor);
+                textColor = getItemBasedOnThreshold(this.thresholds, list_of_textColors_based_on_thresholds, this.value, textColor);
             }
             if (this.pattern.enable_textColor_overrides && this.pattern.textColors_overrides !== "") {
                 let _textColors_overrides = this.pattern.textColors_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === this.value).map(con => con[1]);
@@ -147,7 +135,7 @@ class BoomSeries implements IBoomSeries {
                 }
             }
         }
-        return utils.normalizeColor(textColor);
+        return normalizeColor(textColor);
     }
     private getDisplayValueTemplate(): string {
         let template = this.template_value;
@@ -156,7 +144,7 @@ class BoomSeries implements IBoomSeries {
         } else {
             if (this.pattern.enable_transform) {
                 let transform_values = this.pattern.transform_values.split("|");
-                template = utils.getItemBasedOnThreshold(this.thresholds, transform_values, this.value, template);
+                template = getItemBasedOnThreshold(this.thresholds, transform_values, this.value, template);
             }
             if (this.pattern.enable_transform_overrides && this.pattern.transform_values_overrides !== "") {
                 let _transform_values_overrides = this.pattern.transform_values_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === this.value).map(con => con[1]);
@@ -212,13 +200,13 @@ class BoomSeries implements IBoomSeries {
         this.display_value = this.template_value.replace(new RegExp("_series_", "g"), this.seriesName.toString());
         // _row_name_ can be specified in Col, Display Value, Tooltip & Link
         this.col_name = this.col_name.replace(new RegExp("_row_name_", "g"), this.row_name.toString());
-        this.link = this.link.replace(new RegExp("_row_name_", "g"), utils.getActualNameWithoutTokens(this.row_name.toString()).trim());
-        this.tooltip = this.tooltip.replace(new RegExp("_row_name_", "g"), utils.getActualNameWithoutTokens(this.row_name.toString()).trim());
+        this.link = this.link.replace(new RegExp("_row_name_", "g"), getActualNameWithoutTokens(this.row_name.toString()).trim());
+        this.tooltip = this.tooltip.replace(new RegExp("_row_name_", "g"), getActualNameWithoutTokens(this.row_name.toString()).trim());
         this.display_value = this.display_value.replace(new RegExp("_row_name_", "g"), this.row_name.toString());
         // _col_name_ can be specified in Row, Display Value, Tooltip & Link
         this.row_name = this.row_name.replace(new RegExp("_col_name_", "g"), this.col_name.toString());
-        this.link = this.link.replace(new RegExp("_col_name_", "g"), utils.getActualNameWithoutTokens(this.col_name.toString()).trim());
-        this.tooltip = this.tooltip.replace(new RegExp("_col_name_", "g"), utils.getActualNameWithoutTokens(this.col_name.toString()).trim());
+        this.link = this.link.replace(new RegExp("_col_name_", "g"), getActualNameWithoutTokens(this.col_name.toString()).trim());
+        this.tooltip = this.tooltip.replace(new RegExp("_col_name_", "g"), getActualNameWithoutTokens(this.col_name.toString()).trim());
         this.display_value = this.display_value.replace(new RegExp("_col_name_", "g"), this.col_name.toString());
         // _value_raw_ can be specified in Display Value, Tooltip & Link
         let value_raw = _.isNaN(this.value) || this.value === null ? "null" : this.value.toString().trim();
@@ -231,140 +219,12 @@ class BoomSeries implements IBoomSeries {
         this.tooltip = this.tooltip.replace(new RegExp("_value_", "g"), value_formatted);
         this.display_value = this.display_value.replace(new RegExp("_value_", "g"), value_formatted);
         // FA & Img transforms can be specified in Row, Col & Display Value
-        this.row_name = utils.replaceTokens(this.row_name);
-        this.col_name = utils.replaceTokens(this.col_name);
-        this.display_value = utils.replaceTokens(this.display_value);
+        this.row_name = replaceTokens(this.row_name);
+        this.col_name = replaceTokens(this.col_name);
+        this.display_value = replaceTokens(this.display_value);
     }
 }
-
-class BoomTimeBasedThreshold {
-    public enabledDays: string;
-    public from: string;
-    public name: string;
-    public threshold: string;
-    public to: string;
-    constructor() {
-        this.enabledDays = "Sun,Mon,Tue,Wed,Thu,Fri,Sat";
-        this.from = "0000";
-        this.name = "Early morning of everyday";
-        this.threshold = "70,90";
-        this.to = "0530";
-    }
-}
-
-class BoomPattern {
-    private row_col_wrapper = "_";
-    public bgColors: string;
-    public bgColors_overrides: string;
-    public clickable_cells_link: string;
-    public col_name: string;
-    public decimals: Number;
-    public delimiter: string;
-    public enable_bgColor: Boolean;
-    public enable_bgColor_overrides: Boolean;
-    public enable_clickable_cells: Boolean;
-    public enable_textColor: Boolean;
-    public enable_textColor_overrides: Boolean;
-    public enable_time_based_thresholds: Boolean;
-    public enable_transform: Boolean;
-    public enable_transform_overrides: Boolean;
-    public filter: {
-        value_above: string;
-        value_below: string;
-    };
-    public format: string;
-    public name: string;
-    public null_color: string;
-    public null_value: string;
-    public null_textcolor: string;
-    public pattern: string;
-    public row_name: string;
-    public textColors: string;
-    public textColors_overrides: string;
-    public thresholds: string;
-    public time_based_thresholds: BoomTimeBasedThreshold[];
-    public transform_values: string;
-    public transform_values_overrides: string;
-    public tooltipTemplate: string;
-    public valueName: string;
-    public inverseBGColors;
-    public inverseTextColors;
-    public inverseTransformValues;
-    public add_time_based_thresholds;
-    public remove_time_based_thresholds;
-    public setUnitFormat;
-    constructor(options: any) {
-        if (options && options.row_col_wrapper) {
-            this.row_col_wrapper = options.row_col_wrapper;
-        }
-        this.bgColors = options && options.bgColors ? options.bgColors : "green|orange|red";
-        this.bgColors_overrides = options && options.bgColors_overrides ? options.bgColors_overrides : "0->green|2->red|1->yellow";
-        this.textColors = options && options.textColors ? options.textColors : "red|orange|green";
-        this.textColors_overrides = options && options.textColors_overrides ? options.textColors_overrides : "0->red|2->green|1->yellow";
-        this.clickable_cells_link = options && options.clickable_cells_link ? options.clickable_cells_link : "";
-        this.col_name = options && options.col_name ? options.col_name : this.row_col_wrapper + "1" + this.row_col_wrapper;
-        this.decimals = options && options.decimals ? options.decimals : 2;
-        this.delimiter = options && options.delimiter ? options.delimiter : ".";
-        this.enable_bgColor = false;
-        this.enable_bgColor_overrides = false;
-        this.enable_textColor = false;
-        this.enable_textColor_overrides = false;
-        this.enable_clickable_cells = false;
-        this.enable_time_based_thresholds = false;
-        this.enable_transform = false;
-        this.enable_transform_overrides = false;
-        this.filter = {
-            value_above: "",
-            value_below: "",
-        };
-        this.format = options && options.format ? options.format : "none";
-        this.name = options && options.name ? options.name : "New Pattern";
-        this.null_color = options && options.null_color ? options.null_color : "darkred";
-        this.null_textcolor = options && options.null_Textcolor ? options.null_Textcolor : "black";
-        this.null_value = options && options.null_value ? options.null_value : "No data";
-        this.pattern = options && options.pattern ? options.pattern : "^server.*cpu$";
-        this.row_name = options && options.row_name ? options.row_name : this.row_col_wrapper + "0" + this.row_col_wrapper;
-        this.thresholds = options && options.thresholds ? options.thresholds : "70,90";
-        this.time_based_thresholds = [];
-        this.transform_values = options && options.transform_values ? options.transform_values : "_value_|_value_|_value_";
-        this.transform_values_overrides = options && options.transform_values_overrides ? options.transform_values_overrides : "0->down|1->up";
-        this.tooltipTemplate = options && options.tooltipTemplate ? options.tooltipTemplate : "Series : _series_ <br/>Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_";
-        this.valueName = options && options.valueName ? options.valueName : "avg";
-    }
-}
-
-BoomPattern.prototype.inverseBGColors = function () {
-    this.bgColors = this.bgColors ? this.bgColors.split("|").reverse().join("|") : "";
-};
-
-BoomPattern.prototype.inverseTextColors = function () {
-    this.textColors = this.textColors ? this.textColors.split("|").reverse().join("|") : "";
-};
-
-
-BoomPattern.prototype.inverseTransformValues = function () {
-    this.transform_values = this.transform_values ? this.transform_values.split("|").reverse().join("|") : "";
-};
-
-BoomPattern.prototype.add_time_based_thresholds = function () {
-    let new_time_based_threshold = new BoomTimeBasedThreshold();
-    this.time_based_thresholds = this.time_based_thresholds || [];
-    this.time_based_thresholds.push(new_time_based_threshold);
-};
-
-BoomPattern.prototype.remove_time_based_thresholds = function (index) {
-    if (this.time_based_thresholds.length > 0) {
-        this.time_based_thresholds.splice(index, 1);
-    }
-};
-
-BoomPattern.prototype.setUnitFormat = function (format) {
-    this.format = format && format.value ? format.value : "none";
-};
 
 export {
-    IBoomSeries,
-    BoomSeries,
-    BoomPattern,
-    BoomTimeBasedThreshold
+    BoomSeries
 };

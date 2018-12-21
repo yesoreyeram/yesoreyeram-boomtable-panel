@@ -329,13 +329,28 @@
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
+                            <label class="gf-form-label width-26">Pattern status</label>
+                            <button class="btn btn-warning btn-small boom-btn" ng-if="pattern.disabled !== true"
+                                ng-click="pattern.disabled = true; ctrl.render();">
+                                <i class="fa fa-eye-slash"></i> Disable Pattern
+                            </button>
+                            <button class="btn btn-success btn-small boom-btn" ng-if="pattern.disabled === true"
+                                ng-click="pattern.disabled = false; ctrl.render();">
+                                <i class="fa fa-eye"></i> Enable Pattern
+                            </button>
+                            <span class="split"></span>
+                            <span class="text-success boom-label" ng-if="pattern.disabled !== true">Currently Enabled</span>
+                            <span class="text-warning boom-label" ng-if="pattern.disabled === true">Currently Disabled</span>
+                        </div>
+                    </div>
+                    <div class="gr-form-inline">
+                        <div class="gf-form">
                             <label class="gf-form-label width-26">Order Pattern</label>
-                            <button class="btn btn-success btn-small" ng-if="pattern.pattern !== undefined && $index !== 0"
+                            <button class="btn btn-success btn-small boom-btn" ng-if="pattern.pattern !== undefined && $index !== 0"
                                 ng-click="ctrl.movePattern('UP',$index)">
                                 <i class="fa fa-arrow-up"></i>Move the pattern UP
                             </button>
-                            <span class="split"></span>
-                            <button class="btn btn-success btn-small" ng-if="pattern.pattern !== undefined && $index !== ctrl.panel.patterns.length-1"
+                            <button class="btn btn-success btn-small boom-btn" ng-if="pattern.pattern !== undefined && $index !== ctrl.panel.patterns.length-1"
                                 ng-click="ctrl.movePattern('DOWN',$index)">
                                 <i class="fa fa-arrow-down"></i>Move the pattern DOWN
                             </button>
@@ -343,26 +358,13 @@
                     </div>
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <label class="gf-form-label width-26">Pattern status</label>
-                            <button class="btn btn-warning btn-small" ng-if="pattern.disabled !== true" ng-click="pattern.disabled = true; ctrl.render();">
-                                <i class="fa fa-eye-slash"></i> Disable Pattern
-                            </button>
-                            <button class="btn btn-success btn-small" ng-if="pattern.disabled === true" ng-click="pattern.disabled = false; ctrl.render();">
-                                <i class="fa fa-eye"></i> Enable Pattern
-                            </button>
-                            <span class="split"></span>
-                            <span class="text-success" ng-if="pattern.disabled !== true">Currently Enabled</span>
-                            <span class="text-warning" ng-if="pattern.disabled === true">Currently Disabled</span>
-                        </div>
-                    </div>
-                    <div class="gr-form-inline">
-                        <div class="gf-form">
                             <label class="gf-form-label width-26">Pattern Options</label>
-                            <button class="btn btn-danger btn-small" ng-if="pattern.pattern !== undefined" ng-click="ctrl.removePattern($index)">
+                            <button class="btn btn-danger btn-small boom-btn" ng-if="pattern.pattern !== undefined"
+                                ng-click="ctrl.removePattern($index)">
                                 <i class="fa fa-trash"></i> Remove this pattern
                             </button>
-                            <span class="split"></span>
-                            <button class="btn btn-success btn-small" ng-if="pattern.pattern !== undefined" ng-click="ctrl.clonePattern($index)">
+                            <button class="btn btn-success btn-small boom-btn" ng-if="pattern.pattern !== undefined"
+                                ng-click="ctrl.clonePattern($index)">
                                 <i class="fa fa-clone"></i> Clone this pattern
                             </button>
                         </div>

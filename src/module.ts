@@ -3,10 +3,9 @@
 import _ from "lodash";
 import kbn from 'app/core/utils/kbn';
 import { loadPluginCss, MetricsPanelCtrl } from "app/plugins/sdk";
-import * as utils from "./app/utils";
-import { defaultPattern, seriesToTable, getRenderingData, getDebugData } from "./app/app";
 import { plugin_id, value_name_options, config } from "./app/config";
-import { BoomPattern, BoomSeries } from "./app/Boom";
+import { BoomPattern, BoomSeries } from "./app/boom/index";
+import { defaultPattern, seriesToTable, getRenderingData, getDebugData } from "./app/app";
 
 loadPluginCss({
   dark: `plugins/${plugin_id}/css/default.dark.css`,
@@ -15,7 +14,6 @@ loadPluginCss({
 
 class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   public static templateUrl = "partials/module.html";
-  public limitText = utils.limitText;
   public unitFormats = kbn.getUnitFormats();
   public valueNameOptions = value_name_options;
   public dataReceived: any;
@@ -32,22 +30,22 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
     this.panel.activePatternIndex = this.panel.activePatternIndex === -1 ? this.panel.patterns.length : this.panel.activePatternIndex;
   }
-  private updatePrototypes() {
+  private updatePrototypes(): void {
     Object.setPrototypeOf(this.panel.defaultPattern, BoomPattern.prototype);
     this.panel.patterns.map(pattern => {
       Object.setPrototypeOf(pattern, BoomPattern.prototype);
       return pattern;
     });
   }
-  public onDataReceived(data) {
+  public onDataReceived(data: any): void {
     this.dataReceived = data;
     this.render();
   }
-  public onInitEditMode() {
+  public onInitEditMode(): void {
     this.addEditorTab("Patterns", `public/plugins/${plugin_id}/partials/patterns.html`, 2);
     this.addEditorTab("Options", `public/plugins/${plugin_id}/partials/options.html`, 3);
   }
-  public addPattern() {
+  public addPattern(): void {
     let newPattern = new BoomPattern({
       row_col_wrapper: this.panel.row_col_wrapper
     });
@@ -55,32 +53,38 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.activePatternIndex = this.panel.patterns.length - 1;
     this.render();
   }
-  public removePattern(index) {
+  public removePattern(index: Number): void {
     this.panel.patterns.splice(index, 1);
     this.panel.activePatternIndex = (this.panel.patterns && this.panel.patterns.length > 0) ? (this.panel.patterns.length - 1) : -1;
     this.render();
   }
-  public movePattern(direction, index) {
-    let tempElement = this.panel.patterns[index];
+  public movePattern(direction: string, index: Number) {
+    let tempElement = this.panel.patterns[Number(index)];
     if (direction === "UP") {
-      this.panel.patterns[index] = this.panel.patterns[index - 1];
-      this.panel.patterns[index - 1] = tempElement;
-      this.panel.activePatternIndex = index - 1;
+      this.panel.patterns[Number(index)] = this.panel.patterns[Number(index) - 1];
+      this.panel.patterns[Number(index) - 1] = tempElement;
+      this.panel.activePatternIndex = Number(index) - 1;
     }
     if (direction === "DOWN") {
-      this.panel.patterns[index] = this.panel.patterns[index + 1];
-      this.panel.patterns[index + 1] = tempElement;
-      this.panel.activePatternIndex = index + 1;
+      this.panel.patterns[Number(index)] = this.panel.patterns[Number(index) + 1];
+      this.panel.patterns[Number(index) + 1] = tempElement;
+      this.panel.activePatternIndex = Number(index) + 1;
     }
     this.render();
   }
-  public clonePattern(index) {
-    let copiedPattern = Object.assign({}, this.panel.patterns[index]);
+  public clonePattern(index: Number): void {
+    let copiedPattern = Object.assign({}, this.panel.patterns[Number(index)]);
     Object.setPrototypeOf(copiedPattern, BoomPattern.prototype);
     this.panel.patterns.push(copiedPattern);
     this.render();
   }
-  public link(scope, elem, attrs, ctrl) {
+  public limitText(text: string, maxlength: Number): string {
+    if (text.split('').length > maxlength) {
+      text = text.substring(0, Number(maxlength) - 3) + "...";
+    }
+    return text;
+  }
+  public link(scope: any, elem: any, attrs: any, ctrl: any): void {
     this.scope = scope;
     this.elem = elem;
     this.attrs = attrs;

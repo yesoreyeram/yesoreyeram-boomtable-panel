@@ -1,6 +1,6 @@
 import * as utils from "./utils";
 import _ from "lodash";
-import { BoomPattern, IBoomSeries } from './Boom';
+import { BoomPattern, IBoomSeries } from './boom/index';
 
 const defaultPattern = new BoomPattern({
     bgColors: "green|orange|red",
