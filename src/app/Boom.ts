@@ -11,6 +11,7 @@ interface IBoomSeries {
     row_name: string;
     display_value: string;
     color_bg: string;
+    color_text: string;
     tooltip: string;
     value_formatted: string;
     link: string;
@@ -27,6 +28,7 @@ class BoomSeries implements IBoomSeries {
     public col_name: string;
     public row_name: string;
     public color_bg: string;
+    public color_text: string;
     public display_value = "-";
     public tooltip = "-";
     public value = NaN;
@@ -82,6 +84,7 @@ class BoomSeries implements IBoomSeries {
         this.col_name = this.getColName(this.pattern, row_col_wrapper, this.seriesName.toString(), this.row_name);
         this.thresholds = this.getThresholds();
         this.color_bg = this.getBGColor();
+        this.color_text = this.getTextColor();
         this.template_value = this.getDisplayValueTemplate();
         this.link = this.pattern.enable_clickable_cells ? this.pattern.clickable_cells_link || "#" : "#";
         this.replaceTokens();
@@ -111,7 +114,7 @@ class BoomSeries implements IBoomSeries {
         if (_.isNaN(this.value) || this.value === null) {
             bgColor = this.pattern.null_color || "darkred";
         } else {
-            if (this.pattern.enable_bgColor) {
+            if (this.pattern.enable_bgColor && this.pattern.bgColors) {
                 let list_of_bgColors_based_on_thresholds = this.pattern.bgColors.split("|");
                 bgColor = utils.getItemBasedOnThreshold(this.thresholds, list_of_bgColors_based_on_thresholds, this.value, bgColor);
 
@@ -124,6 +127,24 @@ class BoomSeries implements IBoomSeries {
             }
         }
         return utils.normalizeColor(bgColor);
+    }
+    private getTextColor(): string {
+        let textColor = "white";
+        if (_.isNaN(this.value) || this.value === null) {
+            textColor = this.pattern.null_textcolor || "white";
+        } else {
+            if (this.pattern.enable_textColor && this.pattern.textColors) {
+                let list_of_textColors_based_on_thresholds = this.pattern.textColors.split("|");
+                textColor = utils.getItemBasedOnThreshold(this.thresholds, list_of_textColors_based_on_thresholds, this.value, textColor);
+            }
+            if (this.pattern.enable_textColor_overrides && this.pattern.textColors_overrides !== "") {
+                let _textColors_overrides = this.pattern.textColors_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === this.value).map(con => con[1]);
+                if (_textColors_overrides.length > 0 && _textColors_overrides[0] !== "") {
+                    textColor = ("" + _textColors_overrides[0]).trim();
+                }
+            }
+        }
+        return utils.normalizeColor(textColor);
     }
     private getDisplayValueTemplate(): string {
         let template = this.template_value;
@@ -232,6 +253,8 @@ class BoomPattern {
     public enable_bgColor: Boolean;
     public enable_bgColor_overrides: Boolean;
     public enable_clickable_cells: Boolean;
+    public enable_textColor: Boolean;
+    public enable_textColor_overrides: Boolean;
     public enable_time_based_thresholds: Boolean;
     public enable_transform: Boolean;
     public enable_transform_overrides: Boolean;
@@ -243,14 +266,18 @@ class BoomPattern {
     public name: string;
     public null_color: string;
     public null_value: string;
+    public null_textcolor: string;
     public pattern: string;
     public row_name: string;
+    public textColors: string;
+    public textColors_overrides: string;
     public thresholds: string;
     public time_based_thresholds: BoomTimeBasedThreshold[];
     public transform_values: string;
     public transform_values_overrides: string;
     public valueName: string;
     public inverseBGColors;
+    public inverseTextColors;
     public inverseTransformValues;
     public add_time_based_thresholds;
     public remove_time_based_thresholds;
@@ -261,12 +288,16 @@ class BoomPattern {
         }
         this.bgColors = options && options.bgColors ? options.bgColors : "green|orange|red";
         this.bgColors_overrides = options && options.bgColors_overrides ? options.bgColors_overrides : "0->green|2->red|1->yellow";
+        this.textColors = options && options.textColors ? options.textColors : "red|orange|green";
+        this.textColors_overrides = options && options.textColors_overrides ? options.textColors_overrides : "0->red|2->green|1->yellow";
         this.clickable_cells_link = options && options.clickable_cells_link ? options.clickable_cells_link : "";
         this.col_name = options && options.col_name ? options.col_name : this.row_col_wrapper + "1" + this.row_col_wrapper;
         this.decimals = options && options.decimals ? options.decimals : 2;
         this.delimiter = options && options.delimiter ? options.delimiter : ".";
         this.enable_bgColor = false;
         this.enable_bgColor_overrides = false;
+        this.enable_textColor = false;
+        this.enable_textColor_overrides = false;
         this.enable_clickable_cells = false;
         this.enable_time_based_thresholds = false;
         this.enable_transform = false;
@@ -278,6 +309,7 @@ class BoomPattern {
         this.format = options && options.format ? options.format : "none";
         this.name = options && options.name ? options.name : "New Pattern";
         this.null_color = options && options.null_color ? options.null_color : "darkred";
+        this.null_textcolor = options && options.null_Textcolor ? options.null_Textcolor : "black";
         this.null_value = options && options.null_value ? options.null_value : "No data";
         this.pattern = options && options.pattern ? options.pattern : "^server.*cpu$";
         this.row_name = options && options.row_name ? options.row_name : this.row_col_wrapper + "0" + this.row_col_wrapper;
@@ -292,6 +324,11 @@ class BoomPattern {
 BoomPattern.prototype.inverseBGColors = function () {
     this.bgColors = this.bgColors ? this.bgColors.split("|").reverse().join("|") : "";
 };
+
+BoomPattern.prototype.inverseTextColors = function () {
+    this.textColors = this.textColors ? this.textColors.split("|").reverse().join("|") : "";
+};
+
 
 BoomPattern.prototype.inverseTransformValues = function () {
     this.transform_values = this.transform_values ? this.transform_values.split("|").reverse().join("|") : "";

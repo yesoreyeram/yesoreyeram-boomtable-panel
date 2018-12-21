@@ -12,9 +12,12 @@ const defaultPattern = new BoomPattern({
     format: "none",
     name: "Default Pattern",
     null_color: "darkred",
+    null_textcolor: "white",
     null_value: "No data",
     pattern: "*",
     row_name: "_series_",
+    textColor:  "red|orange|green",
+    textColors_overrides : "0->red|2->green|1->yellow",
     thresholds: "70,90",
     time_based_thresholds: [],
     transform_values: "_value_|_value_|_value_",
@@ -35,6 +38,7 @@ const seriesToTable = function (inputdata: IBoomSeries[]): any {
                 cols.push({
                     "col_name": col_name,
                     "color_bg": "darkred",
+                    "color_text": "white",
                     "display_value": "No match found",
                     "hidden": false,
                     "link": "-",
@@ -48,6 +52,7 @@ const seriesToTable = function (inputdata: IBoomSeries[]): any {
                 cols.push({
                     "col_name": col_name,
                     "color_bg": "darkred",
+                    "color_text": "white",
                     "display_value": "Duplicate matches",
                     "hidden": false,
                     "link": "-",
@@ -93,8 +98,8 @@ const getRenderingData = function (data, options): any {
                     </td>`;
             }
             _.each(o, item => {
-                let item_style = `padding:4px;background-color:${item.color_bg}`;
-                let item_display = item.link === "#" ? item.display_value : `<a href="${item.link}" target="_blank">${item.display_value}</a>`;
+                let item_style = `padding:4px;background-color:${item.color_bg};color:${item.color_text}`;
+                let item_display = item.link === "#" ? item.display_value : `<a href="${item.link}" target="_blank" style="color:${item.color_text}">${item.display_value}</a>`;
                 output.body += `
                     <td style="${item_style}">
                         ${item_display}
