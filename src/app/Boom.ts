@@ -88,6 +88,7 @@ class BoomSeries implements IBoomSeries {
         this.color_bg = this.getBGColor();
         this.color_text = this.getTextColor();
         this.template_value = this.getDisplayValueTemplate();
+        this.tooltip = this.pattern.tooltipTemplate || "Series : _series_ <br/>Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_";
         this.link = this.pattern.enable_clickable_cells ? this.pattern.clickable_cells_link || "#" : "#";
         this.replaceTokens();
         this.cleanup();
@@ -203,26 +204,31 @@ class BoomSeries implements IBoomSeries {
         return col_name;
     }
     private replaceTokens() {
-        // _series_ can be specified in Row, Col, Display Value & Link
+        // _series_ can be specified in Row, Col, Display Value, Tooltip & Link
         this.row_name = this.template_row_name.replace(new RegExp("_series_", "g"), this.seriesName.toString());
         this.col_name = this.template_col_name.replace(new RegExp("_series_", "g"), this.seriesName.toString());
         this.link = this.link.replace(new RegExp("_series_", "g"), this.seriesName.toString().trim());
+        this.tooltip = this.tooltip.replace(new RegExp("_series_", "g"), this.seriesName.toString().trim());
         this.display_value = this.template_value.replace(new RegExp("_series_", "g"), this.seriesName.toString());
-        // _row_name_ can be specified in Col, Display Value & Link
+        // _row_name_ can be specified in Col, Display Value, Tooltip & Link
         this.col_name = this.col_name.replace(new RegExp("_row_name_", "g"), this.row_name.toString());
         this.link = this.link.replace(new RegExp("_row_name_", "g"), utils.getActualNameWithoutTokens(this.row_name.toString()).trim());
+        this.tooltip = this.tooltip.replace(new RegExp("_row_name_", "g"), utils.getActualNameWithoutTokens(this.row_name.toString()).trim());
         this.display_value = this.display_value.replace(new RegExp("_row_name_", "g"), this.row_name.toString());
-        // _col_name_ can be specified in Row, Display Value & Link
+        // _col_name_ can be specified in Row, Display Value, Tooltip & Link
         this.row_name = this.row_name.replace(new RegExp("_col_name_", "g"), this.col_name.toString());
         this.link = this.link.replace(new RegExp("_col_name_", "g"), utils.getActualNameWithoutTokens(this.col_name.toString()).trim());
+        this.tooltip = this.tooltip.replace(new RegExp("_col_name_", "g"), utils.getActualNameWithoutTokens(this.col_name.toString()).trim());
         this.display_value = this.display_value.replace(new RegExp("_col_name_", "g"), this.col_name.toString());
-        // _value_raw_ can be specified in Display Value & Link
+        // _value_raw_ can be specified in Display Value, Tooltip & Link
         let value_raw = _.isNaN(this.value) || this.value === null ? "null" : this.value.toString().trim();
         this.link = this.link.replace(new RegExp("_value_raw_", "g"), value_raw);
+        this.tooltip = this.tooltip.replace(new RegExp("_value_raw_", "g"), value_raw);
         this.display_value = this.display_value.replace(new RegExp("_value_raw_", "g"), value_raw);
-        // _value_ can be specified in Display Value & Link
+        // _value_ can be specified in Display Value, Tooltip & Link
         let value_formatted = _.isNaN(this.value) || this.value === null ? "null" : this.value_formatted.toString().trim();
         this.link = this.link.replace(new RegExp("_value_", "g"), value_formatted);
+        this.tooltip = this.tooltip.replace(new RegExp("_value_", "g"), value_formatted);
         this.display_value = this.display_value.replace(new RegExp("_value_", "g"), value_formatted);
         // FA & Img transforms can be specified in Row, Col & Display Value
         this.row_name = utils.replaceTokens(this.row_name);
@@ -279,6 +285,7 @@ class BoomPattern {
     public time_based_thresholds: BoomTimeBasedThreshold[];
     public transform_values: string;
     public transform_values_overrides: string;
+    public tooltipTemplate: string;
     public valueName: string;
     public inverseBGColors;
     public inverseTextColors;
@@ -321,6 +328,7 @@ class BoomPattern {
         this.time_based_thresholds = [];
         this.transform_values = options && options.transform_values ? options.transform_values : "_value_|_value_|_value_";
         this.transform_values_overrides = options && options.transform_values_overrides ? options.transform_values_overrides : "0->down|1->up";
+        this.tooltipTemplate = options && options.tooltipTemplate ? options.tooltipTemplate : "Series : _series_ <br/>Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_";
         this.valueName = options && options.valueName ? options.valueName : "avg";
     }
 }

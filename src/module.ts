@@ -104,6 +104,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     this.elem.find("#boomtable_output_body_headers").html(`<br/>` + renderingdata.headers);
     this.elem.find('#boomtable_output_body').html(`` + renderingdata.body);
     this.elem.find('#boomtable_output_body_debug').html(this.panel.debug_mode ? getDebugData(outputdata) : ``);
+    this.elem.find("[data-toggle='tooltip']").tooltip({
+      boundary: "scrollParent"
+    });
     let rootElem = this.elem.find('.table-panel-scroll');
     let maxheightofpanel = this.panel.debug_mode ? this.ctrl.height - 111 : this.ctrl.height - 31;
     rootElem.css({ 'max-height': maxheightofpanel + "px" });

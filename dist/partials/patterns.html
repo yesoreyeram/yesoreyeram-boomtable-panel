@@ -290,6 +290,14 @@
                                 bs-tooltip="'Cell target URL'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                         </div>
                     </div>
+                    <div class="gr-form-inline">
+                        <div class="gf-form">
+                            <label class="gf-form-label width-12">Tooltip Template</label>
+                            <input type="text" placeholder="Series : _series_ <br/>Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_"
+                                class="gf-form-input width-18" ng-model="pattern.tooltipTemplate" bs-tooltip="'Tooltip Template; Leave blank for default template; Enter - to disable tooltip'"
+                                ng-blur="ctrl.render()">
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="editor-row" id="boom-editor-pattern-hide-series">

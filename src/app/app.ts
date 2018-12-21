@@ -99,9 +99,12 @@ const getRenderingData = function (data, options): any {
             _.each(o, item => {
                 let item_style = `padding:4px;background-color:${item.color_bg};color:${item.color_text}`;
                 let item_display = item.link === "#" ? item.display_value : `<a href="${item.link}" target="_blank" style="color:${item.color_text}">${item.display_value}</a>`;
+                let tooltip = !item.tooltip || item.tooltip === "-" ? undefined : ` data-toggle="tooltip" data-html="true" data-placement="auto" title="${item.tooltip}" `;
                 output.body += `
                     <td style="${item_style}">
-                        ${item_display}
+                        ${tooltip ? `<span ${tooltip}>` : ""}
+                            ${item_display}
+                        ${tooltip ? `</span>` : ""}
                     </td>
                 `;
             });
@@ -116,7 +119,7 @@ const getDebugData = function (data): any {
         return `
         <tr>
             <td style="padding:4px;text-align:center;width:30%;">${d.seriesName}</td>
-            <td style="padding:4px;text-align:center;width:10%;">${d.pattern.name || d.pattern.pattern || "Default" }</td>
+            <td style="padding:4px;text-align:center;width:10%;">${d.pattern.name || d.pattern.pattern || "Default"}</td>
             <td style="padding:4px;text-align:center;width:10%;" title="Value : ${String(d.value_formatted || "null")} / Raw : ${String(d.value || "null")} / Stat : ${d.pattern.valueName}">${d.display_value}</td>
             <td style="padding:4px;text-align:center;width:10%;">${d.row_name}</td>
             <td style="padding:4px;text-align:center;width:10%;">${d.col_name}</td>
