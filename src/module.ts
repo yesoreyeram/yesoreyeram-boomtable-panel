@@ -4,7 +4,7 @@ import _ from "lodash";
 import kbn from 'app/core/utils/kbn';
 import { loadPluginCss, MetricsPanelCtrl } from "app/plugins/sdk";
 import * as utils from "./app/utils";
-import { defaultPattern, seriesToTable, getRenderingData } from "./app/app";
+import { defaultPattern, seriesToTable, getRenderingData, getDebugData } from "./app/app";
 import { plugin_id, value_name_options, config } from "./app/config";
 import { BoomPattern, BoomSeries } from "./app/Boom";
 
@@ -90,7 +90,9 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
 GrafanaBoomTableCtrl.prototype.render = function () {
   if (this.dataReceived) {
     let outputdata = this.dataReceived.map(seriesData => {
-      return new BoomSeries(seriesData, this.panel.defaultPattern, this.panel.patterns, {});
+      return new BoomSeries(seriesData, this.panel.defaultPattern, this.panel.patterns, {
+        debug_mode: this.panel.debug_mode
+      });
     });
     let renderingdata = getRenderingData(seriesToTable(outputdata), {
       default_title_for_rows: this.panel.default_title_for_rows || config.default_title_for_rows,
@@ -99,9 +101,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     });
     this.elem.find("#boomtable_output_body_headers").html(`<br/>` + renderingdata.headers);
     this.elem.find('#boomtable_output_body').html(`` + renderingdata.body);
-    this.elem.find('#boomtable_output_body_debug').html(``);
+    this.elem.find('#boomtable_output_body_debug').html(this.panel.debug_mode ? getDebugData(outputdata) : ``);
     let rootElem = this.elem.find('.table-panel-scroll');
-    let maxheightofpanel = this.panel.debug_mode ? this.ctrl.height - 71 : this.ctrl.height - 31;
+    let maxheightofpanel = this.panel.debug_mode ? this.ctrl.height - 111 : this.ctrl.height - 31;
     rootElem.css({ 'max-height': maxheightofpanel + "px" });
   }
 };

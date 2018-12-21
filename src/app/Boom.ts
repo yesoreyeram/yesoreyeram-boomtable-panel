@@ -18,6 +18,7 @@ interface IBoomSeries {
 }
 
 class BoomSeries implements IBoomSeries {
+    private debug_mode: Boolean;
     private pattern: any;
     private seriesName: string;
     private currentTimeStamp: Date;
@@ -37,6 +38,7 @@ class BoomSeries implements IBoomSeries {
     public thresholds: Number[];
     public hidden: Boolean;
     constructor(seriesData: any, panelDefaultPattern: any, panelPatterns: any[], options: any) {
+        this.debug_mode = options && options.debug_mode === true ? true : false;
         let nullPointMode = options && options.nullPointMode ? options.nullPointMode : "connected";
         let row_col_wrapper = options && options.row_col_wrapper ? options.row_col_wrapper : "_";
         this.seriesName = "";
@@ -165,16 +167,18 @@ class BoomSeries implements IBoomSeries {
         return template;
     }
     private cleanup() {
-        delete this.decimals;
-        delete this.template_col_name;
-        delete this.template_row_name;
-        delete this.template_value;
-        delete this.pattern;
-        delete this.seriesName;
-        delete this.value;
-        delete this.value_formatted;
-        delete this.currentTimeStamp;
-        delete this.thresholds;
+        if (this.debug_mode !== true) {
+            delete this.seriesName;
+            delete this.value;
+            delete this.pattern;
+            delete this.thresholds;
+            delete this.decimals;
+            delete this.template_col_name;
+            delete this.template_row_name;
+            delete this.template_value;
+            delete this.value_formatted;
+            delete this.currentTimeStamp;
+        }
     }
     private getRowName(pattern, row_col_wrapper: string, seriesName: string): string {
         let row_name = pattern.row_name;

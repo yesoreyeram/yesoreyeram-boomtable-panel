@@ -16,8 +16,8 @@ const defaultPattern = new BoomPattern({
     null_value: "No data",
     pattern: "*",
     row_name: "_series_",
-    textColor:  "red|orange|green",
-    textColors_overrides : "0->red|2->green|1->yellow",
+    textColor: "red|orange|green",
+    textColors_overrides: "0->red|2->green|1->yellow",
     thresholds: "70,90",
     time_based_thresholds: [],
     transform_values: "_value_|_value_|_value_",
@@ -73,7 +73,6 @@ const seriesToTable = function (inputdata: IBoomSeries[]): any {
 const getRenderingData = function (data, options): any {
     let output: any = {
         body: "",
-        debug: "",
         footer: "",
         headers: "",
     };
@@ -111,9 +110,28 @@ const getRenderingData = function (data, options): any {
     });
     return output;
 };
+const getDebugData = function (data): any {
+    let debugdata = ``;
+    debugdata = _.map(data, d => {
+        return `
+        <tr>
+            <td style="padding:4px;text-align:center;width:30%;">${d.seriesName}</td>
+            <td style="padding:4px;text-align:center;width:10%;">${d.pattern.name || d.pattern.pattern || "Default" }</td>
+            <td style="padding:4px;text-align:center;width:10%;" title="Value : ${String(d.value_formatted || "null")} / Raw : ${String(d.value || "null")} / Stat : ${d.pattern.valueName}">${d.display_value}</td>
+            <td style="padding:4px;text-align:center;width:10%;">${d.row_name}</td>
+            <td style="padding:4px;text-align:center;width:10%;">${d.col_name}</td>
+            <td style="padding:4px;text-align:center;width:10%;">${d.thresholds.join(",")}</td>
+            <td style="padding:4px;text-align:center;width:10%;">${d.color_bg}</td>
+            <td style="padding:4px;text-align:center;width:10%;">${d.color_text}</td>
+        </tr>
+        `;
+    }).join(``);
+    return debugdata;
+};
 
 export {
     defaultPattern,
     getRenderingData,
+    getDebugData,
     seriesToTable
 };
