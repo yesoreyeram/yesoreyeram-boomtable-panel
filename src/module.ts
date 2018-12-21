@@ -44,8 +44,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   }
   public onInitEditMode() {
     this.addEditorTab("Patterns", `public/plugins/${plugin_id}/partials/patterns.html`, 2);
-    this.addEditorTab("Time based thresholds & Filters", `public/plugins/${plugin_id}/partials/patterns-advanced-options.html`, 3);
-    this.addEditorTab("Options", `public/plugins/${plugin_id}/partials/options.html`, 4);
+    this.addEditorTab("Options", `public/plugins/${plugin_id}/partials/options.html`, 3);
   }
   public addPattern() {
     let newPattern = new BoomPattern({
