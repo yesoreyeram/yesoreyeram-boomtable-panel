@@ -91,7 +91,8 @@ GrafanaBoomTableCtrl.prototype.render = function () {
   if (this.dataReceived) {
     let outputdata = this.dataReceived.map(seriesData => {
       return new BoomSeries(seriesData, this.panel.defaultPattern, this.panel.patterns, {
-        debug_mode: this.panel.debug_mode
+        debug_mode: this.panel.debug_mode,
+        row_col_wrapper: this.panel.row_col_wrapper || "_"
       });
     });
     let renderingdata = getRenderingData(seriesToTable(outputdata), {
