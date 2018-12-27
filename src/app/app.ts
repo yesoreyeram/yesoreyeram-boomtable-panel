@@ -1,4 +1,3 @@
-import * as utils from "./utils";
 import _ from "lodash";
 import { BoomPattern, IBoomSeries } from './boom/index';
 
@@ -25,8 +24,8 @@ const defaultPattern = new BoomPattern({
     valueName: "avg"
 });
 const seriesToTable = function (inputdata: IBoomSeries[]): any {
-    let rows_found = _.uniq(utils.getFields(inputdata, "row_name"));
-    let cols_found = _.uniq(utils.getFields(inputdata, "col_name"));
+    let rows_found = _.uniq(_.map(inputdata, d => d.row_name));
+    let cols_found = _.uniq(_.map(inputdata, d => d.col_name));
     let output: any[] = [];
     _.each(rows_found, row_name => {
         let cols: any = [];
