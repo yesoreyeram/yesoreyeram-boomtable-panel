@@ -1,5 +1,6 @@
 import _ from "lodash";
-import { BoomPattern, IBoomSeries } from './boom/index';
+import { IBoomSeries, IBoomRenderingOptions, IBoomHTML, IBoomCellDetails, IBoomTable } from "./boom/index";
+import { BoomPattern } from './boom/index';
 
 const defaultPattern = new BoomPattern({
     bgColors: "green|orange|red",
@@ -23,12 +24,12 @@ const defaultPattern = new BoomPattern({
     transform_values_overrides: "0->down|1->up",
     valueName: "avg"
 });
-const seriesToTable = function (inputdata: IBoomSeries[]): any {
+const seriesToTable = function (inputdata: IBoomSeries[]): IBoomTable {
     let rows_found = _.uniq(_.map(inputdata, d => d.row_name));
     let cols_found = _.uniq(_.map(inputdata, d => d.col_name));
-    let output: any[] = [];
+    let output: IBoomCellDetails[][] = [];
     _.each(rows_found, row_name => {
-        let cols: any = [];
+        let cols: IBoomCellDetails[] = [];
         _.each(cols_found, col_name => {
             let matched_items = _.filter(inputdata, o => {
                 return o.row_name === row_name && o.col_name === col_name;
@@ -41,7 +42,6 @@ const seriesToTable = function (inputdata: IBoomSeries[]): any {
                     "display_value": "No match found",
                     "hidden": false,
                     "link": "-",
-                    "row_col_key": "",
                     "row_name": row_name,
                     "tooltip": "-"
                 });
@@ -55,7 +55,6 @@ const seriesToTable = function (inputdata: IBoomSeries[]): any {
                     "display_value": "Duplicate matches",
                     "hidden": false,
                     "link": "-",
-                    "row_col_key": "",
                     "row_name": row_name,
                     "tooltip": "-"
                 });
@@ -69,8 +68,8 @@ const seriesToTable = function (inputdata: IBoomSeries[]): any {
         rows_found,
     };
 };
-const getRenderingData = function (data, options): any {
-    let output: any = {
+const getRenderingHTML = function (data: IBoomTable, options: IBoomRenderingOptions): IBoomHTML {
+    let output: IBoomHTML = {
         body: "",
         footer: "",
         headers: "",
@@ -112,7 +111,7 @@ const getRenderingData = function (data, options): any {
     });
     return output;
 };
-const getDebugData = function (data): any {
+const getDebugData = function (data: IBoomSeries[]): string {
     let debugdata = ``;
     debugdata = _.map(data, d => {
         return `
@@ -133,7 +132,7 @@ const getDebugData = function (data): any {
 
 export {
     defaultPattern,
-    getRenderingData,
+    getRenderingHTML,
     getDebugData,
     seriesToTable
 };

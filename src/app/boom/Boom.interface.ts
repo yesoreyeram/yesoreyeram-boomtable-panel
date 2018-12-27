@@ -51,8 +51,37 @@ interface IBoomTimeBasedThreshold {
     threshold: string;
     to: string;
 }
+interface IBoomRenderingOptions {
+    default_title_for_rows: String;
+    hide_first_column: Boolean;
+    hide_headers: Boolean;
+}
+interface IBoomCellDetails {
+    hidden: Boolean;
+    col_name: string;
+    row_name: string;
+    color_bg: string;
+    color_text: string;
+    display_value: string;
+    link: string;
+    tooltip: string;
+}
+interface IBoomTable {
+    rows_found: string[];
+    cols_found: string[];
+    output: IBoomCellDetails[][];
+}
+interface IBoomHTML {
+    body: string;
+    footer: string;
+    headers: string;
+}
 export {
+    IBoomRenderingOptions,
     IBoomPattern,
     IBoomSeries,
-    IBoomTimeBasedThreshold
+    IBoomTimeBasedThreshold,
+    IBoomHTML,
+    IBoomTable,
+    IBoomCellDetails
 };

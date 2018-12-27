@@ -3,9 +3,10 @@
 import _ from "lodash";
 import kbn from 'app/core/utils/kbn';
 import { loadPluginCss, MetricsPanelCtrl } from "app/plugins/sdk";
-import { plugin_id, value_name_options, config } from "./app/config";
+import { IBoomSeries, IBoomRenderingOptions, IBoomTable, IBoomHTML } from "./app/boom/index";
 import { BoomPattern, BoomSeries } from "./app/boom/index";
-import { defaultPattern, seriesToTable, getRenderingData, getDebugData } from "./app/app";
+import { plugin_id, value_name_options, config } from "./app/config";
+import { defaultPattern, seriesToTable, getRenderingHTML, getDebugData } from "./app/app";
 
 loadPluginCss({
   dark: `plugins/${plugin_id}/css/default.dark.css`,
@@ -94,17 +95,20 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
 
 GrafanaBoomTableCtrl.prototype.render = function () {
   if (this.dataReceived) {
-    let outputdata = this.dataReceived.map(seriesData => {
-      return new BoomSeries(seriesData, this.panel.defaultPattern, this.panel.patterns, {
+    let outputdata: IBoomSeries[] = this.dataReceived.map(seriesData => {
+      let seriesOptions = {
         debug_mode: this.panel.debug_mode,
         row_col_wrapper: this.panel.row_col_wrapper || "_"
-      });
+      };
+      return new BoomSeries(seriesData, this.panel.defaultPattern, this.panel.patterns, seriesOptions);
     });
-    let renderingdata = getRenderingData(seriesToTable(outputdata), {
+    let boomtabledata: IBoomTable = seriesToTable(outputdata);
+    let renderingOptions: IBoomRenderingOptions = {
       default_title_for_rows: this.panel.default_title_for_rows || config.default_title_for_rows,
       hide_first_column: this.panel.hide_first_column,
       hide_headers: this.panel.hide_headers
-    });
+    };
+    let renderingdata: IBoomHTML = getRenderingHTML(boomtabledata, renderingOptions);
     this.elem.find("#boomtable_output_body_headers").html(`<br/>` + renderingdata.headers);
     this.elem.find('#boomtable_output_body').html(`` + renderingdata.body);
     this.elem.find('#boomtable_output_body_debug').html(this.panel.debug_mode ? getDebugData(outputdata) : ``);
