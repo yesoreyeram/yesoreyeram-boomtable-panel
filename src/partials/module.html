@@ -1,24 +1,22 @@
 <div class="boom-table">
     <div data-ng-if="ctrl.panel.debug_mode === true" class="debug">
         <h5 class="text-warning">WARNING: Panel running in debug mode </h5>
-        <table class="table-panel-table">
-            <thead>
-                <tr>
-                    <th style="padding:4px;text-align:center;width:30%">Metric</th>
-                    <th style="padding:4px;text-align:center;width:10%">Pattern</th>
-                    <th style="padding:4px;text-align:center;width:10%">Value</th>
-                    <th style="padding:4px;text-align:center;width:10%">Row Name</th>
-                    <th style="padding:4px;text-align:center;width:10%">Col Name</th>
-                    <th style="padding:4px;text-align:center;width:10%">Thresholds</th>
-                    <th style="padding:4px;text-align:center;width:10%">BG Color</th>
-                    <th style="padding:4px;text-align:center;width:10%">Text Color</th>
-                </tr>
-            </thead>
-        </table>
     </div>
     <div class="table-panel-scroll" style="overflow:auto;">
-        <div data-ng-if="ctrl.panel.debug_mode === true" class="debug">
-            <table>
+        <div data-ng-if="ctrl.panel.debug_mode === true" class="debug">            
+            <table class="table-panel-table">
+                <thead>
+                    <tr>
+                        <th style="padding:4px;text-align:center;width:30%">Metric</th>
+                        <th style="padding:4px;text-align:center;width:10%">Pattern</th>
+                        <th style="padding:4px;text-align:center;width:10%">Value</th>
+                        <th style="padding:4px;text-align:center;width:10%">Row Name</th>
+                        <th style="padding:4px;text-align:center;width:10%">Col Name</th>
+                        <th style="padding:4px;text-align:center;width:10%">Thresholds</th>
+                        <th style="padding:4px;text-align:center;width:10%">BG Color</th>
+                        <th style="padding:4px;text-align:center;width:10%">Text Color</th>
+                    </tr>
+                </thead>
                 <tbody id="boomtable_output_body_debug">
                 </tbody>
             </table>

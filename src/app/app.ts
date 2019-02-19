@@ -116,14 +116,14 @@ const getDebugData = function (data: IBoomSeries[]): string {
     debugdata = _.map(data, d => {
         return `
         <tr>
-            <td style="padding:4px;text-align:center;width:30%;">${d.seriesName}</td>
-            <td style="padding:4px;text-align:center;width:10%;">${d.pattern.name || d.pattern.pattern || "Default"}</td>
-            <td style="padding:4px;text-align:center;width:10%;" title="Value : ${String(d.value_formatted || "null")} / Raw : ${String(d.value || "null")} / Stat : ${d.pattern.valueName}">${d.display_value}</td>
-            <td style="padding:4px;text-align:center;width:10%;">${d.row_name}</td>
-            <td style="padding:4px;text-align:center;width:10%;">${d.col_name}</td>
-            <td style="padding:4px;text-align:center;width:10%;">${d.thresholds.join(",")}</td>
-            <td style="padding:4px;text-align:center;width:10%;">${d.color_bg}</td>
-            <td style="padding:4px;text-align:center;width:10%;">${d.color_text}</td>
+            <td style="padding:4px;text-align:center;width:30%; title="Series Name" >${d.seriesName}</td>
+            <td style="padding:4px;text-align:center;width:10%; title="Matching Pattern Name" >${d.pattern.name || d.pattern.pattern || "Default"}</td>
+            <td style="padding:4px;text-align:center;width:10%; title="Value : ${String(d.value_formatted || "null")} / Raw : ${String(d.value || "null")} / Stat : ${d.pattern.valueName}">${d.display_value}</td>
+            <td style="padding:4px;text-align:center;width:10%; title="Row name" >${d.row_name}</td>
+            <td style="padding:4px;text-align:center;width:10%; title="Col name" >${d.col_name}</td>
+            <td style="padding:4px;text-align:center;width:10%; title="Thresholds" >${d.thresholds.join(",")}</td>
+            <td style="padding:4px;text-align:center;width:10%; title="BG Color" >${d.color_bg}</td>
+            <td style="padding:4px;text-align:center;width:10%; title="Text Color" >${d.color_text}</td>
         </tr>
         `;
     }).join(``);
