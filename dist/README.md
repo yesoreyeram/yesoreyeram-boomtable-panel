@@ -108,7 +108,7 @@ patterns and matching metrics
 Row and Column name guidelines
 ------------------------------
 
-Row and Col names are derived from series name. If n is wrapped by "_", then that will be replaced by n-th column in graphite/influxdb/prometheus metric (seperated by delimiter). Refer below examples and screenshots to get more idea. Or use debug mode to try.
+Row and Col names are derived from series name. If n is wrapped by "_", then that will be replaced by n-th column in graphite/influxdb/prometheus metric (seperated by delimiter). Refer below examples and screenshots to get more idea. Or use debug mode to try. (n starts from index 0)
 
 Sample graphite series / Influx / Prometheus Metrics
 
@@ -219,6 +219,8 @@ Logic is same as background color. But the value to be displayed can be altered 
 `_row_name_` will be replaced by row name. This will be useful when you hide the first column.
 
 `_col_name_` will be replaced by col name. This will be useful when you hide the table header.
+
+`_n_` will be replaced by nth part of the series using `_` delimiter. Same rule as row_name and col_name
 
 Example transformation patterns :
 
@@ -357,6 +359,7 @@ Same as other time series data sources. You need to properly format your legend 
 | 1.0.0   | Jest testcases implemented |
 |         | Typescript & TSLint implementation |
 |         | SASS implementation for stylesheets |
+|         | Display values can have part of series name |
 | 0.5.1   | Images as values based on thresholds |
 | 0.5.0   | Background Color & Transform value overrides |
 |         | Bug fixes #43 #44 #45 |

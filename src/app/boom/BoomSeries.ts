@@ -13,6 +13,7 @@ class BoomSeries implements IBoomSeries {
     private template_row_name: string;
     private template_col_name: string;
     private template_value: string;
+    private row_col_wrapper: string;
     private decimals: Number;
     public col_name: string;
     public row_name: string;
@@ -28,7 +29,7 @@ class BoomSeries implements IBoomSeries {
     constructor(seriesData: any, panelDefaultPattern: any, panelPatterns: any[], options: any) {
         this.debug_mode = options && options.debug_mode === true ? true : false;
         let nullPointMode = options && options.nullPointMode ? options.nullPointMode : "connected";
-        let row_col_wrapper = options && options.row_col_wrapper ? options.row_col_wrapper : "_";
+        this.row_col_wrapper = options && options.row_col_wrapper ? options.row_col_wrapper : "_";
         this.seriesName = "";
         this.template_row_name = "";
         this.template_col_name = "";
@@ -70,8 +71,8 @@ class BoomSeries implements IBoomSeries {
                 this.hidden = true;
             }
         }
-        this.row_name = this.getRowName(this.pattern, row_col_wrapper, this.seriesName.toString());
-        this.col_name = this.getColName(this.pattern, row_col_wrapper, this.seriesName.toString(), this.row_name);
+        this.row_name = this.getRowName(this.pattern, this.row_col_wrapper, this.seriesName.toString());
+        this.col_name = this.getColName(this.pattern, this.row_col_wrapper, this.seriesName.toString(), this.row_name);
         this.thresholds = this.getThresholds();
         this.color_bg = this.getBGColor();
         this.color_text = this.getTextColor();
@@ -151,6 +152,11 @@ class BoomSeries implements IBoomSeries {
                 if (_transform_values_overrides.length > 0 && _transform_values_overrides[0] !== "") {
                     template = ("" + _transform_values_overrides[0]).trim();
                 }
+            }
+            if (this.pattern.enable_transform || this.pattern.enable_transform_overrides) {
+                template = this.seriesName.split(this.pattern.delimiter || ".").reduce((r, it, i) => {
+                    return r.replace(new RegExp(this.row_col_wrapper + i + this.row_col_wrapper, "g"), it);
+                }, template);
             }
         }
         return template;
