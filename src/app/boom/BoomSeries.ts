@@ -105,6 +105,9 @@ class BoomSeries implements IBoomSeries {
         let bgColor = "transparent";
         if (_.isNaN(this.value) || this.value === null) {
             bgColor = this.pattern.null_color || "darkred";
+            if (this.pattern.null_color === "") {
+                bgColor = "transparent";
+            }
         } else {
             if (this.pattern.enable_bgColor && this.pattern.bgColors) {
                 let list_of_bgColors_based_on_thresholds = this.pattern.bgColors.split("|");
@@ -142,6 +145,9 @@ class BoomSeries implements IBoomSeries {
         let template = this.template_value;
         if (_.isNaN(this.value) || this.value === null) {
             template = this.pattern.null_value || "No data";
+            if (this.pattern.null_value === "") {
+                template = "";
+            }
         } else {
             if (this.pattern.enable_transform) {
                 let transform_values = this.pattern.transform_values.split("|");
