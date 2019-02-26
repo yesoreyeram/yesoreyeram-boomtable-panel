@@ -55,6 +55,9 @@ interface IBoomRenderingOptions {
     default_title_for_rows: String;
     hide_first_column: Boolean;
     hide_headers: Boolean;
+    text_alignment_firstcolumn: String;
+    text_alignment_header: String;
+    text_alignment_values: String;
 }
 interface IBoomCellDetails {
     hidden: Boolean;

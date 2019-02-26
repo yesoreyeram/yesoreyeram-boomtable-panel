@@ -78,10 +78,10 @@ const getRenderingHTML = function (data: IBoomTable, options: IBoomRenderingOpti
     if (hide_headers !== true) {
         output.headers += "<tr>";
         if (hide_first_column !== true) {
-            output.headers += `<th style="padding:4px;text-align:center">${default_title_for_rows}</th>`;
+            output.headers += `<th style="padding:4px;text-align:${options.text_alignment_firstcolumn}">${default_title_for_rows}</th>`;
         }
         _.each(data.cols_found, c => {
-            output.headers += `<th style="padding:4px;text-align:center">${c}</th>`;
+            output.headers += `<th style="padding:4px;text-align:${options.text_alignment_header}">${c}</th>`;
         });
         output.body += "</tr>";
     }
@@ -90,12 +90,12 @@ const getRenderingHTML = function (data: IBoomTable, options: IBoomRenderingOpti
             output.body += "<tr>";
             if (hide_first_column !== true) {
                 output.body += `
-                    <td style="padding:4px;">
+                    <td style="padding:4px;text-align:${options.text_alignment_firstcolumn}">
                         ${_.first(o.map(item => item.row_name))}
                     </td>`;
             }
             _.each(o, item => {
-                let item_style = `padding:4px;background-color:${item.color_bg};color:${item.color_text}`;
+                let item_style = `padding:4px;background-color:${item.color_bg};color:${item.color_text};text-align:${options.text_alignment_values}`;
                 let item_display = item.link === "#" ? item.display_value : `<a href="${item.link}" target="_blank" style="color:${item.color_text}">${item.display_value}</a>`;
                 let tooltip = !item.tooltip || item.tooltip === "-" ? undefined : ` data-toggle="tooltip" data-html="true" data-placement="auto" title="${item.tooltip}" `;
                 output.body += `

@@ -331,6 +331,15 @@ If your row name / col name / transform metrics contains strings that starts wit
 
 Note : When using images from other domains, please take care of CORS policy, legal and copyright polices.
 
+Options
+-------
+
+`Text alignment for first column` -> This option specify the text alignment of first column cells in the table. Can be `left`,`right` or `center`. Default is left. 
+
+`Text alignment for table header` -> This option specify the text alignment of table headers excluding first column. Can be `left`,`right` or `center`. Default is left.
+
+`Text alignment for values` -> This option specify the text alignment of value cells in the table. Can be `left`,`right` or `center`. Default is left.
+
 Prometheus Guidelines
 ---------------------
 
@@ -359,6 +368,7 @@ Same as other time series data sources. You need to properly format your legend 
 | 1.0.0   | Jest testcases implemented |
 |         | Typescript & TSLint implementation |
 |         | SASS implementation for stylesheets |
+|         | Display options |
 |         | Display values can have part of series name |
 | 0.5.1   | Images as values based on thresholds |
 | 0.5.0   | Background Color & Transform value overrides |

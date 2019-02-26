@@ -106,7 +106,10 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     let renderingOptions: IBoomRenderingOptions = {
       default_title_for_rows: this.panel.default_title_for_rows || config.default_title_for_rows,
       hide_first_column: this.panel.hide_first_column,
-      hide_headers: this.panel.hide_headers
+      hide_headers: this.panel.hide_headers,
+      text_alignment_firstcolumn: this.panel.text_alignment_firstcolumn,
+      text_alignment_header: this.panel.text_alignment_header,
+      text_alignment_values: this.panel.text_alignment_values
     };
     let renderingdata: IBoomHTML = getRenderingHTML(boomtabledata, renderingOptions);
     this.elem.find("#boomtable_output_body_headers").html(`<br/>` + renderingdata.headers);
