@@ -340,6 +340,12 @@ Options
 
 `Text alignment for values` -> This option specify the text alignment of value cells in the table. Can be `left`,`right` or `center`. Default is left.
 
+`Non matching cells text` -> If no series matches for the given row and col match, the corresponding text can be specified using this option. This option can also contain font awesome and image replacement tokens.
+
+`Non matching cells BG Color` -> If no series matches for the given row and col match, the corresponding bg color can be specified using this option
+
+`Non matching cells Text Color` -> If no series matches for the given row and col match, the corresponding text color can be specified using this option
+
 Prometheus Guidelines
 ---------------------
 

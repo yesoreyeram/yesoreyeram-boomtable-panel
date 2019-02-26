@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { IBoomSeries, IBoomRenderingOptions, IBoomHTML, IBoomCellDetails, IBoomTable } from "./boom/index";
-import { BoomPattern } from './boom/index';
+import { BoomPattern, replaceTokens } from './boom/index';
 
 const defaultPattern = new BoomPattern({
     bgColors: "green|orange|red",
@@ -24,7 +24,7 @@ const defaultPattern = new BoomPattern({
     transform_values_overrides: "0->down|1->up",
     valueName: "avg"
 });
-const seriesToTable = function (inputdata: IBoomSeries[]): IBoomTable {
+const seriesToTable = function (inputdata: IBoomSeries[], options: IBoomRenderingOptions): IBoomTable {
     let rows_found = _.uniq(_.map(inputdata, d => d.row_name));
     let cols_found = _.uniq(_.map(inputdata, d => d.col_name));
     let output: IBoomCellDetails[][] = [];
@@ -37,9 +37,9 @@ const seriesToTable = function (inputdata: IBoomSeries[]): IBoomTable {
             if (!matched_items || matched_items.length === 0) {
                 cols.push({
                     "col_name": col_name,
-                    "color_bg": "darkred",
-                    "color_text": "white",
-                    "display_value": "No match found",
+                    "color_bg": options.non_matching_cells_color_bg,
+                    "color_text": options.non_matching_cells_color_text,
+                    "display_value": replaceTokens(options.non_matching_cells_text),
                     "hidden": false,
                     "link": "-",
                     "row_name": row_name,
