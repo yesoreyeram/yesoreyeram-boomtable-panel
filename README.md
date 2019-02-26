@@ -9,7 +9,6 @@ Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for G
 
 ![Boom Table - Panel with Font Awesome icons](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panels-fa.png)
 
-![Image transform](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/img-transform-example.png)
 
 Features :
 ----------
@@ -41,6 +40,7 @@ Tested Grafana versions :
 
 * Grafana version 4.5.2
 * Grafana version 5.0.2
+* Grafana version 6.0.0
 
 
 Screenshots :
@@ -48,23 +48,16 @@ Screenshots :
 
 Pattern Editors Sample screenshots
 
-![Boom Table - Editor 1 Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/editor-1.png)
+![image](https://user-images.githubusercontent.com/153843/53409051-e973f580-39b7-11e9-83e3-e1b6306abafb.png)
 
-![Boom Table - Editor 2 Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/editor-2.png)
+![image](https://user-images.githubusercontent.com/153843/53409071-fa246b80-39b7-11e9-9e8e-05baa8fc1531.png)
 
-![Boom Table - Editor Default Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/editor-default.png)
+![image](https://user-images.githubusercontent.com/153843/53409114-13c5b300-39b8-11e9-9227-339dcd110276.png)
 
 Debug UI Sample screenshots
 
-![Boom Table - Debug UI Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/debug-ui.png)
+![image](https://user-images.githubusercontent.com/153843/53409376-acf4c980-39b8-11e9-89bc-363822fe370d.png)
 
-Metrics screenshots
-
-![Boom Table - Metrics Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/metrics.png)
-
-Version 5 screenshots
-
-![Boom Table - Version 5 support Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/version-5.0.2.png)
 
 # Setup
 
@@ -371,10 +364,10 @@ Same as other time series data sources. You need to properly format your legend 
 
 | Version | Changes |
 | --------|-----------|
-| 1.0.0   | Jest testcases implemented |
-|         | Typescript & TSLint implementation |
+| 1.0.0   | Typescript & TSLint implementation |
+|         | Jest testcases implemented |
 |         | SASS implementation for stylesheets |
-|         | Display options |
+|         | Display options improved |
 |         | Display values can have part of series name |
 | 0.5.1   | Images as values based on thresholds |
 | 0.5.0   | Background Color & Transform value overrides |
