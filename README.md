@@ -9,7 +9,6 @@ Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for G
 
 ![Boom Table - Panel with Font Awesome icons](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panels-fa.png)
 
-![Image transform](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/img-transform-example.png)
 
 Features :
 ----------
@@ -41,6 +40,7 @@ Tested Grafana versions :
 
 * Grafana version 4.5.2
 * Grafana version 5.0.2
+* Grafana version 6.0.0
 
 
 Screenshots :
@@ -48,23 +48,16 @@ Screenshots :
 
 Pattern Editors Sample screenshots
 
-![Boom Table - Editor 1 Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/editor-1.png)
+![image](https://user-images.githubusercontent.com/153843/53409051-e973f580-39b7-11e9-83e3-e1b6306abafb.png)
 
-![Boom Table - Editor 2 Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/editor-2.png)
+![image](https://user-images.githubusercontent.com/153843/53409071-fa246b80-39b7-11e9-9e8e-05baa8fc1531.png)
 
-![Boom Table - Editor Default Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/editor-default.png)
+![image](https://user-images.githubusercontent.com/153843/53409114-13c5b300-39b8-11e9-9227-339dcd110276.png)
 
 Debug UI Sample screenshots
 
-![Boom Table - Debug UI Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/debug-ui.png)
+![image](https://user-images.githubusercontent.com/153843/53409376-acf4c980-39b8-11e9-89bc-363822fe370d.png)
 
-Metrics screenshots
-
-![Boom Table - Metrics Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/metrics.png)
-
-Version 5 screenshots
-
-![Boom Table - Version 5 support Screenshot](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/version-5.0.2.png)
 
 # Setup
 
@@ -108,7 +101,7 @@ patterns and matching metrics
 Row and Column name guidelines
 ------------------------------
 
-Row and Col names are derived from series name. If n is wrapped by "_", then that will be replaced by n-th column in graphite/influxdb/prometheus metric (seperated by delimiter). Refer below examples and screenshots to get more idea. Or use debug mode to try.
+Row and Col names are derived from series name. If n is wrapped by "_", then that will be replaced by n-th column in graphite/influxdb/prometheus metric (seperated by delimiter). Refer below examples and screenshots to get more idea. Or use debug mode to try. (n starts from index 0)
 
 Sample graphite series / Influx / Prometheus Metrics
 
@@ -220,6 +213,8 @@ Logic is same as background color. But the value to be displayed can be altered 
 
 `_col_name_` will be replaced by col name. This will be useful when you hide the table header.
 
+`_n_` will be replaced by nth part of the series using `_` delimiter. Same rule as row_name and col_name
+
 Example transformation patterns :
 
     _value_|_value_|_value_
@@ -329,6 +324,21 @@ If your row name / col name / transform metrics contains strings that starts wit
 
 Note : When using images from other domains, please take care of CORS policy, legal and copyright polices.
 
+Options
+-------
+
+`Text alignment for first column` -> This option specify the text alignment of first column cells in the table. Can be `left`,`right` or `center`. Default is left. 
+
+`Text alignment for table header` -> This option specify the text alignment of table headers excluding first column. Can be `left`,`right` or `center`. Default is left.
+
+`Text alignment for values` -> This option specify the text alignment of value cells in the table. Can be `left`,`right` or `center`. Default is left.
+
+`Non matching cells text` -> If no series matches for the given row and col match, the corresponding text can be specified using this option. This option can also contain font awesome and image replacement tokens.
+
+`Non matching cells BG Color` -> If no series matches for the given row and col match, the corresponding bg color can be specified using this option
+
+`Non matching cells Text Color` -> If no series matches for the given row and col match, the corresponding text color can be specified using this option
+
 Prometheus Guidelines
 ---------------------
 
@@ -354,6 +364,11 @@ Same as other time series data sources. You need to properly format your legend 
 
 | Version | Changes |
 | --------|-----------|
+| 1.0.0   | Typescript & TSLint implementation |
+|         | Jest testcases implemented |
+|         | SASS implementation for stylesheets |
+|         | Display options improved |
+|         | Display values can have part of series name |
 | 0.5.1   | Images as values based on thresholds |
 | 0.5.0   | Background Color & Transform value overrides |
 |         | Bug fixes #43 #44 #45 |

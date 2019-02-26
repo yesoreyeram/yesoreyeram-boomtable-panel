@@ -1,95 +1,82 @@
-System.register(["./app/app", "lodash"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var app_1, lodash_1;
-    var GrafanaBoomTableCtrl;
+System.register(["lodash", "app/core/utils/kbn", "app/plugins/sdk", "./app/boom/index", "./app/config", "./app/app"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf ||
+                ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+                function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var lodash_1, kbn_1, sdk_1, index_1, config_1, app_1, GrafanaBoomTableCtrl;
+    var __moduleName = context_1 && context_1.id;
     return {
-        setters:[
-            function (app_1_1) {
-                app_1 = app_1_1;
-            },
+        setters: [
             function (lodash_1_1) {
                 lodash_1 = lodash_1_1;
-            }],
-        execute: function() {
-            app_1.loadPluginCss(app_1.config.list_of_stylesheets);
+            },
+            function (kbn_1_1) {
+                kbn_1 = kbn_1_1;
+            },
+            function (sdk_1_1) {
+                sdk_1 = sdk_1_1;
+            },
+            function (index_1_1) {
+                index_1 = index_1_1;
+            },
+            function (config_1_1) {
+                config_1 = config_1_1;
+            },
+            function (app_1_1) {
+                app_1 = app_1_1;
+            }
+        ],
+        execute: function () {
+            sdk_1.loadPluginCss({
+                dark: "plugins/" + config_1.plugin_id + "/css/default.dark.css",
+                light: "plugins/" + config_1.plugin_id + "/css/default.light.css"
+            });
             GrafanaBoomTableCtrl = (function (_super) {
                 __extends(GrafanaBoomTableCtrl, _super);
-                function GrafanaBoomTableCtrl($scope, $injector, $sce) {
-                    _super.call(this, $scope, $injector);
-                    this.unitFormats = app_1.kbn.getUnitFormats();
-                    this.valueNameOptions = app_1.config.valueNameOptions;
-                    lodash_1.default.defaults(this.panel, app_1.config.panelDefaults);
-                    this.events.on("data-received", this.onDataReceived.bind(this));
-                    this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
+                function GrafanaBoomTableCtrl($scope, $injector) {
+                    var _this = _super.call(this, $scope, $injector) || this;
+                    _this.unitFormats = kbn_1.default.getUnitFormats();
+                    _this.valueNameOptions = config_1.value_name_options;
+                    lodash_1.default.defaults(_this.panel, config_1.config.panelDefaults);
+                    _this.panel.defaultPattern = _this.panel.defaultPattern || app_1.defaultPattern;
+                    _this.updatePrototypes();
+                    _this.events.on("data-received", _this.onDataReceived.bind(_this));
+                    _this.events.on("data-snapshot-load", _this.onDataReceived.bind(_this));
+                    _this.events.on("init-edit-mode", _this.onInitEditMode.bind(_this));
+                    _this.panel.activePatternIndex = _this.panel.activePatternIndex === -1 ? _this.panel.patterns.length : _this.panel.activePatternIndex;
+                    return _this;
                 }
-                GrafanaBoomTableCtrl.prototype.onInitEditMode = function () {
-                    var _this = this;
-                    lodash_1.default.each(app_1.config.editorTabs, function (editor) {
-                        _this.addEditorTab(editor.name, "public/plugins/" + app_1.config.plugin_id + editor.template, editor.position);
+                GrafanaBoomTableCtrl.prototype.updatePrototypes = function () {
+                    Object.setPrototypeOf(this.panel.defaultPattern, index_1.BoomPattern.prototype);
+                    this.panel.patterns.map(function (pattern) {
+                        Object.setPrototypeOf(pattern, index_1.BoomPattern.prototype);
+                        return pattern;
                     });
                 };
                 GrafanaBoomTableCtrl.prototype.onDataReceived = function (data) {
                     this.dataReceived = data;
                     this.render();
                 };
-                GrafanaBoomTableCtrl.prototype.seriesHandler = function (seriesData) {
-                    var series = new app_1.TimeSeries({
-                        datapoints: seriesData.datapoints || [],
-                        alias: seriesData.target
-                    });
-                    series.flotpairs = series.getFlotPairs(this.panel.nullPointMode);
-                    return series;
+                GrafanaBoomTableCtrl.prototype.onInitEditMode = function () {
+                    this.addEditorTab("Patterns", "public/plugins/" + config_1.plugin_id + "/partials/patterns.html", 2);
+                    this.addEditorTab("Options", "public/plugins/" + config_1.plugin_id + "/partials/options.html", 3);
                 };
                 GrafanaBoomTableCtrl.prototype.addPattern = function () {
-                    var newPattern = {
-                        name: "New Pattern",
-                        pattern: "^server.*cpu$",
-                        delimiter: ".",
-                        valueName: "avg",
-                        row_name: this.panel.row_col_wrapper + "0" + this.panel.row_col_wrapper,
-                        col_name: this.panel.row_col_wrapper + "1" + this.panel.row_col_wrapper,
-                        thresholds: "70,90",
-                        time_based_thresholds: [],
-                        enable_time_based_thresholds: false,
-                        enable_bgColor: false,
-                        bgColors: "green|orange|red",
-                        enable_bgColor_overrides: false,
-                        bgColors_overrides: "0->green|2->red|1->yellow",
-                        enable_transform: false,
-                        transform_values: "_value_|_value_|_value_",
-                        enable_transform_overrides: false,
-                        transform_values_overrides: "0->down|1->up",
-                        decimals: 2,
-                        format: "none",
-                        null_color: "darkred",
-                        null_value: "No data",
-                        enable_clickable_cells: false,
-                        clickable_cells_link: "",
-                        filter: {
-                            value_below: "",
-                            value_above: "",
-                        }
-                    };
+                    var newPattern = new index_1.BoomPattern({
+                        row_col_wrapper: this.panel.row_col_wrapper
+                    });
                     this.panel.patterns.push(newPattern);
                     this.panel.activePatternIndex = this.panel.patterns.length - 1;
-                    this.render();
-                };
-                GrafanaBoomTableCtrl.prototype.movePattern = function (direction, index) {
-                    var tempElement = this.panel.patterns[index];
-                    if (direction === "UP") {
-                        this.panel.patterns[index] = this.panel.patterns[index - 1];
-                        this.panel.patterns[index - 1] = tempElement;
-                        this.panel.activePatternIndex = index - 1;
-                    }
-                    if (direction === "DOWN") {
-                        this.panel.patterns[index] = this.panel.patterns[index + 1];
-                        this.panel.patterns[index + 1] = tempElement;
-                        this.panel.activePatternIndex = index + 1;
-                    }
                     this.render();
                 };
                 GrafanaBoomTableCtrl.prototype.removePattern = function (index) {
@@ -97,493 +84,77 @@ System.register(["./app/app", "lodash"], function(exports_1) {
                     this.panel.activePatternIndex = (this.panel.patterns && this.panel.patterns.length > 0) ? (this.panel.patterns.length - 1) : -1;
                     this.render();
                 };
+                GrafanaBoomTableCtrl.prototype.movePattern = function (direction, index) {
+                    var tempElement = this.panel.patterns[Number(index)];
+                    if (direction === "UP") {
+                        this.panel.patterns[Number(index)] = this.panel.patterns[Number(index) - 1];
+                        this.panel.patterns[Number(index) - 1] = tempElement;
+                        this.panel.activePatternIndex = Number(index) - 1;
+                    }
+                    if (direction === "DOWN") {
+                        this.panel.patterns[Number(index)] = this.panel.patterns[Number(index) + 1];
+                        this.panel.patterns[Number(index) + 1] = tempElement;
+                        this.panel.activePatternIndex = Number(index) + 1;
+                    }
+                    this.render();
+                };
                 GrafanaBoomTableCtrl.prototype.clonePattern = function (index) {
-                    var copiedPattern = Object.assign({}, this.panel.patterns[index]);
+                    var copiedPattern = Object.assign({}, this.panel.patterns[Number(index)]);
+                    Object.setPrototypeOf(copiedPattern, index_1.BoomPattern.prototype);
                     this.panel.patterns.push(copiedPattern);
-                    this.render();
-                };
-                GrafanaBoomTableCtrl.prototype.add_time_based_thresholds = function (index) {
-                    var new_time_based_threshold = {
-                        name: "Early morning of everyday",
-                        from: "0000",
-                        to: "0530",
-                        enabledDays: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
-                        threshold: "70,90"
-                    };
-                    if (index === 'default') {
-                        this.panel.defaultPattern.time_based_thresholds = this.panel.defaultPattern.time_based_thresholds || [];
-                        this.panel.defaultPattern.time_based_thresholds.push(new_time_based_threshold);
-                    }
-                    else {
-                        this.panel.patterns[index].time_based_thresholds = this.panel.patterns[index].time_based_thresholds || [];
-                        this.panel.patterns[index].time_based_thresholds.push(new_time_based_threshold);
-                    }
-                    this.render();
-                };
-                GrafanaBoomTableCtrl.prototype.remove_time_based_thresholds = function (patternIndex, index) {
-                    if (patternIndex === 'default') {
-                        this.panel.defaultPattern.time_based_thresholds.splice(index, 1);
-                    }
-                    else {
-                        this.panel.patterns[patternIndex].time_based_thresholds.splice(index, 1);
-                    }
-                };
-                GrafanaBoomTableCtrl.prototype.inverseBGColors = function (index) {
-                    if (index === -1) {
-                        this.panel.defaultPattern.bgColors = this.panel.defaultPattern.bgColors.split("|").reverse().join("|");
-                    }
-                    else {
-                        this.panel.patterns[index].bgColors = this.panel.patterns[index].bgColors.split("|").reverse().join("|");
-                    }
-                    this.render();
-                };
-                GrafanaBoomTableCtrl.prototype.inverseTransformValues = function (index) {
-                    if (index === -1) {
-                        this.panel.defaultPattern.transform_values = this.panel.defaultPattern.transform_values.split("|").reverse().join("|");
-                    }
-                    else {
-                        this.panel.patterns[index].transform_values = this.panel.patterns[index].transform_values.split("|").reverse().join("|");
-                    }
-                    this.render();
-                };
-                GrafanaBoomTableCtrl.prototype.computeBgColor = function (thresholds, bgColors, value) {
-                    var c = "transparent";
-                    if (thresholds && bgColors && typeof value === "number" && thresholds.length + 1 <= bgColors.length) {
-                        bgColors = lodash_1.default.dropRight(bgColors, bgColors.length - thresholds.length - 1);
-                        if (bgColors[bgColors.length - 1] === "") {
-                            bgColors[bgColors.length - 1] = "transparent";
-                        }
-                        for (var i = thresholds.length; i > 0; i--) {
-                            if (value >= thresholds[i - 1]) {
-                                return app_1.utils.normalizeColor(bgColors[i]);
-                            }
-                        }
-                        return app_1.utils.normalizeColor(lodash_1.default.first(bgColors));
-                    }
-                    return c;
-                };
-                GrafanaBoomTableCtrl.prototype.transformValue = function (thresholds, transform_values, value, displayValue, row_name, col_name) {
-                    var t = value;
-                    if (thresholds && transform_values && typeof value === "number" && thresholds.length + 1 <= transform_values.length) {
-                        transform_values = lodash_1.default.dropRight(transform_values, transform_values.length - thresholds.length - 1);
-                        if (transform_values[transform_values.length - 1] === "") {
-                            transform_values[transform_values.length - 1] = "_value_";
-                        }
-                        for (var i = thresholds.length; i > 0; i--) {
-                            if (value >= thresholds[i - 1]) {
-                                return transform_values[i].replace(new RegExp("_value_", "g"), displayValue).replace(new RegExp("_row_name_", "g"), row_name).replace(new RegExp("_col_name_", "g"), col_name);
-                            }
-                        }
-                        return lodash_1.default.first(transform_values).replace(new RegExp("_value_", "g"), displayValue).replace(new RegExp("_row_name_", "g"), row_name).replace(new RegExp("_col_name_", "g"), col_name);
-                    }
-                    return t;
-                };
-                GrafanaBoomTableCtrl.prototype.replaceFontAwesomeIcons = function (value) {
-                    if (!value)
-                        return value;
-                    return (value + "")
-                        .split(" ")
-                        .map(function (a) {
-                        if (a.startsWith("_fa-") && a.endsWith("_")) {
-                            var icon = a.replace(/\_/g, "").split(",")[0];
-                            var color = a.indexOf(",") > -1 ? " style=\"color:" + app_1.utils.normalizeColor(a.replace(/\_/g, "").split(",")[1]) + "\" " : "";
-                            var repeatCount = a.split(",").length > 2 ? +(a.replace(/\_/g, "").split(",")[2]) : 1;
-                            a = ("<i class=\"fa " + icon + "\" " + color + "></i> ").repeat(repeatCount);
-                        }
-                        return a;
-                    })
-                        .join(" ");
-                };
-                GrafanaBoomTableCtrl.prototype.replaceWithImages = function (value) {
-                    if (!value)
-                        return value;
-                    return (value + "")
-                        .split(" ")
-                        .map(function (a) {
-                        if (a.startsWith("_img-") && a.endsWith("_")) {
-                            a = a.slice(0, -1);
-                            var imgUrl = a.replace("_img-", "").split(",")[0];
-                            var imgWidth = a.split(",").length > 1 ? a.replace("_img-", "").split(",")[1] : "20px";
-                            var imgHeight = a.split(",").length > 2 ? a.replace("_img-", "").split(",")[2] : "20px";
-                            var repeatCount = a.split(",").length > 3 ? +(a.replace("_img-", "").split(",")[3]) : 1;
-                            a = ("<img width=\"" + imgWidth + "\" height=\"" + imgHeight + "\" src=\"" + imgUrl + "\"/>").repeat(repeatCount);
-                        }
-                        return a;
-                    })
-                        .join(" ");
-                };
-                GrafanaBoomTableCtrl.prototype.getActualNameWithoutTransformSign = function (value) {
-                    return (value + "")
-                        .split(" ")
-                        .map(function (a) {
-                        if (a.startsWith("_fa-") && a.endsWith("_")) {
-                            a = "";
-                        }
-                        if (a.startsWith("_img-") && a.endsWith("_")) {
-                            a = "";
-                        }
-                        return a;
-                    })
-                        .join(" ");
-                };
-                GrafanaBoomTableCtrl.prototype.getDecimalsForValue = function (value, _decimals) {
-                    if (lodash_1.default.isNumber(+_decimals)) {
-                        var o = {
-                            decimals: _decimals,
-                            scaledDecimals: null
-                        };
-                        return o;
-                    }
-                    var delta = value / 2;
-                    var dec = -Math.floor(Math.log(delta) / Math.LN10);
-                    var magn = Math.pow(10, -dec), norm = delta / magn, // norm is between 1.0 and 10.0
-                    size;
-                    if (norm < 1.5) {
-                        size = 1;
-                    }
-                    else if (norm < 3) {
-                        size = 2;
-                        // special case for 2.5, requires an extra decimal
-                        if (norm > 2.25) {
-                            size = 2.5;
-                            ++dec;
-                        }
-                    }
-                    else if (norm < 7.5) {
-                        size = 5;
-                    }
-                    else {
-                        size = 10;
-                    }
-                    size *= magn;
-                    // reduce starting decimals if not needed
-                    if (Math.floor(value) === value) {
-                        dec = 0;
-                    }
-                    var result = {
-                        decimals: Math.max(0, dec),
-                        scaledDecimals: Math.max(0, dec) - Math.floor(Math.log(size) / Math.LN10) + 2
-                    };
-                    return result;
-                };
-                GrafanaBoomTableCtrl.prototype.setUnitFormat = function (subItem, index) {
-                    if (index === -1) {
-                        this.panel.defaultPattern.format = subItem.value;
-                    }
-                    else {
-                        this.panel.patterns[index].format = subItem.value;
-                    }
                     this.render();
                 };
                 GrafanaBoomTableCtrl.prototype.limitText = function (text, maxlength) {
                     if (text.split('').length > maxlength) {
-                        text = text.substring(0, maxlength - 3) + "...";
+                        text = text.substring(0, Number(maxlength) - 3) + "...";
                     }
                     return text;
                 };
                 GrafanaBoomTableCtrl.prototype.link = function (scope, elem, attrs, ctrl) {
-                    this.ctrl = ctrl;
+                    this.scope = scope;
                     this.elem = elem;
+                    this.attrs = attrs;
+                    this.ctrl = ctrl;
                 };
                 GrafanaBoomTableCtrl.templateUrl = "partials/module.html";
                 return GrafanaBoomTableCtrl;
-            })(app_1.MetricsPanelCtrl);
+            }(sdk_1.MetricsPanelCtrl));
+            exports_1("PanelCtrl", GrafanaBoomTableCtrl);
             GrafanaBoomTableCtrl.prototype.render = function () {
                 var _this = this;
                 if (this.dataReceived) {
-                    // Copying the data received
-                    this.dataComputed = this.dataReceived;
-                    this.panel.default_title_for_rows = this.panel.default_title_for_rows || app_1.config.default_title_for_rows;
-                    var metricsReceived = app_1.utils.getFields(this.dataComputed, "target");
-                    if (metricsReceived.length !== lodash_1.default.uniq(metricsReceived).length) {
-                        var duplicateKeys = lodash_1.default.uniq(metricsReceived.filter(function (v) {
-                            return metricsReceived.filter(function (t) { return t === v; }).length > 1;
-                        }));
-                        var err = new Error();
-                        err.name = "Duplicate data received";
-                        err.message = "Duplicate keys : <br/>" + duplicateKeys.join("<br/> ");
-                        this.panel.error = err;
-                        this.panel.data = undefined;
-                    }
-                    else {
-                        this.panel.error = undefined;
-                        // Binding the grafana computations to the metrics received
-                        this.dataComputed = this.dataReceived.map(this.seriesHandler.bind(this));
-                        // Get Server Time Stamp of the Series for time based thresholds.
-                        this.dataComputed = this.dataComputed.map(function (series) {
-                            series.current_servertimestamp = new Date();
-                            if (series && series.datapoints && series.datapoints.length > 0) {
-                                if (lodash_1.default.last(series.datapoints).length === 2) {
-                                    series.current_servertimestamp = new Date(lodash_1.default.last(series.datapoints)[1]);
-                                }
-                            }
-                            return series;
-                        });
-                        // Assign pattern
-                        this.dataComputed = this.dataComputed.map(function (series) {
-                            series.pattern = lodash_1.default.find(_this.panel.patterns.filter(function (p) { return p.disabled !== true; }), function (p) {
-                                return series.alias.match(p.pattern);
-                            });
-                            if (series.pattern === undefined) {
-                                series.pattern = _this.panel.defaultPattern || app_1.config.panelDefaults.defaultPattern;
-                            }
-                            return series;
-                        });
-                        // Assign Decimal Values
-                        this.dataComputed = this.dataComputed.map(function (series) {
-                            series.decimals = (series.pattern.decimals) || app_1.config.panelDefaults.defaultPattern.decimals;
-                            return series;
-                        });
-                        // Assign value
-                        this.dataComputed = this.dataComputed.map(function (series) {
-                            if (series.stats) {
-                                series.value = series.stats[series.pattern.valueName || app_1.config.panelDefaults.defaultPattern.valueName];
-                                var decimalInfo = _this.getDecimalsForValue(series.value, series.decimals);
-                                var formatFunc = app_1.kbn.valueFormats[series.pattern.format || app_1.config.panelDefaults.defaultPattern.format];
-                                if (series.value === null) {
-                                    series.displayValue = series.pattern.null_value || app_1.config.panelDefaults.defaultPattern.null_value || "Null";
-                                }
-                                else if (!isNaN(series.value)) {
-                                    series.valueFormatted = formatFunc(series.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
-                                    series.valueRounded = app_1.kbn.roundValue(series.value, decimalInfo.decimals);
-                                    series.displayValue = series.valueFormatted;
-                                }
-                                else {
-                                    series.displayValue = series.pattern.null_value || app_1.config.panelDefaults.defaultPattern.null_value || "Null";
-                                }
-                            }
-                            return series;
-                        });
-                        // Filter Values
-                        this.dataComputed = this.dataComputed.filter(function (series) {
-                            if (!series.pattern.filter) {
-                                series.pattern.filter = {};
-                                series.pattern.filter.value_below = "";
-                                series.pattern.filter.value_above = "";
-                            }
-                            if (series.pattern && series.pattern.filter && (series.pattern.filter.value_below !== "" || series.pattern.filter.value_above !== "")) {
-                                if (series.pattern.filter.value_below !== "" && series.value < +(series.pattern.filter.value_below)) {
-                                    return false;
-                                }
-                                if (series.pattern.filter.value_above !== "" && series.value > +(series.pattern.filter.value_above)) {
-                                    return false;
-                                }
-                                return true;
-                            }
-                            else {
-                                return true;
-                            }
-                            ;
-                        });
-                        // Assign Row Name
-                        this.dataComputed = this.dataComputed.map(function (series) {
-                            series.row_name = series.alias.split(series.pattern.delimiter || ".").reduce(function (r, it, i) {
-                                return r.replace(new RegExp(_this.panel.row_col_wrapper + i + _this.panel.row_col_wrapper, "g"), it);
-                            }, series.pattern.row_name.replace(new RegExp(_this.panel.row_col_wrapper + "series" + _this.panel.row_col_wrapper, "g"), series.alias) || app_1.config.panelDefaults.defaultPattern.row_name.replace(new RegExp(_this.panel.row_col_wrapper + "series" + _this.panel.row_col_wrapper, "g"), series.alias));
-                            if (series.alias.split(series.pattern.delimiter || ".").length === 1) {
-                                series.row_name = series.alias;
-                            }
-                            return series;
-                        });
-                        // Assign Col Name
-                        this.dataComputed = this.dataComputed.map(function (series) {
-                            series.col_name = series.alias.split(series.pattern.delimiter || ".").reduce(function (r, it, i) {
-                                return r.replace(new RegExp(_this.panel.row_col_wrapper + i + _this.panel.row_col_wrapper, "g"), it);
-                            }, series.pattern.col_name || app_1.config.panelDefaults.defaultPattern.col_name);
-                            if (series.alias.split(series.pattern.delimiter || ".").length === 1 || series.row_name === series.alias) {
-                                series.col_name = series.pattern.col_name || "Value";
-                            }
-                            return series;
-                        });
-                        // Assign RowCol Key
-                        this.dataComputed = this.dataComputed.map(function (series) {
-                            series.key_name = series.row_name + "#" + series.col_name;
-                            return series;
-                        });
-                        // Assign Thresholds
-                        this.dataComputed = this.dataComputed.map(function (series) {
-                            series.thresholds = (series.pattern.thresholds || app_1.config.panelDefaults.defaultPattern.thresholds).split(",").map(function (d) { return +d; });
-                            if (series.pattern.enable_time_based_thresholds) {
-                                var metricrecivedTimeStamp = series.current_servertimestamp || new Date();
-                                var metricrecivedTimeStamp_innumber = metricrecivedTimeStamp.getHours() * 100 + metricrecivedTimeStamp.getMinutes();
-                                var weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
-                                lodash_1.default.each(series.pattern.time_based_thresholds, function (tbtx) {
-                                    if (tbtx && tbtx.from && tbtx.to && tbtx.enabledDays &&
-                                        (metricrecivedTimeStamp_innumber >= +(tbtx.from)) &&
-                                        (metricrecivedTimeStamp_innumber <= +(tbtx.to)) &&
-                                        (tbtx.enabledDays.toLowerCase().indexOf(weekdays[metricrecivedTimeStamp.getDay()]) > -1) &&
-                                        tbtx.threshold) {
-                                        series.thresholds = (tbtx.threshold + "").split(",").map(function (d) { return +d; });
-                                    }
-                                });
-                            }
-                            return series;
-                        });
-                        // Assign BG Colors
-                        this.dataComputed = this.dataComputed.map(function (series) {
-                            series.enable_bgColor = series.pattern.enable_bgColor;
-                            series.bgColors = (series.pattern.bgColors || app_1.config.panelDefaults.defaultPattern.bgColors).split("|");
-                            series.bgColor = series.enable_bgColor === true ? _this.computeBgColor(series.thresholds, series.bgColors, series.value) : "transparent";
-                            if (series.displayValue === (series.pattern.null_value || app_1.config.panelDefaults.defaultPattern.null_value || "Null")) {
-                                series.bgColor = series.pattern.null_color || app_1.config.panelDefaults.defaultPattern.null_color;
-                            }
-                            return series;
-                        });
-                        // BG Colors overrides 
-                        this.dataComputed = this.dataComputed.map(function (series) {
-                            series.enable_bgColor_overrides = series.pattern.enable_bgColor_overrides;
-                            series.bgColors_overrides = series.pattern.bgColors_overrides || "";
-                            if (series.enable_bgColor_overrides && series.bgColors_overrides !== "") {
-                                var _bgColors_overrides = series.bgColors_overrides.split("|").filter(function (con) { return con.indexOf("->"); }).map(function (con) { return con.split("->"); }).filter(function (con) { return +(con[0]) === series.value; }).map(function (con) { return con[1]; });
-                                if (_bgColors_overrides.length > 0 && _bgColors_overrides[0] !== "") {
-                                    series.bgColor = app_1.utils.normalizeColor(("" + _bgColors_overrides[0]).trim());
-                                }
-                            }
-                            return series;
-                        });
-                        // Value Transform
-                        this.dataComputed = this.dataComputed.map(function (series) {
-                            series.enable_transform = series.pattern.enable_transform;
-                            series.transform_values = (series.pattern.transform_values || app_1.config.panelDefaults.defaultPattern.transform_values).split("|");
-                            series.displayValue = series.enable_transform === true ? _this.transformValue(series.thresholds, series.transform_values, series.value, series.displayValue, series.row_name, series.col_name) : series.displayValue;
-                            if (series.displayValue === (series.pattern.null_value || app_1.config.panelDefaults.defaultPattern.null_value || "Null")) {
-                                series.displayValue = series.pattern.null_value || app_1.config.panelDefaults.defaultPattern.null_value;
-                            }
-                            else if (isNaN(series.value)) {
-                                series.displayValue = series.pattern.null_value || app_1.config.panelDefaults.defaultPattern.null_value;
-                            }
-                            return series;
-                        });
-                        // Value Transform Overrides
-                        this.dataComputed = this.dataComputed.map(function (series) {
-                            series.enable_transform_overrides = series.pattern.enable_transform_overrides;
-                            series.transform_values_overrides = series.pattern.transform_values_overrides || "";
-                            if (series.enable_transform_overrides && series.transform_values_overrides !== "") {
-                                var _transform_values_overrides = series.transform_values_overrides.split("|").filter(function (con) { return con.indexOf("->"); }).map(function (con) { return con.split("->"); }).filter(function (con) { return +(con[0]) === series.value; }).map(function (con) { return con[1]; });
-                                if (_transform_values_overrides.length > 0 && _transform_values_overrides[0] !== "") {
-                                    series.displayValue = ("" + _transform_values_overrides[0]).trim().replace(new RegExp("_value_", "g"), series.displayValue).replace(new RegExp("_row_name_", "g"), series.row_name).replace(new RegExp("_col_name_", "g"), series.col_name);
-                                }
-                            }
-                            return series;
-                        });
-                        // Font awesome icons
-                        this.dataComputed = this.dataComputed.map(function (series) {
-                            series.actual_displayvalue = series.displayValue;
-                            series.actual_row_name = series.row_name;
-                            series.actual_col_name = series.col_name;
-                            if (series.displayValue && series.displayValue.indexOf("_fa-") > -1)
-                                series.displayValue = _this.replaceFontAwesomeIcons(series.displayValue);
-                            if (series.row_name && series.row_name.indexOf("_fa-") > -1)
-                                series.row_name = _this.replaceFontAwesomeIcons(series.row_name);
-                            if (series.col_name && series.col_name.indexOf("_fa-") > -1)
-                                series.col_name = _this.replaceFontAwesomeIcons(series.col_name);
-                            return series;
-                        });
-                        // Image transforms
-                        this.dataComputed = this.dataComputed.map(function (series) {
-                            if (series.displayValue && series.displayValue.indexOf("_img-") > -1)
-                                series.displayValue = _this.replaceWithImages(series.displayValue);
-                            if (series.row_name && series.row_name.indexOf("_img-") > -1)
-                                series.row_name = _this.replaceWithImages(series.row_name);
-                            if (series.col_name && series.col_name.indexOf("_img-") > -1)
-                                series.col_name = _this.replaceWithImages(series.col_name);
-                            return series;
-                        });
-                        // Cell Links
-                        this.dataComputed = this.dataComputed.map(function (series) {
-                            if (series.pattern.enable_clickable_cells) {
-                                var targetLink = series.pattern.clickable_cells_link || "#";
-                                targetLink = targetLink.replace(new RegExp("_row_name_", "g"), _this.getActualNameWithoutTransformSign(series.actual_row_name).trim());
-                                targetLink = targetLink.replace(new RegExp("_col_name_", "g"), _this.getActualNameWithoutTransformSign(series.actual_col_name).trim());
-                                targetLink = targetLink.replace(new RegExp("_value_", "g"), _this.getActualNameWithoutTransformSign(series.value).trim());
-                                series.displayValue = "<a href=\"" + targetLink + "\" target=\"_blank\">" + series.displayValue + "</a>";
-                            }
-                            return series;
-                        });
-                        // Grouping
-                        var rows_found = app_1.utils.getFields(this.dataComputed, "row_name");
-                        var cols_found = app_1.utils.getFields(this.dataComputed, "col_name");
-                        var keys_found = app_1.utils.getFields(this.dataComputed, "key_name");
-                        var is_unique_keys = (keys_found.length === lodash_1.default.uniq(keys_found).length);
-                        if (is_unique_keys) {
-                            this.panel.error = undefined; ////
-                            var output = [];
-                            lodash_1.default.each(lodash_1.default.uniq(rows_found), function (row_name) {
-                                var o = {};
-                                o.row = row_name;
-                                o.cols = [];
-                                lodash_1.default.each(lodash_1.default.uniq(cols_found), function (col_name) {
-                                    var matched_value = (lodash_1.default.find(_this.dataComputed, function (e) {
-                                        return e.row_name === row_name && e.col_name === col_name;
-                                    }));
-                                    if (!matched_value)
-                                        matched_value = {
-                                            value: NaN,
-                                            displayValue: "N/A"
-                                        };
-                                    o.cols.push({
-                                        "name": col_name,
-                                        "value": matched_value.value,
-                                        "actual_col_name": matched_value.actual_col_name,
-                                        "actual_row_name": matched_value.actual_row_name,
-                                        "displayValue": matched_value.displayValue || matched_value.value,
-                                        "bgColor": matched_value.bgColor || "transparent"
-                                    });
-                                });
-                                output.push(o);
-                            });
-                            //region Output table construction
-                            var boomtable_output_body_headers = this.elem.find("#boomtable_output_body_headers");
-                            var boomtable_output_body_headers_output = "<br/>";
-                            if (this.panel.hide_headers !== true) {
-                                boomtable_output_body_headers_output += "<tr>";
-                                if (this.panel.hide_first_column !== true) {
-                                    boomtable_output_body_headers_output += "<th style=\"padding:4px;text-align:center\">" + this.panel.default_title_for_rows + "</th>";
-                                }
-                                lodash_1.default.each(lodash_1.default.uniq(cols_found), function (c) {
-                                    boomtable_output_body_headers_output += "<th style=\"padding:4px;text-align:center\">" + c + "</th>";
-                                });
-                                boomtable_output_body_headers_output += "</tr>";
-                            }
-                            boomtable_output_body_headers.html(boomtable_output_body_headers_output);
-                            var boomtable_output_body = this.elem.find('#boomtable_output_body');
-                            var boomtable_output_body_output = "";
-                            lodash_1.default.each(output, function (o) {
-                                boomtable_output_body_output += "<tr>";
-                                if (_this.panel.hide_first_column !== true) {
-                                    boomtable_output_body_output += "<td style=\"padding:4px;\">" + o.row + "</td>";
-                                }
-                                lodash_1.default.each(o.cols, function (c) {
-                                    boomtable_output_body_output += "<td \n              style=\"padding:4px;background-color:" + c.bgColor + "\" \n              title=\"" + ("Row Name : " + _this.getActualNameWithoutTransformSign(c.actual_row_name) + "\nCol Name : " + _this.getActualNameWithoutTransformSign(c.actual_col_name) + "\nValue : " + c.value) + "\"\n            >" + c.displayValue + "</td>";
-                                });
-                                boomtable_output_body_output += "</tr>";
-                            });
-                            boomtable_output_body.html(boomtable_output_body_output);
-                        }
-                        else {
-                            var duplicateKeys = lodash_1.default.uniq(keys_found.filter(function (v) {
-                                return keys_found.filter(function (t) { return t === v; }).length > 1;
-                            }));
-                            var err = new Error();
-                            err.name = "Duplicate keys found";
-                            err.message = "Duplicate key values : <br/>" + duplicateKeys.join("<br/> ");
-                            this.panel.error = err;
-                        }
-                        //region Debug table body construction
-                        var boomtable_output_body_debug = this.elem.find('#boomtable_output_body_debug');
-                        var boomtable_output_body_debug_output = "";
-                        lodash_1.default.each(this.dataComputed, function (d) {
-                            boomtable_output_body_debug_output += "\n        <tr>\n          <td style=\"padding:4px;\" width=\"40%\">" + d.alias + "</td>\n          <td style=\"padding:4px;\">" + (d.pattern.pattern || "Default") + "</td>\n          <td style=\"padding:4px;background-color:" + d.bgColor + "\">" + d.displayValue + "</td>\n          <td style=\"padding:4px;\">" + d.row_name + "</td>\n          <td style=\"padding:4px;\">" + d.col_name + "</td>\n          <td style=\"padding:4px;\">" + d.thresholds + "</td>\n        </tr>\n        ";
-                        });
-                        boomtable_output_body_debug.html(boomtable_output_body_debug_output);
-                    }
+                    var outputdata = this.dataReceived.map(function (seriesData) {
+                        var seriesOptions = {
+                            debug_mode: _this.panel.debug_mode,
+                            row_col_wrapper: _this.panel.row_col_wrapper || "_"
+                        };
+                        return new index_1.BoomSeries(seriesData, _this.panel.defaultPattern, _this.panel.patterns, seriesOptions);
+                    });
+                    var renderingOptions = {
+                        default_title_for_rows: this.panel.default_title_for_rows || config_1.config.default_title_for_rows,
+                        hide_first_column: this.panel.hide_first_column,
+                        hide_headers: this.panel.hide_headers,
+                        non_matching_cells_color_bg: this.panel.non_matching_cells_color_bg,
+                        non_matching_cells_color_text: this.panel.non_matching_cells_color_text,
+                        non_matching_cells_text: this.panel.non_matching_cells_text,
+                        text_alignment_firstcolumn: this.panel.text_alignment_firstcolumn,
+                        text_alignment_header: this.panel.text_alignment_header,
+                        text_alignment_values: this.panel.text_alignment_values
+                    };
+                    var boomtabledata = app_1.seriesToTable(outputdata, renderingOptions);
+                    var renderingdata = app_1.getRenderingHTML(boomtabledata, renderingOptions);
+                    this.elem.find("#boomtable_output_body_headers").html("<br/>" + renderingdata.headers);
+                    this.elem.find('#boomtable_output_body').html("" + renderingdata.body);
+                    this.elem.find('#boomtable_output_body_debug').html(this.panel.debug_mode ? app_1.getDebugData(outputdata) : "");
+                    this.elem.find("[data-toggle='tooltip']").tooltip({
+                        boundary: "scrollParent"
+                    });
                     var rootElem = this.elem.find('.table-panel-scroll');
-                    var maxheightofpanel = this.panel.debug_mode ? this.ctrl.height - 71 : this.ctrl.height - 31;
+                    var maxheightofpanel = this.panel.debug_mode ? this.ctrl.height - 111 : this.ctrl.height - 31;
                     rootElem.css({ 'max-height': maxheightofpanel + "px" });
                 }
             };
-            exports_1("PanelCtrl", GrafanaBoomTableCtrl);
         }
-    }
+    };
 });
-//# sourceMappingURL=module.js.map
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibW9kdWxlLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vc3JjL21vZHVsZS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7WUFVQSxtQkFBYSxDQUFDO2dCQUNaLElBQUksRUFBRSxhQUFXLGtCQUFTLDBCQUF1QjtnQkFDakQsS0FBSyxFQUFFLGFBQVcsa0JBQVMsMkJBQXdCO2FBQ3BELENBQUMsQ0FBQzs7Z0JBRWdDLHdDQUFnQjtnQkFRakQsOEJBQVksTUFBTSxFQUFFLFNBQVM7b0JBQTdCLFlBQ0Usa0JBQU0sTUFBTSxFQUFFLFNBQVMsQ0FBQyxTQVF6QjtvQkFmTSxpQkFBVyxHQUFHLGFBQUcsQ0FBQyxjQUFjLEVBQUUsQ0FBQztvQkFDbkMsc0JBQWdCLEdBQUcsMkJBQWtCLENBQUM7b0JBTzNDLGdCQUFDLENBQUMsUUFBUSxDQUFDLEtBQUksQ0FBQyxLQUFLLEVBQUUsZUFBTSxDQUFDLGFBQWEsQ0FBQyxDQUFDO29CQUM3QyxLQUFJLENBQUMsS0FBSyxDQUFDLGNBQWMsR0FBRyxLQUFJLENBQUMsS0FBSyxDQUFDLGNBQWMsSUFBSSxvQkFBYyxDQUFDO29CQUN4RSxLQUFJLENBQUMsZ0JBQWdCLEVBQUUsQ0FBQztvQkFDeEIsS0FBSSxDQUFDLE1BQU0sQ0FBQyxFQUFFLENBQUMsZUFBZSxFQUFFLEtBQUksQ0FBQyxjQUFjLENBQUMsSUFBSSxDQUFDLEtBQUksQ0FBQyxDQUFDLENBQUM7b0JBQ2hFLEtBQUksQ0FBQyxNQUFNLENBQUMsRUFBRSxDQUFDLG9CQUFvQixFQUFFLEtBQUksQ0FBQyxjQUFjLENBQUMsSUFBSSxDQUFDLEtBQUksQ0FBQyxDQUFDLENBQUM7b0JBQ3JFLEtBQUksQ0FBQyxNQUFNLENBQUMsRUFBRSxDQUFDLGdCQUFnQixFQUFFLEtBQUksQ0FBQyxjQUFjLENBQUMsSUFBSSxDQUFDLEtBQUksQ0FBQyxDQUFDLENBQUM7b0JBQ2pFLEtBQUksQ0FBQyxL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LENBQUMsT0FBTyxDQUFDO3dCQUNoRCxRQUFRLEVBQUUsY0FBYztxQkFDekIsQ0FBQyxDQUFDO29CQUNILElBQUksUUFBUSxHQUFHLElBQUksQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLHFCQUFxQixDQUFDLENBQUM7b0JBQ3JELElBQUksZ0JBQWdCLEdBQUcsSUFBSSxDQUFDLEtBQUssQ0FBQyxVQUFVLENBQUMsQ0FBQyxDQUFDLElBQUksQ0FBQyxJQUFJLENBQUMsTUFBTSxHQUFHLEdBQUcsQ0FBQyxDQUFDLENBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxNQUFNLEdBQUcsRUFBRSxDQUFDO29CQUM5RixRQUFRLENBQUMsR0FBRyxDQUFDLEVBQUUsWUFBWSxFQUFFLGdCQUFnQixHQUFHLElBQUksRUFBRSxDQUFDLENBQUM7aUJBQ3pEO1lBQ0gsQ0FBQyxDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiLy8vPHJlZmVyZW5jZSBwYXRoPVwiLi4vbm9kZV9tb2R1bGVzL2dyYWZhbmEtc2RrLW1vY2tzL2FwcC9oZWFkZXJzL2NvbW1vbi5kLnRzXCIgLz5cclxuXHJcbmltcG9ydCBfIGZyb20gXCJsb2Rhc2hcIjtcclxuaW1wb3J0IGtibiBmcm9tICdhcHAvY29yZS91dGlscy9rYm4nO1xyXG5pbXBvcnQgeyBsb2FkUGx1Z2luQ3NzLCBNZXRyaWNzUGFuZWxDdHJsIH0gZnJvbSBcImFwcC9wbHVnaW5zL3Nka1wiO1xyXG5pbXBvcnQgeyBJQm9vbVNlcmllcywgSUJvb21SZW5kZXJpbmdPcHRpb25zLCBJQm9vbVRhYmxlLCBJQm9vbUhUTUwgfSBmcm9tIFwiLi9hcHAvYm9vbS9pbmRleFwiO1xyXG5pbXBvcnQgeyBCb29tUGF0dGVybiwgQm9vbVNlcmllcyB9IGZyb20gXCIuL2FwcC9ib29tL2luZGV4XCI7XHJcbmltcG9ydCB7IHBsdWdpbl9pZCwgdmFsdWVfbmFtZV9vcHRpb25zLCBjb25maWcgfSBmcm9tIFwiLi9hcHAvY29uZmlnXCI7XHJcbmltcG9ydCB7IGRlZmF1bHRQYXR0ZXJuLCBzZXJpZXNUb1RhYmxlLCBnZXRSZW5kZXJpbmdIVE1MLCBnZXREZWJ1Z0RhdGEgfSBmcm9tIFwiLi9hcHAvYXBwXCI7XHJcblxyXG5sb2FkUGx1Z2luQ3NzKHtcclxuICBkYXJrOiBgcGx1Z2lucy8ke3BsdWdpbl9pZH0vY3NzL2RlZmF1bHQuZGFyay5jc3NgLFxyXG4gIGxpZ2h0OiBgcGx1Z2lucy8ke3BsdWdpbl9pZH0vY3NzL2RlZmF1bHQubGlnaHQuY3NzYFxyXG59KTtcclxuXHJcbmNsYXNzIEdyYWZhbmFCb29tVGFibGVDdHJsIGV4dGVuZHMgTWV0cmljc1BhbmVsQ3RybCB7XHJcbiAgcHVibGljIHN0YXRpYyB0ZW1wbGF0ZVVybCA9IFwicGFydGlhbHMvbW9kdWxlLmh0bWxcIjtcclxuICBwdWJsaWMgdW5pdEZvcm1hdHMgPSBrYm4uZ2V0VW5pdEZvcm1hdHMoKTtcclxuICBwdWJsaWMgdmFsdWVOYW1lT3B0aW9ucyA9IHZhbHVlX25hbWVfb3B0aW9ucztcclxuICBwdWJsaWMgZGF0YVJlY2VpdmVkOiBhbnk7XHJcbiAgcHVibGljIGN0cmw6IGFueTtcclxuICBwdWJsaWMgZWxlbTogYW55O1xyXG4gIHB1YmxpYyBhdHRyczogYW55O1xyXG4gIGNvbnN0cnVjdG9yKCRzY29wZSwgJGluamVjdG9yKSB7XHJcbiAgICBzdXBlcigkc2NvcGUsICRpbmplY3Rvcik7XHJcbiAgICBfLmRlZmF1bHRzKHRoaXMucGFuZWwsIGNvbmZpZy5wYW5lbERlZmF1bHRzKTtcclxuICAgIHRoaXMucGFuZWwuZGVmYXVsdFBhdHRlcm4gPSB0aGlzLnBhbmVsLmRlZmF1bHRQYXR0ZXJuIHx8IGRlZmF1bHRQYXR0ZXJuO1xyXG4gICAgdGhpcy51cGRhdGVQcm90b3R5cGVzKCk7XHJcbiAgICB0aGlzLmV2ZW50cy5vbihcImRhdGEtcmVjZWl2ZWRcIiwgdGhpcy5vbkRhdGFSZWNlaXZlZC5iaW5kKHRoaXMpKTtcclxuICAgIHRoaXMuZXZlbnRzLm9uKFwiZGF0YS1zbmFwc2hvdC1sb2FkXCIsIHRoaXMub25EYXRhUmVjZWl2ZWQuYmluZCh0aGlzKSk7XHJcbiAgICB0aGlzLmV2ZW50cy5vbihcImluaXQtZWRpdC1tb2RlXCIsIHRoaXMub25Jbml0RWRpdE1vZGUuYmluZCh0aGlzKSk7XHJcbiAgICB0aGlzLnBhbmVsLmFjdGl2ZVBhdHRlcm5JbmRleCA9IHRoaXMucGFuZWwuYWN0aXZlUGF0dGVybkluZGV4ID09PSAtMSA/IHRoaXMucGFuZWwucGF0dGVybnMubGVuZ3RoIDogdGhpcy5wYW5lbC5hY3RpdmVQYXR0ZXJuSW5kZXg7XHJcbiAgfVxyXG4gIHByaXZhdGUgdXBkYXRlUHJvdG90eXBlcygpOiB2b2lkIHtcclxuICAgIE9iamVjdC5zZXRQcm90b3R5cGVPZih0aGlzLnBhbmVsLmRlZmF1bHRQYXR0ZXJuLCBCb29tUGF0dGVybi5wcm90b3R5cGUpO1xyXG4gICAgdGhpcy5wYW5lbC5wYXR0ZXJucy5tYXAocGF0dGVybiA9PiB7XHJcbiAgICAgIE9iamVjdC5zZXRQcm90b3R5cGVPZihwYXR0ZXJuLCBCb29tUGF0dGVybi5wcm90b3R5cGUpO1xyXG4gICAgICByZXR1cm4gcGF0dGVybjtcclxuICAgIH0pO1xyXG4gIH1cclxuICBwdWJsaWMgb25EYXRhUmVjZWl2ZWQoZGF0YTogYW55KTogdm9pZCB7XHJcbiAgICB0aGlzLmRhdGFSZWNlaXZlZCA9IGRhdGE7XHJcbiAgICB0aGlzLnJlbmRlcigpO1xyXG4gIH1cclxuICBwdWJsaWMgb25Jbml0RWRpdE1vZGUoKTogdm9pZCB7XHJcbiAgICB0aGlzLmFkZEVkaXRvclRhYihcIlBhdHRlcm5zXCIsIGBwdWJsaWMvcGx1Z2lucy8ke3BsdWdpbl9pZH0vcGFydGlhbHMvcGF0dGVybnMuaHRtbGAsIDIpO1xyXG4gICAgdGhpcy5hZGRFZGl0b3JUYWIoXCJPcHRpb25zXCIsIGBwdWJsaWMvcGx1Z2lucy8ke3BsdWdpbl9pZH0vcGFydGlhbHMvb3B0aW9ucy5odG1sYCwgMyk7XHJcbiAgfVxyXG4gIHB1YmxpYyBhZGRQYXR0ZXJuKCk6IHZvaWQge1xyXG4gICAgbGV0IG5ld1BhdHRlcm4gPSBuZXcgQm9vbVBhdHRlcm4oe1xyXG4gICAgICByb3dfY29sX3dyYXBwZXI6IHRoaXMucGFuZWwucm93X2NvbF93cmFwcGVyXHJcbiAgICB9KTtcclxuICAgIHRoaXMucGFuZWwucGF0dGVybnMucHVzaChuZXdQYXR0ZXJuKTtcclxuICAgIHRoaXMucGFuZWwuYWN0aXZlUGF0dGVybkluZGV4ID0gdGhpcy5wYW5lbC5wYXR0ZXJucy5sZW5ndGggLSAxO1xyXG4gICAgdGhpcy5yZW5kZXIoKTtcclxuICB9XHJcbiAgcHVibGljIHJlbW92ZVBhdHRlcm4oaW5kZXg6IE51bWJlcik6IHZvaWQge1xyXG4gICAgdGhpcy5wYW5lbC5wYXR0ZXJucy5zcGxpY2UoaW5kZXgsIDEpO1xyXG4gICAgdGhpcy5wYW5lbC5hY3RpdmVQYXR0ZXJuSW5kZXggPSAodGhpcy5wYW5lbC5wYXR0ZXJucyAmJiB0aGlzLnBhbmVsLnBhdHRlcm5zLmxlbmd0aCA+IDApID8gKHRoaXMucGFuZWwucGF0dGVybnMubGVuZ3RoIC0gMSkgOiAtMTtcclxuICAgIHRoaXMucmVuZGVyKCk7XHJcbiAgfVxyXG4gIHB1YmxpYyBtb3ZlUGF0dGVybihkaXJlY3Rpb246IHN0cmluZywgaW5kZXg6IE51bWJlcikge1xyXG4gICAgbGV0IHRlbXBFbGVtZW50ID0gdGhpcy5wYW5lbC5wYXR0ZXJuc1tOdW1iZXIoaW5kZXgpXTtcclxuICAgIGlmIChkaXJlY3Rpb24gPT09IFwiVVBcIikge1xyXG4gICAgICB0aGlzLnBhbmVsLnBhdHRlcm5zW051bWJlcihpbmRleCldID0gdGhpcy5wYW5lbC5wYXR0ZXJuc1tOdW1iZXIoaW5kZXgpIC0gMV07XHJcbiAgICAgIHRoaXMucGFuZWwucGF0dGVybnNbTnVtYmVyKGluZGV4KSAtIDFdID0gdGVtcEVsZW1lbnQ7XHJcbiAgICAgIHRoaXMucGFuZWwuYWN0aXZlUGF0dGVybkluZGV4ID0gTnVtYmVyKGluZGV4KSAtIDE7XHJcbiAgICB9XHJcbiAgICBpZiAoZGlyZWN0aW9uID09PSBcIkRPV05cIikge1xyXG4gICAgICB0aGlzLnBhbmVsLnBhdHRlcm5zW051bWJlcihpbmRleCldID0gdGhpcy5wYW5lbC5wYXR0ZXJuc1tOdW1iZXIoaW5kZXgpICsgMV07XHJcbiAgICAgIHRoaXMucGFuZWwucGF0dGVybnNbTnVtYmVyKGluZGV4KSArIDFdID0gdGVtcEVsZW1lbnQ7XHJcbiAgICAgIHRoaXMucGFuZWwuYWN0aXZlUGF0dGVybkluZGV4ID0gTnVtYmVyKGluZGV4KSArIDE7XHJcbiAgICB9XHJcbiAgICB0aGlzLnJlbmRlcigpO1xyXG4gIH1cclxuICBwdWJsaWMgY2xvbmVQYXR0ZXJuKGluZGV4OiBOdW1iZXIpOiB2b2lkIHtcclxuICAgIGxldCBjb3BpZWRQYXR0ZXJuID0gT2JqZWN0LmFzc2lnbih7fSwgdGhpcy5wYW5lbC5wYXR0ZXJuc1tOdW1iZXIoaW5kZXgpXSk7XHJcbiAgICBPYmplY3Quc2V0UHJvdG90eXBlT2YoY29waWVkUGF0dGVybiwgQm9vbVBhdHRlcm4ucHJvdG90eXBlKTtcclxuICAgIHRoaXMucGFuZWwucGF0dGVybnMucHVzaChjb3BpZWRQYXR0ZXJuKTtcclxuICAgIHRoaXMucmVuZGVyKCk7XHJcbiAgfVxyXG4gIHB1YmxpYyBsaW1pdFRleHQodGV4dDogc3RyaW5nLCBtYXhsZW5ndGg6IE51bWJlcik6IHN0cmluZyB7XHJcbiAgICBpZiAodGV4dC5zcGxpdCgnJykubGVuZ3RoID4gbWF4bGVuZ3RoKSB7XHJcbiAgICAgIHRleHQgPSB0ZXh0LnN1YnN0cmluZygwLCBOdW1iZXIobWF4bGVuZ3RoKSAtIDMpICsgXCIuLi5cIjtcclxuICAgIH1cclxuICAgIHJldHVybiB0ZXh0O1xyXG4gIH1cclxuICBwdWJsaWMgbGluayhzY29wZTogYW55LCBlbGVtOiBhbnksIGF0dHJzOiBhbnksIGN0cmw6IGFueSk6IHZvaWQge1xyXG4gICAgdGhpcy5zY29wZSA9IHNjb3BlO1xyXG4gICAgdGhpcy5lbGVtID0gZWxlbTtcclxuICAgIHRoaXMuYXR0cnMgPSBhdHRycztcclxuICAgIHRoaXMuY3RybCA9IGN0cmw7XHJcbiAgfVxyXG59XHJcblxyXG5HcmFmYW5hQm9vbVRhYmxlQ3RybC5wcm90b3R5cGUucmVuZGVyID0gZnVuY3Rpb24gKCkge1xyXG4gIGlmICh0aGlzLmRhdGFSZWNlaXZlZCkge1xyXG4gICAgbGV0IG91dHB1dGRhdGE6IElCb29tU2VyaWVzW10gPSB0aGlzLmRhdGFSZWNlaXZlZC5tYXAoc2VyaWVzRGF0YSA9PiB7XHJcbiAgICAgIGxldCBzZXJpZXNPcHRpb25zID0ge1xyXG4gICAgICAgIGRlYnVnX21vZGU6IHRoaXMucGFuZWwuZGVidWdfbW9kZSxcclxuICAgICAgICByb3dfY29sX3dyYXBwZXI6IHRoaXMucGFuZWwucm93X2NvbF93cmFwcGVyIHx8IFwiX1wiXHJcbiAgICAgIH07XHJcbiAgICAgIHJldHVybiBuZXcgQm9vbVNlcmllcyhzZXJpZXNEYXRhLCB0aGlzLnBhbmVsLmRlZmF1bHRQYXR0ZXJuLCB0aGlzLnBhbmVsLnBhdHRlcm5zLCBzZXJpZXNPcHRpb25zKTtcclxuICAgIH0pO1xyXG4gICAgbGV0IHJlbmRlcmluZ09wdGlvbnM6IElCb29tUmVuZGVyaW5nT3B0aW9ucyA9IHtcclxuICAgICAgZGVmYXVsdF90aXRsZV9mb3Jfcm93czogdGhpcy5wYW5lbC5kZWZhdWx0X3RpdGxlX2Zvcl9yb3dzIHx8IGNvbmZpZy5kZWZhdWx0X3RpdGxlX2Zvcl9yb3dzLFxyXG4gICAgICBoaWRlX2ZpcnN0X2NvbHVtbjogdGhpcy5wYW5lbC5oaWRlX2ZpcnN0X2NvbHVtbixcclxuICAgICAgaGlkZV9oZWFkZXJzOiB0aGlzLnBhbmVsLmhpZGVfaGVhZGVycyxcclxuICAgICAgbm9uX21hdGNoaW5nX2NlbGxzX2NvbG9yX2JnOiB0aGlzLnBhbmVsLm5vbl9tYXRjaGluZ19jZWxsc19jb2xvcl9iZyxcclxuICAgICAgbm9uX21hdGNoaW5nX2NlbGxzX2NvbG9yX3RleHQ6IHRoaXMucGFuZWwubm9uX21hdGNoaW5nX2NlbGxzX2NvbG9yX3RleHQsXHJcbiAgICAgIG5vbl9tYXRjaGluZ19jZWxsc190ZXh0OiB0aGlzLnBhbmVsLm5vbl9tYXRjaGluZ19jZWxsc190ZXh0LFxyXG4gICAgICB0ZXh0X2FsaWdubWVudF9maXJzdGNvbHVtbjogdGhpcy5wYW5lbC50ZXh0X2FsaWdubWVudF9maXJzdGNvbHVtbixcclxuICAgICAgdGV4dF9hbGlnbm1lbnRfaGVhZGVyOiB0aGlzLnBhbmVsLnRleHRfYWxpZ25tZW50X2hlYWRlcixcclxuICAgICAgdGV4dF9hbGlnbm1lbnRfdmFsdWVzOiB0aGlzLnBhbmVsLnRleHRfYWxpZ25tZW50X3ZhbHVlc1xyXG4gICAgfTtcclxuICAgIGxldCBib29tdGFibGVkYXRhOiBJQm9vbVRhYmxlID0gc2VyaWVzVG9UYWJsZShvdXRwdXRkYXRhLHJlbmRlcmluZ09wdGlvbnMpO1xyXG4gICAgbGV0IHJlbmRlcmluZ2RhdGE6IElCb29tSFRNTCA9IGdldFJlbmRlcmluZ0hUTUwoYm9vbXRhYmxlZGF0YSwgcmVuZGVyaW5nT3B0aW9ucyk7XHJcbiAgICB0aGlzLmVsZW0uZmluZChcIiNib29tdGFibGVfb3V0cHV0X2JvZHlfaGVhZGVyc1wiKS5odG1sKGA8YnIvPmAgKyByZW5kZXJpbmdkYXRhLmhlYWRlcnMpO1xyXG4gICAgdGhpcy5lbGVtLmZpbmQoJyNib29tdGFibGVfb3V0cHV0X2JvZHknKS5odG1sKGBgICsgcmVuZGVyaW5nZGF0YS5ib2R5KTtcclxuICAgIHRoaXMuZWxlbS5maW5kKCcjYm9vbXRhYmxlX291dHB1dF9ib2R5X2RlYnVnJykuaHRtbCh0aGlzLnBhbmVsLmRlYnVnX21vZGUgPyBnZXREZWJ1Z0RhdGEob3V0cHV0ZGF0YSkgOiBgYCk7XHJcbiAgICB0aGlzLmVsZW0uZmluZChcIltkYXRhLXRvZ2dsZT0ndG9vbHRpcCddXCIpLnRvb2x0aXAoe1xyXG4gICAgICBib3VuZGFyeTogXCJzY3JvbGxQYXJlbnRcIlxyXG4gICAgfSk7XHJcbiAgICBsZXQgcm9vdEVsZW0gPSB0aGlzLmVsZW0uZmluZCgnLnRhYmxlLXBhbmVsLXNjcm9sbCcpO1xyXG4gICAgbGV0IG1heGhlaWdodG9mcGFuZWwgPSB0aGlzLnBhbmVsLmRlYnVnX21vZGUgPyB0aGlzLmN0cmwuaGVpZ2h0IC0gMTExIDogdGhpcy5jdHJsLmhlaWdodCAtIDMxO1xyXG4gICAgcm9vdEVsZW0uY3NzKHsgJ21heC1oZWlnaHQnOiBtYXhoZWlnaHRvZnBhbmVsICsgXCJweFwiIH0pO1xyXG4gIH1cclxufTtcclxuXHJcbmV4cG9ydCB7XHJcbiAgR3JhZmFuYUJvb21UYWJsZUN0cmwgYXMgUGFuZWxDdHJsXHJcbn07XHJcbiJdfQ==

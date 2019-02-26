@@ -1,18 +1,17 @@
+const sass = require('node-sass');
+
 module.exports = grunt => {
   require("load-grunt-tasks")(grunt);
 
-  grunt.loadNpmTasks("grunt-execute");
-  grunt.loadNpmTasks("grunt-contrib-clean");
-  grunt.loadNpmTasks('grunt-typescript');
-
   grunt.initConfig({
+
     clean: ["dist"],
 
     copy: {
       src_to_dist: {
         cwd: "src",
         expand: true,
-        src: ["**/*", "css/*.css", "!**/*.ts", "!**/*.js", "!**/*.scss", "!img/**/*"],
+        src: ["**/*", "!**/*.ts", "!**/*.js", "!**/*.scss", "!img/**/*"],
         dest: "dist"
       },
       pluginDef: {
@@ -38,29 +37,59 @@ module.exports = grunt => {
       }
     },
 
-    typescript: {
+    sass: {
       build: {
-        src: ['src/**/*.ts', '!**/*.d.ts'],
-        dest: 'dist/',
         options: {
-          module: 'system',
-          target: 'es5',
-          declaration: false,
-          emitDecoratorMetadata: true,
-          experimentalDecorators: true,
-          sourceMap: true,
-          noImplicitAny: false,
+          debugInfo: true,
+          check: true,
+          implementation: sass,
+          sourceMap: false
+        },
+        files: {
+          'dist/css/default.dark.css': 'src/css/default.dark.scss',
+          'dist/css/default.light.css': 'src/css/default.light.scss'
         }
+      }
+    },
+
+    tslint : {
+      options: {
+        configuration: "tslint.json"
+      },
+      files: {
+        src: ['src/**/*.ts'],
+      },
+    },
+
+    ts: {
+      default: {
+        tsconfig: './tsconfig.json'
+      }
+    },
+
+    run: {
+      options: {
+      },
+      tests: {
+        exec: "npm run test"
       }
     }
 
   });
 
+  grunt.registerTask("test", [
+    "run:tests",
+    "tslint"
+  ]);
+
   grunt.registerTask("default", [
     "clean",
+    "run:tests",
+    "tslint",
+    "ts:default",
+    "sass:build",
     "copy:src_to_dist",
     "copy:pluginDef",
-    "copy:img_to_dist",
-    "typescript"
+    "copy:img_to_dist"
   ]);
 };
