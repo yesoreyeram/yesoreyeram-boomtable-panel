@@ -16,7 +16,7 @@ module.exports = grunt => {
       },
       pluginDef: {
         expand: true,
-        src: ["plugin.json", "README.md"],
+        src: ["plugin.json", "README.md", "CHANGELOG.md"],
         dest: "dist"
       },
       img_to_dist: {
@@ -29,7 +29,7 @@ module.exports = grunt => {
 
     watch: {
       rebuild_all: {
-        files: ["src/**/*", "plugin.json", "README.md"],
+        files: ["src/**/*", "plugin.json", "README.md", "CHANGELOG.md"],
         tasks: ["default"],
         options: {
           spawn: false
