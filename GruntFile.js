@@ -1,10 +1,9 @@
-const sass = require('node-sass');
+const sass = require("node-sass");
 
 module.exports = grunt => {
   require("load-grunt-tasks")(grunt);
 
   grunt.initConfig({
-
     clean: ["dist"],
 
     copy: {
@@ -30,7 +29,13 @@ module.exports = grunt => {
     watch: {
       rebuild_all: {
         files: ["src/**/*", "plugin.json", "README.md", "CHANGELOG.md"],
-        tasks: ["default"],
+        tasks: [
+          "ts:default",
+          "sass:build",
+          "copy:src_to_dist",
+          "copy:pluginDef",
+          "copy:img_to_dist"
+        ],
         options: {
           spawn: false
         }
@@ -46,41 +51,36 @@ module.exports = grunt => {
           sourceMap: false
         },
         files: {
-          'dist/css/default.dark.css': 'src/css/default.dark.scss',
-          'dist/css/default.light.css': 'src/css/default.light.scss'
+          "dist/css/default.dark.css": "src/css/default.dark.scss",
+          "dist/css/default.light.css": "src/css/default.light.scss"
         }
       }
     },
 
-    tslint : {
+    tslint: {
       options: {
         configuration: "tslint.json"
       },
       files: {
-        src: ['src/**/*.ts'],
-      },
+        src: ["src/**/*.ts"]
+      }
     },
 
     ts: {
       default: {
-        tsconfig: './tsconfig.json'
+        tsconfig: "./tsconfig.json"
       }
     },
 
     run: {
-      options: {
-      },
+      options: {},
       tests: {
-        exec: "npm run test"
+        exec: "npm run jest"
       }
     }
-
   });
 
-  grunt.registerTask("test", [
-    "run:tests",
-    "tslint"
-  ]);
+  grunt.registerTask("test", ["run:tests", "tslint"]);
 
   grunt.registerTask("default", [
     "clean",
