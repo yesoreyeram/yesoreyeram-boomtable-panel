@@ -6,6 +6,7 @@ const value_name_options = [
     { text: "Current", value: "current" },
     { text: "Total", value: "total" }
 ];
+const textAlignmentOptions = ["left", "right", "center"];
 const config: any = {
     debug_mode: false,
     error: undefined,
@@ -23,5 +24,6 @@ const config: any = {
 export {
     plugin_id,
     value_name_options,
+    textAlignmentOptions,
     config
 };

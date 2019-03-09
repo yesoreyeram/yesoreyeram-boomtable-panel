@@ -5,7 +5,7 @@ import kbn from 'app/core/utils/kbn';
 import { loadPluginCss, MetricsPanelCtrl } from "app/plugins/sdk";
 import { IBoomSeries, IBoomRenderingOptions, IBoomTable, IBoomHTML, IBoomTableTransformationOptions } from "./app/boom/index";
 import { BoomPattern, BoomSeries, BoomOutput } from "./app/boom/index";
-import { plugin_id, value_name_options, config } from "./app/config";
+import { plugin_id, value_name_options, textAlignmentOptions, config } from "./app/config";
 import { defaultPattern, seriesToTable } from "./app/app";
 
 loadPluginCss({
@@ -17,6 +17,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   public static templateUrl = "partials/module.html";
   public unitFormats = kbn.getUnitFormats();
   public valueNameOptions = value_name_options;
+  public textAlignmentOptions = textAlignmentOptions;
   public dataReceived: any;
   public ctrl: any;
   public elem: any;
