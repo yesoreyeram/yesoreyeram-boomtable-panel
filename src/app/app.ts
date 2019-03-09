@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { IBoomSeries, IBoomRenderingOptions, IBoomHTML, IBoomCellDetails, IBoomTable } from "./boom/index";
+import { IBoomSeries, IBoomCellDetails, IBoomTable, IBoomTableTransformationOptions } from "./boom/index";
 import { BoomPattern, replaceTokens } from './boom/index';
 
 const defaultPattern = new BoomPattern({
@@ -24,7 +24,7 @@ const defaultPattern = new BoomPattern({
     transform_values_overrides: "0->down|1->up",
     valueName: "avg"
 });
-const seriesToTable = function (inputdata: IBoomSeries[], options: IBoomRenderingOptions): IBoomTable {
+const seriesToTable = function (inputdata: IBoomSeries[], options: IBoomTableTransformationOptions): IBoomTable {
     let rows_found = _.uniq(_.map(inputdata, d => d.row_name));
     let cols_found = _.uniq(_.map(inputdata, d => d.col_name));
     let output: IBoomCellDetails[][] = [];
@@ -68,71 +68,8 @@ const seriesToTable = function (inputdata: IBoomSeries[], options: IBoomRenderin
         rows_found,
     };
 };
-const getRenderingHTML = function (data: IBoomTable, options: IBoomRenderingOptions): IBoomHTML {
-    let output: IBoomHTML = {
-        body: "",
-        footer: "",
-        headers: "",
-    };
-    let { default_title_for_rows, hide_headers, hide_first_column } = options;
-    if (hide_headers !== true) {
-        output.headers += "<tr>";
-        if (hide_first_column !== true) {
-            output.headers += `<th style="padding:4px;text-align:${options.text_alignment_firstcolumn}">${default_title_for_rows}</th>`;
-        }
-        _.each(data.cols_found, c => {
-            output.headers += `<th style="padding:4px;text-align:${options.text_alignment_header}">${c}</th>`;
-        });
-        output.body += "</tr>";
-    }
-    _.each(data.output, o => {
-        if (o.map(item => item.hidden.toString()).indexOf("false") > -1) {
-            output.body += "<tr>";
-            if (hide_first_column !== true) {
-                output.body += `
-                    <td style="padding:4px;text-align:${options.text_alignment_firstcolumn}">
-                        ${_.first(o.map(item => item.row_name))}
-                    </td>`;
-            }
-            _.each(o, item => {
-                let item_style = `padding:4px;background-color:${item.color_bg};color:${item.color_text};text-align:${options.text_alignment_values}`;
-                let item_display = item.link === "#" ? item.display_value : `<a href="${item.link}" target="_blank" style="color:${item.color_text}">${item.display_value}</a>`;
-                let tooltip = !item.tooltip || item.tooltip === "-" ? undefined : ` data-toggle="tooltip" data-html="true" data-placement="auto" title="${item.tooltip}" `;
-                output.body += `
-                    <td style="${item_style}">
-                        ${tooltip ? `<span ${tooltip}>` : ""}
-                            ${item_display}
-                        ${tooltip ? `</span>` : ""}
-                    </td>
-                `;
-            });
-            output.body += "</tr>";
-        }
-    });
-    return output;
-};
-const getDebugData = function (data: IBoomSeries[]): string {
-    let debugdata = ``;
-    debugdata = _.map(data, d => {
-        return `
-        <tr>
-            <td style="padding:4px;text-align:center;width:30%; title="Series Name" >${d.seriesName}</td>
-            <td style="padding:4px;text-align:center;width:10%; title="Matching Pattern Name" >${d.pattern.name || d.pattern.pattern || "Default"}</td>
-            <td style="padding:4px;text-align:center;width:10%; title="Value : ${String(d.value_formatted || "null")} / Raw : ${String(d.value || "null")} / Stat : ${d.pattern.valueName}">${d.display_value}</td>
-            <td style="padding:4px;text-align:center;width:10%; title="Row name" >${d.row_name}</td>
-            <td style="padding:4px;text-align:center;width:10%; title="Col name" >${d.col_name}</td>
-            <td style="padding:4px;text-align:center;width:10%; title="Thresholds" >${d.thresholds.join(",")}</td>
-            <td style="padding:4px;text-align:center;width:10%; title="BG Color" >${d.color_bg}</td>
-            <td style="padding:4px;text-align:center;width:10%; title="Text Color" >${d.color_text}</td>
-        </tr>
-        `;
-    }).join(``);
-    return debugdata;
-};
 
 export {
     defaultPattern,
-    getRenderingHTML,
-    getDebugData,
     seriesToTable
 };

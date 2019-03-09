@@ -51,13 +51,15 @@ interface IBoomTimeBasedThreshold {
     threshold: string;
     to: string;
 }
+interface IBoomTableTransformationOptions {
+    non_matching_cells_color_bg: string;
+    non_matching_cells_color_text: string;
+    non_matching_cells_text: string;
+}
 interface IBoomRenderingOptions {
     default_title_for_rows: String;
     hide_first_column: Boolean;
     hide_headers: Boolean;
-    non_matching_cells_color_bg: string;
-    non_matching_cells_color_text: string;
-    non_matching_cells_text: string;
     text_alignment_firstcolumn: String;
     text_alignment_header: String;
     text_alignment_values: String;
@@ -83,6 +85,7 @@ interface IBoomHTML {
     headers: string;
 }
 export {
+    IBoomTableTransformationOptions,
     IBoomRenderingOptions,
     IBoomPattern,
     IBoomSeries,

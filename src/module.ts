@@ -3,10 +3,10 @@
 import _ from "lodash";
 import kbn from 'app/core/utils/kbn';
 import { loadPluginCss, MetricsPanelCtrl } from "app/plugins/sdk";
-import { IBoomSeries, IBoomRenderingOptions, IBoomTable, IBoomHTML } from "./app/boom/index";
-import { BoomPattern, BoomSeries } from "./app/boom/index";
+import { IBoomSeries, IBoomRenderingOptions, IBoomTable, IBoomHTML, IBoomTableTransformationOptions } from "./app/boom/index";
+import { BoomPattern, BoomSeries, BoomOutput } from "./app/boom/index";
 import { plugin_id, value_name_options, config } from "./app/config";
-import { defaultPattern, seriesToTable, getRenderingHTML, getDebugData } from "./app/app";
+import { defaultPattern, seriesToTable } from "./app/app";
 
 loadPluginCss({
   dark: `plugins/${plugin_id}/css/default.dark.css`,
@@ -102,22 +102,25 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       };
       return new BoomSeries(seriesData, this.panel.defaultPattern, this.panel.patterns, seriesOptions);
     });
+    let boomTableTransformationOptions: IBoomTableTransformationOptions = {
+      non_matching_cells_color_bg: this.panel.non_matching_cells_color_bg,
+      non_matching_cells_color_text: this.panel.non_matching_cells_color_text,
+      non_matching_cells_text: this.panel.non_matching_cells_text,
+    };
+    let boomtabledata: IBoomTable = seriesToTable(outputdata,boomTableTransformationOptions);
     let renderingOptions: IBoomRenderingOptions = {
       default_title_for_rows: this.panel.default_title_for_rows || config.default_title_for_rows,
       hide_first_column: this.panel.hide_first_column,
       hide_headers: this.panel.hide_headers,
-      non_matching_cells_color_bg: this.panel.non_matching_cells_color_bg,
-      non_matching_cells_color_text: this.panel.non_matching_cells_color_text,
-      non_matching_cells_text: this.panel.non_matching_cells_text,
       text_alignment_firstcolumn: this.panel.text_alignment_firstcolumn,
       text_alignment_header: this.panel.text_alignment_header,
       text_alignment_values: this.panel.text_alignment_values
     };
-    let boomtabledata: IBoomTable = seriesToTable(outputdata,renderingOptions);
-    let renderingdata: IBoomHTML = getRenderingHTML(boomtabledata, renderingOptions);
+    let boom_output = new BoomOutput(renderingOptions);
+    let renderingdata: IBoomHTML  = boom_output.getDataAsHTML(boomtabledata);
     this.elem.find("#boomtable_output_body_headers").html(`<br/>` + renderingdata.headers);
     this.elem.find('#boomtable_output_body').html(`` + renderingdata.body);
-    this.elem.find('#boomtable_output_body_debug').html(this.panel.debug_mode ? getDebugData(outputdata) : ``);
+    this.elem.find('#boomtable_output_body_debug').html(this.panel.debug_mode ? boom_output.getDataAsDebugHTML(outputdata) : ``);
     this.elem.find("[data-toggle='tooltip']").tooltip({
       boundary: "scrollParent"
     });
