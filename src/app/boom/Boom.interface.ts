@@ -72,6 +72,7 @@ interface IBoomCellDetails {
     display_value: string;
     link: string;
     tooltip: string;
+    value: number;
 }
 interface IBoomTable {
     rows_found: string[];

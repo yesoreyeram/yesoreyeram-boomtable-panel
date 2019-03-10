@@ -17,10 +17,23 @@ export class BoomOutput {
     this.text_alignment_values = options.text_alignment_values || "";
   }
 }
-BoomOutput.prototype.getDataAsHTML = function(data: IBoomTable): IBoomHTML {
+BoomOutput.prototype.getDataAsHTML = function(data: IBoomTable, sorting_props): IBoomHTML {
   let output: IBoomHTML = {
     body: ""
   };
+  if (sorting_props && sorting_props.col_index !== undefined && sorting_props.col_index > -1) {
+    let sortFunction = (a,b,sortMethod)=>{
+      if (sortMethod==="asc") {
+        return a[sorting_props.col_index].value - b[sorting_props.col_index].value;
+      } else {
+        return b[sorting_props.col_index].value - a[sorting_props.col_index].value;
+      }
+    };
+    data.output = data.output
+        .filter(a=> !isNaN(a[sorting_props.col_index].value))
+        .concat(data.output.filter(a=> isNaN(a[sorting_props.col_index].value)))
+        .sort((a,b)=>sortFunction(a,b,sorting_props.direction));
+  }
   _.each(data.output, o => {
     if (o.map(item => item.hidden.toString()).indexOf("false") > -1) {
       output.body += "<tr>";

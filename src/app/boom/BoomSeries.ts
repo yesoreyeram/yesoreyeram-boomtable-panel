@@ -170,7 +170,6 @@ class BoomSeries implements IBoomSeries {
     private cleanup() {
         if (this.debug_mode !== true) {
             delete this.seriesName;
-            delete this.value;
             delete this.pattern;
             delete this.thresholds;
             delete this.decimals;

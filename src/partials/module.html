@@ -26,7 +26,10 @@
                 <tr>
                     <th data-ng-if="ctrl.panel.hide_first_column !== true" style="padding:4px;text-align:{{ctrl.panel.text_alignment_firstcolumn}}" ng-bind="ctrl.panel.default_title_for_rows">
                     </th>
-                    <th ng-repeat="col in ctrl.outdata.cols_found track by $index" style="padding:4px;text-align:{{ctrl.panel.text_alignment_header}}"  ng-bind-html="col">
+                    <th ng-repeat="col in ctrl.outdata.cols_found track by $index" ng-click="ctrl.sortByHeader($index)" style="padding:4px;text-align:{{ctrl.panel.text_alignment_header}}">
+                        <span ng-bind-html="col"></span>
+                        <i class="fa fa-arrow-up sortarrows" data-ng-if="ctrl.sorting_props.col_index === $index && ctrl.sorting_props.direction === 'asc'"></i>
+                        <i class="fa fa-arrow-down sortarrows" data-ng-if="ctrl.sorting_props.col_index === $index && ctrl.sorting_props.direction === 'desc'"></i>
                     </th>
                 </tr>
             </thead>

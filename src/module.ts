@@ -19,6 +19,10 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   public valueNameOptions = value_name_options;
   public textAlignmentOptions = textAlignmentOptions;
   public outdata;
+  public sorting_props = {
+    col_index: -1,
+    direction: "desc"
+  };
   public dataReceived: any;
   public ctrl: any;
   public elem: any;
@@ -83,6 +87,11 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.patterns.push(copiedPattern);
     this.render();
   }
+  public sortByHeader(headerIndex: number){
+    this.sorting_props.col_index = headerIndex;
+    this.sorting_props.direction = this.sorting_props.direction === "asc" ? "desc" : "asc";
+    this.render();
+  }
   public limitText(text: string, maxlength: Number): string {
     if (text.split('').length > maxlength) {
       text = text.substring(0, Number(maxlength) - 3) + "...";
@@ -123,7 +132,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     this.outdata = {
       cols_found : boomtabledata.cols_found.map(col=> { return this.$sce.trustAsHtml(col); })
     };
-    let renderingdata: IBoomHTML  = boom_output.getDataAsHTML(boomtabledata);
+    let renderingdata: IBoomHTML  = boom_output.getDataAsHTML(boomtabledata,this.sorting_props);
     this.elem.find('#boomtable_output_body').html(`` + renderingdata.body);
     this.elem.find('#boomtable_output_body_debug').html(this.panel.debug_mode ? boom_output.getDataAsDebugHTML(outputdata) : ``);
     this.elem.find("[data-toggle='tooltip']").tooltip({

@@ -43,7 +43,8 @@ const seriesToTable = function (inputdata: IBoomSeries[], options: IBoomTableTra
                     "hidden": false,
                     "link": "-",
                     "row_name": row_name,
-                    "tooltip": "-"
+                    "tooltip": "-",
+                    "value": NaN
                 });
             } else if (matched_items && matched_items.length === 1) {
                 cols.push(matched_items[0]);
@@ -56,7 +57,8 @@ const seriesToTable = function (inputdata: IBoomSeries[], options: IBoomTableTra
                     "hidden": false,
                     "link": "-",
                     "row_name": row_name,
-                    "tooltip": "-"
+                    "tooltip": "-",
+                    "value": NaN
                 });
             }
         });
