@@ -22,7 +22,13 @@
             </table>
         </div>
         <table class="table-panel-table">
-            <thead id="boomtable_output_body_headers">
+            <thead id="boomtable_output_body_headers" data-ng-if="ctrl.panel.hide_headers !== true">
+                <tr>
+                    <th data-ng-if="ctrl.panel.hide_first_column !== true" style="padding:4px;text-align:{{ctrl.panel.text_alignment_firstcolumn}}" ng-bind="ctrl.panel.default_title_for_rows">
+                    </th>
+                    <th ng-repeat="col in ctrl.outdata.cols_found track by $index" style="padding:4px;text-align:{{ctrl.panel.text_alignment_header}}"  ng-bind-html="col">
+                    </th>
+                </tr>
             </thead>
             <tbody id="boomtable_output_body">
             </tbody>

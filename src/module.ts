@@ -18,14 +18,17 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   public unitFormats = kbn.getUnitFormats();
   public valueNameOptions = value_name_options;
   public textAlignmentOptions = textAlignmentOptions;
+  public outdata;
   public dataReceived: any;
   public ctrl: any;
   public elem: any;
   public attrs: any;
-  constructor($scope, $injector) {
+  public $sce: any;
+  constructor($scope, $injector, $sce) {
     super($scope, $injector);
     _.defaults(this.panel, config.panelDefaults);
     this.panel.defaultPattern = this.panel.defaultPattern || defaultPattern;
+    this.$sce = $sce;
     this.updatePrototypes();
     this.events.on("data-received", this.onDataReceived.bind(this));
     this.events.on("data-snapshot-load", this.onDataReceived.bind(this));
@@ -114,12 +117,13 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       hide_first_column: this.panel.hide_first_column,
       hide_headers: this.panel.hide_headers,
       text_alignment_firstcolumn: this.panel.text_alignment_firstcolumn,
-      text_alignment_header: this.panel.text_alignment_header,
       text_alignment_values: this.panel.text_alignment_values
     };
     let boom_output = new BoomOutput(renderingOptions);
+    this.outdata = {
+      cols_found : boomtabledata.cols_found.map(col=> { return this.$sce.trustAsHtml(col); })
+    };
     let renderingdata: IBoomHTML  = boom_output.getDataAsHTML(boomtabledata);
-    this.elem.find("#boomtable_output_body_headers").html(`<br/>` + renderingdata.headers);
     this.elem.find('#boomtable_output_body').html(`` + renderingdata.body);
     this.elem.find('#boomtable_output_body_debug').html(this.panel.debug_mode ? boom_output.getDataAsDebugHTML(outputdata) : ``);
     this.elem.find("[data-toggle='tooltip']").tooltip({

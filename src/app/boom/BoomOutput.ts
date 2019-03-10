@@ -6,7 +6,6 @@ export class BoomOutput {
   public hide_first_column: Boolean;
   public hide_headers: Boolean;
   public text_alignment_firstcolumn: String;
-  public text_alignment_header: String;
   public text_alignment_values: String;
   public getDataAsHTML;
   public getDataAsDebugHTML;
@@ -15,30 +14,13 @@ export class BoomOutput {
     this.hide_first_column = options.hide_first_column;
     this.hide_headers = options.hide_headers;
     this.text_alignment_firstcolumn = options.text_alignment_firstcolumn || "";
-    this.text_alignment_header = options.text_alignment_header || "";
     this.text_alignment_values = options.text_alignment_values || "";
   }
 }
 BoomOutput.prototype.getDataAsHTML = function(data: IBoomTable): IBoomHTML {
   let output: IBoomHTML = {
-    body: "",
-    footer: "",
-    headers: ""
+    body: ""
   };
-  if (this.hide_headers !== true) {
-    output.headers += "<tr>";
-    if (this.hide_first_column !== true) {
-      output.headers += `<th style="padding:4px;text-align:${
-        this.text_alignment_firstcolumn
-      }">${this.default_title_for_rows}</th>`;
-    }
-    _.each(data.cols_found, c => {
-      output.headers += `<th style="padding:4px;text-align:${
-        this.text_alignment_header
-      }">${c}</th>`;
-    });
-    output.body += "</tr>";
-  }
   _.each(data.output, o => {
     if (o.map(item => item.hidden.toString()).indexOf("false") > -1) {
       output.body += "<tr>";

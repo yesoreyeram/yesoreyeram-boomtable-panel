@@ -61,7 +61,6 @@ interface IBoomRenderingOptions {
     hide_first_column: Boolean;
     hide_headers: Boolean;
     text_alignment_firstcolumn: String;
-    text_alignment_header: String;
     text_alignment_values: String;
 }
 interface IBoomCellDetails {
@@ -81,8 +80,6 @@ interface IBoomTable {
 }
 interface IBoomHTML {
     body: string;
-    footer: string;
-    headers: string;
 }
 export {
     IBoomTableTransformationOptions,
