@@ -203,6 +203,10 @@ class BoomSeries implements IBoomSeries {
         return col_name;
     }
     private replaceTokens() {
+        // colnames can be specified in the link
+        this.link = this.seriesName.split(this.pattern.delimiter || ".").reduce((r, it, i) => {
+            return r.replace(new RegExp(this.row_col_wrapper + i + this.row_col_wrapper, "g"), it);
+        }, this.link);
         // _series_ can be specified in Row, Col, Display Value, Tooltip & Link
         this.row_name = this.template_row_name.replace(new RegExp("_series_", "g"), this.seriesName.toString());
         this.col_name = this.template_col_name.replace(new RegExp("_series_", "g"), this.seriesName.toString());
