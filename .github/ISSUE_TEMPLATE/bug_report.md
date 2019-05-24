@@ -1,8 +1,8 @@
 ---
 name: Bug report
 about: Report bug/issue to improve the plugin
-title: "[BUG] Title "
-labels: ''
+title: "[Bug] Title "
+labels: bug
 assignees: ''
 
 ---
