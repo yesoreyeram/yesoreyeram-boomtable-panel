@@ -124,9 +124,9 @@ class BoomSeries implements IBoomSeries {
         return normalizeColor(bgColor);
     }
     private getTextColor(): string {
-        let textColor = "white";
+        let textColor = document.body.classList.contains("theme-light") ? "black" : "white";
         if (_.isNaN(this.value) || this.value === null) {
-            textColor = this.pattern.null_textcolor || "white";
+            textColor = this.pattern.null_textcolor || textColor;
         } else {
             if (this.pattern.enable_textColor && this.pattern.textColors) {
                 let list_of_textColors_based_on_thresholds = this.pattern.textColors.split("|");
