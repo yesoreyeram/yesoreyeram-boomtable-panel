@@ -4,6 +4,8 @@ const value_name_options = [
     { text: "Max", value: "max" },
     { text: "Average", value: "avg" },
     { text: "Current", value: "current" },
+    { value: 'last_time', text: 'Time of last data point' },
+    { value: 'last_time_nonnull', text: 'Time of last non null data point' },
     { text: "Total", value: "total" }
 ];
 const textAlignmentOptions = ["left", "right", "center"];

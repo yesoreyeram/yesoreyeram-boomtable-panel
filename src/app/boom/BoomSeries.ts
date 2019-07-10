@@ -49,7 +49,18 @@ class BoomSeries implements IBoomSeries {
         this.pattern = _.find(panelPatterns.filter(p => { return p.disabled !== true; }), p => this.seriesName.match(p.pattern)) || panelDefaultPattern;
         this.decimals = this.pattern.decimals || panelDefaultPattern.decimals || 2;
         if (series.stats) {
-            this.value = series.stats[this.pattern.valueName];
+            if (this.pattern.valueName === "last_time") {
+                if (_.last(series.datapoints)) {
+                    this.value = _.last(series.datapoints)[1];
+                }
+            } else if (this.pattern.valueName === "last_time_nonnull") {
+                let non_null_data = series.datapoints.filter(s => s[0]);
+                if (_.last(non_null_data) && _.last(non_null_data)[1]) {
+                    this.value = _.last(non_null_data)[1];
+                }
+            } else {
+                this.value = series.stats[this.pattern.valueName];
+            }
             if (_.isNaN(this.value) || this.value === null) {
                 this.display_value = this.pattern.null_value;
             } else {

@@ -3,6 +3,7 @@
 | Version            | Changes |
 | -------------------|-----------|
 | 1.2.1              | Time range in cell links |
+|                    | Time of last data point stat added |
 | 1.2.0              | Template variables in row name, col name, link, tooltip, thresholds, colors |
 | 1.1.0              | Colnames in the link |
 | 1.0.0              | Typescript & TSLint implementation |
