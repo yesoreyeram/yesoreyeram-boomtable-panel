@@ -34,6 +34,7 @@ Supported / Tested Data Sources :
 * Prometheus
 * Azure Monitor
 * AWS Cloud Watch
+* Any datasources that returns data in timeseries format
 
 Tested Grafana versions :
 -------------------------
@@ -114,6 +115,7 @@ Pattern & Output
     _4_ 2 _5_                   --> cpu 2 usage
     _4_ use                     --> cpu use
     Production _4_ usage        --> Production cpu usage
+    Production _4_ $somevar     --> Production cpu value_of_somevar_variable
     _series_                    --> prod.server.my-app-01.sys.cpu.usage
     _1_ _1_                     --> server server
     _4_ __5_                    --> cpu _usage

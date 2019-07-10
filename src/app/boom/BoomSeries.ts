@@ -26,7 +26,7 @@ class BoomSeries implements IBoomSeries {
     public link = "-";
     public thresholds: Number[];
     public hidden: Boolean;
-    constructor(seriesData: any, panelDefaultPattern: any, panelPatterns: any[], options: any) {
+    constructor(seriesData: any, panelDefaultPattern: any, panelPatterns: any[], options: any, templateSrv: any) {
         this.debug_mode = options && options.debug_mode === true ? true : false;
         let nullPointMode = options && options.nullPointMode ? options.nullPointMode : "connected";
         this.row_col_wrapper = options && options.row_col_wrapper ? options.row_col_wrapper : "_";
@@ -73,17 +73,17 @@ class BoomSeries implements IBoomSeries {
         }
         this.row_name = this.getRowName(this.pattern, this.row_col_wrapper, this.seriesName.toString());
         this.col_name = this.getColName(this.pattern, this.row_col_wrapper, this.seriesName.toString(), this.row_name);
-        this.thresholds = this.getThresholds();
-        this.color_bg = this.getBGColor();
-        this.color_text = this.getTextColor();
+        this.thresholds = this.getThresholds(templateSrv);
+        this.color_bg = this.getBGColor(templateSrv);
+        this.color_text = this.getTextColor(templateSrv);
         this.template_value = this.getDisplayValueTemplate();
         this.tooltip = this.pattern.tooltipTemplate || "Series : _series_ <br/>Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_";
         this.link = this.pattern.enable_clickable_cells ? this.pattern.clickable_cells_link || "#" : "#";
-        this.replaceTokens();
+        this.replaceTokens(templateSrv);
         this.cleanup();
     }
-    private getThresholds() {
-        let thresholds = this.pattern.thresholds.split(",").map(d => +d);
+    private getThresholds(templateSrv: any) {
+        let thresholds = templateSrv.replaceWithText(this.pattern.thresholds).split(",").map(d => +d);
         if (this.pattern.enable_time_based_thresholds) {
             let metricrecivedTimeStamp = this.currentTimeStamp || new Date();
             let metricrecivedTimeStamp_innumber = metricrecivedTimeStamp.getHours() * 100 + metricrecivedTimeStamp.getMinutes();
@@ -101,7 +101,7 @@ class BoomSeries implements IBoomSeries {
         }
         return thresholds;
     }
-    private getBGColor(): string {
+    private getBGColor(templateSrv: any): string {
         let bgColor = "transparent";
         if (_.isNaN(this.value) || this.value === null) {
             bgColor = this.pattern.null_color || "darkred";
@@ -110,12 +110,12 @@ class BoomSeries implements IBoomSeries {
             }
         } else {
             if (this.pattern.enable_bgColor && this.pattern.bgColors) {
-                let list_of_bgColors_based_on_thresholds = this.pattern.bgColors.split("|");
+                let list_of_bgColors_based_on_thresholds = templateSrv.replaceWithText(this.pattern.bgColors).split("|");
                 bgColor = getItemBasedOnThreshold(this.thresholds, list_of_bgColors_based_on_thresholds, this.value, bgColor);
 
             }
             if (this.pattern.enable_bgColor_overrides && this.pattern.bgColors_overrides !== "") {
-                let _bgColors_overrides = this.pattern.bgColors_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === this.value).map(con => con[1]);
+                let _bgColors_overrides = templateSrv.replaceWithText(this.pattern.bgColors_overrides).split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === this.value).map(con => con[1]);
                 if (_bgColors_overrides.length > 0 && _bgColors_overrides[0] !== "") {
                     bgColor = ("" + _bgColors_overrides[0]).trim();
                 }
@@ -123,17 +123,17 @@ class BoomSeries implements IBoomSeries {
         }
         return normalizeColor(bgColor);
     }
-    private getTextColor(): string {
+    private getTextColor(templateSrv: any): string {
         let textColor = document.body.classList.contains("theme-light") ? "black" : "white";
         if (_.isNaN(this.value) || this.value === null) {
             textColor = this.pattern.null_textcolor || textColor;
         } else {
             if (this.pattern.enable_textColor && this.pattern.textColors) {
-                let list_of_textColors_based_on_thresholds = this.pattern.textColors.split("|");
+                let list_of_textColors_based_on_thresholds = templateSrv.replaceWithText(this.pattern.textColors).split("|");
                 textColor = getItemBasedOnThreshold(this.thresholds, list_of_textColors_based_on_thresholds, this.value, textColor);
             }
             if (this.pattern.enable_textColor_overrides && this.pattern.textColors_overrides !== "") {
-                let _textColors_overrides = this.pattern.textColors_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === this.value).map(con => con[1]);
+                let _textColors_overrides = templateSrv.replaceWithText(this.pattern.textColors_overrides).split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === this.value).map(con => con[1]);
                 if (_textColors_overrides.length > 0 && _textColors_overrides[0] !== "") {
                     textColor = ("" + _textColors_overrides[0]).trim();
                 }
@@ -202,7 +202,7 @@ class BoomSeries implements IBoomSeries {
         this.template_col_name = col_name;
         return col_name;
     }
-    private replaceTokens() {
+    private replaceTokens(templateSrv: any) {
         // colnames can be specified in the link
         this.link = this.seriesName.split(this.pattern.delimiter || ".").reduce((r, it, i) => {
             return r.replace(new RegExp(this.row_col_wrapper + i + this.row_col_wrapper, "g"), it);
@@ -237,6 +237,12 @@ class BoomSeries implements IBoomSeries {
         this.row_name = replaceTokens(this.row_name);
         this.col_name = replaceTokens(this.col_name);
         this.display_value = replaceTokens(this.display_value);
+        // Replace Grafana Variables
+        this.row_name = templateSrv.replaceWithText(this.row_name);
+        this.col_name = templateSrv.replaceWithText(this.col_name);
+        this.display_value = templateSrv.replaceWithText(this.display_value);
+        this.tooltip = templateSrv.replaceWithText(this.tooltip);
+        this.link = templateSrv.replaceWithText(this.link);
     }
 }
 

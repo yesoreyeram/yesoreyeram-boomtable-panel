@@ -33,6 +33,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     _.defaults(this.panel, config.panelDefaults);
     this.panel.defaultPattern = this.panel.defaultPattern || defaultPattern;
     this.$sce = $sce;
+    this.templateSrv = $injector.get("templateSrv");
     this.updatePrototypes();
     this.events.on("data-received", this.onDataReceived.bind(this));
     this.events.on("data-snapshot-load", this.onDataReceived.bind(this));
@@ -87,7 +88,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.patterns.push(copiedPattern);
     this.render();
   }
-  public sortByHeader(headerIndex: number){
+  public sortByHeader(headerIndex: number) {
     this.sorting_props.col_index = headerIndex;
     this.sorting_props.direction = this.sorting_props.direction === "asc" ? "desc" : "asc";
     this.render();
@@ -113,14 +114,14 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         debug_mode: this.panel.debug_mode,
         row_col_wrapper: this.panel.row_col_wrapper || "_"
       };
-      return new BoomSeries(seriesData, this.panel.defaultPattern, this.panel.patterns, seriesOptions);
+      return new BoomSeries(seriesData, this.panel.defaultPattern, this.panel.patterns, seriesOptions, this.templateSrv);
     });
     let boomTableTransformationOptions: IBoomTableTransformationOptions = {
       non_matching_cells_color_bg: this.panel.non_matching_cells_color_bg,
       non_matching_cells_color_text: this.panel.non_matching_cells_color_text,
       non_matching_cells_text: this.panel.non_matching_cells_text,
     };
-    let boomtabledata: IBoomTable = seriesToTable(outputdata,boomTableTransformationOptions);
+    let boomtabledata: IBoomTable = seriesToTable(outputdata, boomTableTransformationOptions);
     let renderingOptions: IBoomRenderingOptions = {
       default_title_for_rows: this.panel.default_title_for_rows || config.default_title_for_rows,
       hide_first_column: this.panel.hide_first_column,
@@ -130,9 +131,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     };
     let boom_output = new BoomOutput(renderingOptions);
     this.outdata = {
-      cols_found : boomtabledata.cols_found.map(col=> { return this.$sce.trustAsHtml(col); })
+      cols_found: boomtabledata.cols_found.map(col => { return this.$sce.trustAsHtml(col); })
     };
-    let renderingdata: IBoomHTML  = boom_output.getDataAsHTML(boomtabledata,this.sorting_props);
+    let renderingdata: IBoomHTML = boom_output.getDataAsHTML(boomtabledata, this.sorting_props);
     this.elem.find('#boomtable_output_body').html(`` + renderingdata.body);
     this.elem.find('#boomtable_output_body_debug').html(this.panel.debug_mode ? boom_output.getDataAsDebugHTML(outputdata) : ``);
     this.elem.find("[data-toggle='tooltip']").tooltip({
