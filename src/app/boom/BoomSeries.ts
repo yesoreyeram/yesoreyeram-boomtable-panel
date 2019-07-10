@@ -26,7 +26,7 @@ class BoomSeries implements IBoomSeries {
     public link = "-";
     public thresholds: Number[];
     public hidden: Boolean;
-    constructor(seriesData: any, panelDefaultPattern: any, panelPatterns: any[], options: any, templateSrv: any) {
+    constructor(seriesData: any, panelDefaultPattern: any, panelPatterns: any[], options: any, templateSrv: any, timeSrv: any) {
         this.debug_mode = options && options.debug_mode === true ? true : false;
         let nullPointMode = options && options.nullPointMode ? options.nullPointMode : "connected";
         this.row_col_wrapper = options && options.row_col_wrapper ? options.row_col_wrapper : "_";
@@ -79,6 +79,11 @@ class BoomSeries implements IBoomSeries {
         this.template_value = this.getDisplayValueTemplate();
         this.tooltip = this.pattern.tooltipTemplate || "Series : _series_ <br/>Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_";
         this.link = this.pattern.enable_clickable_cells ? this.pattern.clickable_cells_link || "#" : "#";
+        if (this.link !== "#") {
+            const range = timeSrv.timeRangeForUrl();
+            this.link += (this.link.indexOf("?") > -1 ? `&from=${range.from}` : `?from=${range.from}`);
+            this.link += `&to=${range.to}`;
+        }
         this.replaceTokens(templateSrv);
         this.cleanup();
     }

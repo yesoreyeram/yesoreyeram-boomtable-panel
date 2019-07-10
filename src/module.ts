@@ -34,6 +34,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.panel.defaultPattern = this.panel.defaultPattern || defaultPattern;
     this.$sce = $sce;
     this.templateSrv = $injector.get("templateSrv");
+    this.timeSrv = $injector.get("timeSrv");
     this.updatePrototypes();
     this.events.on("data-received", this.onDataReceived.bind(this));
     this.events.on("data-snapshot-load", this.onDataReceived.bind(this));
@@ -114,7 +115,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         debug_mode: this.panel.debug_mode,
         row_col_wrapper: this.panel.row_col_wrapper || "_"
       };
-      return new BoomSeries(seriesData, this.panel.defaultPattern, this.panel.patterns, seriesOptions, this.templateSrv);
+      return new BoomSeries(seriesData, this.panel.defaultPattern, this.panel.patterns, seriesOptions, this.templateSrv, this.timeSrv);
     });
     let boomTableTransformationOptions: IBoomTableTransformationOptions = {
       non_matching_cells_color_bg: this.panel.non_matching_cells_color_bg,
