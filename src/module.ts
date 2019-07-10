@@ -140,7 +140,13 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       boundary: "scrollParent"
     });
     let rootElem = this.elem.find('.table-panel-scroll');
-    let maxheightofpanel = this.panel.debug_mode ? this.ctrl.height - 111 : this.ctrl.height - 31;
+    let originalHeight = this.ctrl.height;
+    if (isNaN(originalHeight)) {
+      if (this.ctrl && this.ctrl.elem && this.ctrl.elem[0] && this.ctrl.elem[0].clientHeight) {
+        originalHeight = this.ctrl.elem[0].clientHeight;
+      }
+    }
+    let maxheightofpanel = this.panel.debug_mode ? originalHeight - 111 : originalHeight - 31;
     rootElem.css({ 'max-height': maxheightofpanel + "px" });
   }
 };
