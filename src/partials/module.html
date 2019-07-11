@@ -21,7 +21,7 @@
                 </tbody>
             </table>
         </div>
-        <table class="table-panel-table">
+        <table class="table-panel-table" style="font-size:{{ctrl.panel.font_size || '1rem'}};">
             <thead id="boomtable_output_body_headers" data-ng-if="ctrl.panel.hide_headers !== true">
                 <tr>
                     <th data-ng-if="ctrl.panel.hide_first_column !== true" style="padding:4px;text-align:{{ctrl.panel.text_alignment_firstcolumn}}" ng-bind="ctrl.panel.default_title_for_rows">

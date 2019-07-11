@@ -354,6 +354,8 @@ Options
 
 `Non matching cells Text Color` -> If no series matches for the given row and col match, the corresponding text color can be specified using this option
 
+`Font Size` -> Specify font size to be used in the table. Leave blank for default. size can be specified in css units such as `1.4rem` , `16px` etc
+
 Prometheus Guidelines
 ---------------------
 

@@ -7,6 +7,7 @@
 |                    | Patterns Quick Editor |
 |                    | Sorting Persisted |
 |                    | Link in first column |
+|                    | Option to modify font size |
 | 1.2.0              | Template variables in row name, col name, link, tooltip, thresholds, colors |
 | 1.1.0              | Colnames in the link |
 | 1.0.0              | Typescript & TSLint implementation |
