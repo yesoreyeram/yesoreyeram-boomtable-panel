@@ -129,6 +129,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     let boomtabledata: IBoomTable = seriesToTable(outputdata, boomTableTransformationOptions);
     let renderingOptions: IBoomRenderingOptions = {
       default_title_for_rows: this.panel.default_title_for_rows || config.default_title_for_rows,
+      first_column_link: this.panel.first_column_link || "#",
       hide_first_column: this.panel.hide_first_column,
       hide_headers: this.panel.hide_headers,
       text_alignment_firstcolumn: this.panel.text_alignment_firstcolumn,

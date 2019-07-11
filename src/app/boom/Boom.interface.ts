@@ -37,6 +37,7 @@ interface IBoomSeries {
     hidden: Boolean;
     col_name: string;
     row_name: string;
+    row_name_raw: string;
     display_value: string;
     color_bg: string;
     color_text: string;
@@ -62,6 +63,7 @@ interface IBoomRenderingOptions {
     hide_headers: Boolean;
     text_alignment_firstcolumn: String;
     text_alignment_values: String;
+    first_column_link: String;
 }
 interface IBoomCellDetails {
     hidden: Boolean;
@@ -75,6 +77,7 @@ interface IBoomCellDetails {
     value: number;
 }
 interface IBoomTable {
+    rows_without_token: string[];
     rows_found: string[];
     cols_found: string[];
     output: IBoomCellDetails[][];

@@ -263,6 +263,19 @@ Note : If the row_name / col_name contains font awesome keywords like `_fa-circl
 
 Example : `https://mysite.com/_row_name_/_col_name_/?foo=bar`
 
+First Column Links
+------------------
+
+To enable link for the first column, Specify link URL in options tab.
+
+First row link can have token `_row_name_` . Any other tokens will be ignored. If your row name tends to any font awesome icons or images, they will be ignored in the link's `_row_name`
+
+![image](https://user-images.githubusercontent.com/153843/61057603-8a0a0580-a3ed-11e9-9572-bd76edb0b685.png)
+
+Example : `http://google.com?q=_row_name_` will be replaced as `http://google.com?q=app_0` if the first columnn name is `app_0`
+
+Refer issue [#85](https://github.com/yesoreyeram/yesoreyeram-boomtable-panel/issues/85) for more details
+
 Filter
 ------
 

@@ -17,6 +17,7 @@ class BoomSeries implements IBoomSeries {
     private decimals: Number;
     public col_name: string;
     public row_name: string;
+    public row_name_raw: string;
     public color_bg: string;
     public color_text: string;
     public display_value = "-";
@@ -83,6 +84,7 @@ class BoomSeries implements IBoomSeries {
             }
         }
         this.row_name = this.getRowName(this.pattern, this.row_col_wrapper, (this.seriesName || "").toString());
+        this.row_name_raw = this.getRowName(this.pattern, this.row_col_wrapper, (this.seriesName || "").toString());
         this.col_name = this.getColName(this.pattern, this.row_col_wrapper, (this.seriesName || "").toString(), this.row_name);
         this.thresholds = this.getThresholds(templateSrv, scopedVars);
         this.color_bg = this.getBGColor(templateSrv, scopedVars);

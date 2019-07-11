@@ -26,6 +26,7 @@ const defaultPattern = new BoomPattern({
 });
 const seriesToTable = function (inputdata: IBoomSeries[], options: IBoomTableTransformationOptions): IBoomTable {
     let rows_found = _.uniq(_.map(inputdata, d => d.row_name));
+    let rows_without_token = _.uniq(_.map(inputdata, d => d.row_name_raw));
     let cols_found = _.uniq(_.map(inputdata, d => d.col_name));
     let output: IBoomCellDetails[][] = [];
     _.each(rows_found, row_name => {
@@ -68,6 +69,7 @@ const seriesToTable = function (inputdata: IBoomSeries[], options: IBoomTableTra
         cols_found,
         output,
         rows_found,
+        rows_without_token
     };
 };
 
