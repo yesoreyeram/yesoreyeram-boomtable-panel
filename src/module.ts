@@ -105,6 +105,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.elem = elem;
     this.attrs = attrs;
     this.ctrl = ctrl;
+    this.panel = ctrl.panel;
   }
 }
 
@@ -115,7 +116,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         debug_mode: this.panel.debug_mode,
         row_col_wrapper: this.panel.row_col_wrapper || "_"
       };
-      return new BoomSeries(seriesData, this.panel.defaultPattern, this.panel.patterns, seriesOptions, this.templateSrv, this.timeSrv);
+      return new BoomSeries(seriesData, this.panel.defaultPattern, this.panel.patterns, seriesOptions, this.panel.scopedVars, this.templateSrv, this.timeSrv);
     });
     let boomTableTransformationOptions: IBoomTableTransformationOptions = {
       non_matching_cells_color_bg: this.panel.non_matching_cells_color_bg,
