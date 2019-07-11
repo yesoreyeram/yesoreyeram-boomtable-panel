@@ -53,20 +53,19 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.render();
   }
   public onInitEditMode(): void {
-    this.addEditorTab("Patterns", `public/plugins/${plugin_id}/partials/patterns.html`, 2);
-    this.addEditorTab("Options", `public/plugins/${plugin_id}/partials/options.html`, 3);
+    this.addEditorTab("Patterns", `public/plugins/${plugin_id}/partials/editor.html`, 2);
   }
   public addPattern(): void {
     let newPattern = new BoomPattern({
       row_col_wrapper: this.panel.row_col_wrapper
     });
     this.panel.patterns.push(newPattern);
-    this.panel.activePatternIndex = this.panel.patterns.length - 1;
+    this.panel.activePatternIndex = this.panel.activePatternIndex === -2 ? -2 : (this.panel.patterns.length - 1);
     this.render();
   }
   public removePattern(index: Number): void {
     this.panel.patterns.splice(index, 1);
-    this.panel.activePatternIndex = (this.panel.patterns && this.panel.patterns.length > 0) ? (this.panel.patterns.length - 1) : -1;
+    this.panel.activePatternIndex = this.panel.activePatternIndex === -2 ? -2 : ((this.panel.patterns && this.panel.patterns.length > 0) ? (this.panel.patterns.length - 1) : -1);
     this.render();
   }
   public movePattern(direction: string, index: Number) {
@@ -74,12 +73,12 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     if (direction === "UP") {
       this.panel.patterns[Number(index)] = this.panel.patterns[Number(index) - 1];
       this.panel.patterns[Number(index) - 1] = tempElement;
-      this.panel.activePatternIndex = Number(index) - 1;
+      this.panel.activePatternIndex = this.panel.activePatternIndex === -2 ? -2 : Number(index) - 1;
     }
     if (direction === "DOWN") {
       this.panel.patterns[Number(index)] = this.panel.patterns[Number(index) + 1];
       this.panel.patterns[Number(index) + 1] = tempElement;
-      this.panel.activePatternIndex = Number(index) + 1;
+      this.panel.activePatternIndex = this.panel.activePatternIndex === -2 ? -2 : Number(index) + 1;
     }
     this.render();
   }

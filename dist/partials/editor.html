@@ -3,8 +3,8 @@
         <aside class="edit-sidemenu-aside">
             <ul class="edit-sidemenu">
                 <li>
-                    <a>
-                        <h5 class="text-warning">Patterns</h5>
+                    <a ng-click="ctrl.panel.activePatternIndex = -2">
+                        <h5 class="text-warning"><i class="fa fa-gear" style="margin-right: 7px;"></i> Patterns</h5>
                     </a>
                 </li>
                 <li ng-repeat="pattern in ctrl.panel.patterns track by $index" ng-class="{active: ctrl.panel.activePatternIndex === $index}">
@@ -16,11 +16,75 @@
                 </li>
                 <li>
                     <a class="pointer" ng-click="ctrl.addPattern()">
-                        <i class="fa fa-plus"></i>&nbsp;Add
+                        <i class="fa fa-plus"></i>&nbsp;Add Pattern
                     </a>
+                </li>
+                <li>
+                    <a ng-click="ctrl.panel.activePatternIndex = -3">
+                        <h5 class="text-warning"><i class="fa fa-gear" style="margin-right: 7px;"></i> Options</h5>
+                    </a>
+                </li>
+                <li>
+                    <a ng-click="ctrl.panel.activePatternIndex = -3">General</a>
                 </li>
             </ul>
         </aside>
+        <div class="edit-tab-content" ng-if="ctrl.panel.activePatternIndex === -2">
+            <div class="editor-row">
+                <table class="table-panel-table">
+                    <thead>
+                        <tr>
+                            <th style="font-weight:bolder;text-align:center;width:15%">Pattern</th>
+                            <th style="font-weight:bolder;text-align:center;width:5%">delimiter</th>
+                            <th style="font-weight:bolder;text-align:center;width:15%">Row Name</th>
+                            <th style="font-weight:bolder;text-align:center;width:15%">Col Name</th>
+                            <th style="font-weight:bolder;text-align:center;width:10%">Stat</th>
+                            <th style="font-weight:bolder;text-align:center;width:10%">Format</th>
+                            <th style="font-weight:bolder;text-align:center;width:5%">Decimals</th>
+                            <th style="font-weight:bolder;text-align:center;width:25%">Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="pattern in ctrl.panel.patterns.concat([ctrl.panel.defaultPattern]) track by $index">
+                            <td>
+                                <input type="text" placeholder="Regex" class="gf-form-input width-12" ng-model="pattern.pattern" bs-tooltip="'Specify regex using /my.*regex/ syntax'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();" data-ng-if="$index < ctrl.panel.patterns.length">
+                                <label class="width-12 boom-label" data-ng-if="$index >= ctrl.panel.patterns.length">*</label>
+                            </td>
+                            <td>
+                                <input type="text" placeholder="Delimiter" class="gf-form-input width-4" ng-model="pattern.delimiter" bs-tooltip="'Delimiter to seperate metrics row and col'" ng-blur="ctrl.render()">
+                            </td>
+                            <td>
+                                <input type="text" placeholder="Row Name" class="gf-form-input width-12" ng-model="pattern.row_name" ng-blur="ctrl.render()">
+                            </td>
+                            <td>
+                                <input type="text" placeholder="Col Name" class="gf-form-input width-12" ng-model="pattern.col_name" ng-blur="ctrl.render()">
+                            </td>
+                            <td>
+                                <select class="gf-form-input width-10" ng-model="pattern.valueName" ng-options="f.value as f.text for f in ctrl.valueNameOptions" ng-change="ctrl.render()"></select>
+                            </td>
+                            <td>
+                                <div class="gf-form-dropdown-typeahead width-10" ng-model="pattern.format" dropdown-typeahead2="ctrl.unitFormats" dropdown-typeahead-on-select="pattern.setUnitFormat($subItem);ctrl.render();"></div>
+                            </td>
+                            <td>
+                                <input type="text" placeholder="2" class="gf-form-input width-4" ng-model="pattern.decimals" bs-tooltip="'Decimals'" ng-blur="ctrl.render()">
+                            </td>
+                            <td>
+                                <a class="btn-primary" style="display: inline-block;padding:5px;margin:5px;" ng-click="ctrl.panel.activePatternIndex = $index"> <i class="fa fa-edit"></i> </a>
+                                <a class="btn-danger" style="display: inline-block;padding:5px;margin:5px;" ng-if="$index < ctrl.panel.patterns.length" ng-click="ctrl.removePattern($index)"> <i class="fa fa-trash"></i> </a>
+                                <a class="btn-secondary" style="display: inline-block;padding:5px;margin:5px;" ng-if="$index < ctrl.panel.patterns.length" ng-click="ctrl.clonePattern($index)"> <i class="fa fa-clone"></i> </a>
+                                <a class="btn-success" style="display: inline-block;padding:5px;margin:5px;" ng-if="$index < ctrl.panel.patterns.length && $index !== 0" ng-click="ctrl.movePattern('UP',$index)"> <i class="fa fa-arrow-up"></i></a>
+                                <a class="btn-success" style="display: inline-block;padding:5px;margin:5px;" ng-if="$index < ctrl.panel.patterns.length && $index !== ctrl.panel.patterns.length-1" ng-click="ctrl.movePattern('DOWN',$index)"><i class="fa fa-arrow-down"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="editor-row">
+                <div style="text-align: center;padding:20px;">
+                    <button class="btn btn-secondary" ng-click="ctrl.addPattern()">Add New Pattern</button>
+                </div>
+            </div>
+        </div>
         <div class="edit-tab-content" ng-repeat="pattern in ctrl.panel.patterns.concat([ctrl.panel.defaultPattern]) track by $index"
             ng-if="ctrl.panel.activePatternIndex === $index">
             <div class="editor-row" id="boom-editor-pattern-info" ng-if="pattern.disabled === true">
@@ -367,6 +431,134 @@
                                 ng-click="ctrl.clonePattern($index)">
                                 <i class="fa fa-clone"></i> Clone this pattern
                             </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="edit-tab-content" ng-if="ctrl.panel.activePatternIndex === -3">
+            <div class="editor-row">
+                <div class="section gf-form-group">
+                    <div class="gr-form-inline">
+                        <div class="gf-form">
+                            <h6 class="text-header">Options</h6>
+                        </div>
+                    </div>
+                    <div class="gf-form">
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Debug</label>
+                                <input type="checkbox" class="width-4" ng-model="ctrl.panel.debug_mode" ng-blur="ctrl.render()" ng-change="ctrl.render()">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gf-form">
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Default Title for rows</label>
+                                <input type="text" placeholder="Metric" class="gf-form-input width-18" ng-model="ctrl.panel.default_title_for_rows" bs-tooltip="'Panel rows title'"
+                                    ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gf-form">
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Default Title for columns</label>
+                                <input type="text" placeholder="Value" class="gf-form-input width-18" ng-model="ctrl.panel.defaultPattern.col_name" bs-tooltip="'Panel cols title'"
+                                    ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gf-form">
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Row / Column indentification wrapper</label>
+                                <input type="text" placeholder="Value" class="gf-form-input width-18" ng-model="ctrl.panel.row_col_wrapper" bs-tooltip="'Default is _'"
+                                    ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gf-form">
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Hide First Column</label>
+                                <input type="checkbox" class="width-4" ng-model="ctrl.panel.hide_first_column" ng-blur="ctrl.render()" ng-change="ctrl.render()">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gf-form">
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Hide Headers</label>
+                                <input type="checkbox" class="width-4" ng-model="ctrl.panel.hide_headers" ng-blur="ctrl.render()" ng-change="ctrl.render()">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gf-form">
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Text alignment for first column</label>
+                                <input type="text" placeholder="LEFT/RIGHT/CENTER" class="gf-form-input width-18" ng-model="ctrl.panel.text_alignment_firstcolumn" bs-tooltip="'Default is LEFT'"
+                                    ng-blur="ctrl.render()" data-ng-change="ctrl.render();" bs-typeahead="ctrl.textAlignmentOptions" data-min-length=0 data-items=100 ng-model-onblur
+                                    data-placement="right">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gf-form">
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Text alignment for values</label>
+                                <input type="text" placeholder="LEFT/RIGHT/CENTER" class="gf-form-input width-18" ng-model="ctrl.panel.text_alignment_values" bs-tooltip="'Default is LEFT'"
+                                    ng-blur="ctrl.render()" data-ng-change="ctrl.render();" bs-typeahead="ctrl.textAlignmentOptions" data-min-length=0 data-items=100 ng-model-onblur
+                                    data-placement="right">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gf-form">
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Text alignment for table header</label>
+                                <input type="text" placeholder="LEFT/RIGHT/CENTER" class="gf-form-input width-18" ng-model="ctrl.panel.text_alignment_header" bs-tooltip="'Default is LEFT'"
+                                    ng-blur="ctrl.render()" data-ng-change="ctrl.render();" bs-typeahead="ctrl.textAlignmentOptions" data-min-length=0 data-items=100 ng-model-onblur
+                                    data-placement="right">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="editor-row">
+                <div class="section gf-form-group">
+                    <div class="gr-form-inline">
+                        <div class="gf-form">
+                            <h6 class="text-header">Non matching series</h6>
+                        </div>
+                    </div>
+                    <div class="gf-form">
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Non matching cells text</label>
+                                <input type="text" placeholder="N/A" class="gf-form-input width-18" ng-model="ctrl.panel.non_matching_cells_text" bs-tooltip="'Cell text for the non matching series. Leave blank if you dont need any text'"
+                                    ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gf-form">
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Non matching cells BG Color</label>
+                                <input type="text" placeholder="red" class="gf-form-input width-18" ng-model="ctrl.panel.non_matching_cells_color_bg" bs-tooltip="'Cell text for the non matching series. Leave blank if you dont need any text'"
+                                    ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gf-form">
+                        <div class="gr-form-inline">
+                            <div class="gf-form">
+                                <label class="gf-form-label width-20">Non matching cells Text Color</label>
+                                <input type="text" placeholder="white" class="gf-form-input width-18" ng-model="ctrl.panel.non_matching_cells_color_text" bs-tooltip="'Cell text for the non matching series. Leave blank if you dont need any text'"
+                                    ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                            </div>
                         </div>
                     </div>
                 </div>
