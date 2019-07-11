@@ -69,11 +69,11 @@
                                 <input type="text" placeholder="2" class="gf-form-input width-4" ng-model="pattern.decimals" bs-tooltip="'Decimals'" ng-blur="ctrl.render()">
                             </td>
                             <td>
-                                <a class="btn-primary" style="display: inline-block;padding:5px;margin:5px;" ng-click="ctrl.panel.activePatternIndex = $index"> <i class="fa fa-edit"></i> </a>
-                                <a class="btn-danger" style="display: inline-block;padding:5px;margin:5px;" ng-if="$index < ctrl.panel.patterns.length" ng-click="ctrl.removePattern($index)"> <i class="fa fa-trash"></i> </a>
-                                <a class="btn-secondary" style="display: inline-block;padding:5px;margin:5px;" ng-if="$index < ctrl.panel.patterns.length" ng-click="ctrl.clonePattern($index)"> <i class="fa fa-clone"></i> </a>
-                                <a class="btn-success" style="display: inline-block;padding:5px;margin:5px;" ng-if="$index < ctrl.panel.patterns.length && $index !== 0" ng-click="ctrl.movePattern('UP',$index)"> <i class="fa fa-arrow-up"></i></a>
-                                <a class="btn-success" style="display: inline-block;padding:5px;margin:5px;" ng-if="$index < ctrl.panel.patterns.length && $index !== ctrl.panel.patterns.length-1" ng-click="ctrl.movePattern('DOWN',$index)"><i class="fa fa-arrow-down"></i></a>
+                                <a class="btn-primary" title="Edit Pattern" style="display: inline-block;padding:5px;margin:5px;" ng-click="ctrl.panel.activePatternIndex = $index"> <i class="fa fa-edit"></i> </a>
+                                <a class="btn-danger" title="Delete Pattern" style="display: inline-block;padding:5px;margin:5px;" ng-if="$index < ctrl.panel.patterns.length" ng-click="ctrl.removePattern($index)"> <i class="fa fa-trash"></i> </a>
+                                <a class="btn-secondary" title="Clone Pattern" style="display: inline-block;padding:5px;margin:5px;" ng-if="$index < ctrl.panel.patterns.length" ng-click="ctrl.clonePattern($index)"> <i class="fa fa-clone"></i> </a>
+                                <a class="btn-success" title="Move Pattern Up" style="display: inline-block;padding:5px;margin:5px;" ng-if="$index < ctrl.panel.patterns.length && $index !== 0" ng-click="ctrl.movePattern('UP',$index)"> <i class="fa fa-arrow-up"></i></a>
+                                <a class="btn-success" title="Move Pattern Down" style="display: inline-block;padding:5px;margin:5px;" ng-if="$index < ctrl.panel.patterns.length && $index !== ctrl.panel.patterns.length-1" ng-click="ctrl.movePattern('DOWN',$index)"><i class="fa fa-arrow-down"></i></a>
                             </td>
                         </tr>
                     </tbody>
