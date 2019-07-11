@@ -48,7 +48,7 @@
                         <tr ng-repeat="pattern in ctrl.panel.patterns.concat([ctrl.panel.defaultPattern]) track by $index">
                             <td>
                                 <input type="text" placeholder="Regex" class="gf-form-input width-12" ng-model="pattern.pattern" bs-tooltip="'Specify regex using /my.*regex/ syntax'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();" data-ng-if="$index < ctrl.panel.patterns.length">
-                                <label class="width-12 boom-label" data-ng-if="$index >= ctrl.panel.patterns.length">*</label>
+                                <label class="width-12 boom-label" data-ng-if="$index >= ctrl.panel.patterns.length">Default Pattern (*)</label>
                             </td>
                             <td>
                                 <input type="text" placeholder="Delimiter" class="gf-form-input width-4" ng-model="pattern.delimiter" bs-tooltip="'Delimiter to seperate metrics row and col'" ng-blur="ctrl.render()">
