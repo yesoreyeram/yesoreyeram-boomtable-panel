@@ -82,8 +82,8 @@ class BoomSeries implements IBoomSeries {
                 this.hidden = true;
             }
         }
-        this.row_name = this.getRowName(this.pattern, this.row_col_wrapper, this.seriesName.toString());
-        this.col_name = this.getColName(this.pattern, this.row_col_wrapper, this.seriesName.toString(), this.row_name);
+        this.row_name = this.getRowName(this.pattern, this.row_col_wrapper, (this.seriesName || "").toString());
+        this.col_name = this.getColName(this.pattern, this.row_col_wrapper, (this.seriesName || "").toString(), this.row_name);
         this.thresholds = this.getThresholds(templateSrv, scopedVars);
         this.color_bg = this.getBGColor(templateSrv, scopedVars);
         this.color_text = this.getTextColor(templateSrv, scopedVars);
