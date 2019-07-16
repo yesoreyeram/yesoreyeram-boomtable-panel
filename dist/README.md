@@ -305,6 +305,34 @@ If your row name / col name / transform metrics contains strings that starts wit
 
 ` _fa-apple,,5_ `           ->  APPLE icon in default color repeated 5 times
 
+` _fa-square,red,3,gray,10_ ` -> 3 RED Square iconds and then 7 gray square icons  ( only from version 1.3.0, fill icons considered )
+
+` _fa-square,red,76/10,gray,10_ ` -> 8 RED Square iconds and then 2 gray square icons  ( only from version 1.3.0, math expressions are considered )
+
+` _fa-square,red,34/10,gray,10_ ` -> 3 RED Square iconds and then 7 gray square icons  ( only from version 1.3.0, math expressions are considered )
+
+In summary, the format of the font awesome token should be in the following format
+
+* this token should be surrounded by one or more empty spaces. 
+* this should start with `_fa-` and ends with `_`
+* should be comma seperated
+* index 0 is fa-iconname where iconname can be any valid font awesome icon
+* index 1 should be color of the icon. If empty default text color / threshold text color will be considered
+* index 2 should be repeat count ( can be simple one level math expression )
+* index 3 should be empty repeat color. If empty default text color / threshold text color will be considered
+* index 4 should be max repeat count ( can be simple one level math expression )
+* index 2 and 4 can have valid math expression like below
+    * 15    ---- valid
+    * 23+12 ---- valid and will yield 35
+    * 24-10 ---- valid and will yield 14
+    * 2.4*10 ---- valid and will yield 24
+    * 15/3  ---- valid and will yield 5
+    * 29/4  ---- valid and will yield 7
+    * 97/10 ---- valid and will yield 10
+    * 23max12 ---- valid and will yield 23
+    * 23min12 ---- valid and will yield 12
+    * 3.36max2 ---- valid and will yield 3
+
 **Example implementations of icons in metrics:** (Unlimited possibilites like heatmap)
 
 ![Font Awesome Icons support](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/font-awesome-examples.png)

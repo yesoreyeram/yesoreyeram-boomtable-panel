@@ -5,6 +5,12 @@ import TimeSeries from "app/core/time_series2";
 import _ from "lodash";
 import { IBoomSeries, replaceTokens, getActualNameWithoutTokens, getDecimalsForValue, getItemBasedOnThreshold, normalizeColor } from "./index";
 
+const get_formatted_value = function (value, decimals, format): string {
+    let decimalInfo: any = getDecimalsForValue(value, decimals);
+    let formatFunc = kbn.valueFormats[format];
+    return formatFunc(value, decimalInfo.decimals, decimalInfo.scaledDecimals);
+};
+
 class BoomSeries implements IBoomSeries {
     private debug_mode: Boolean;
     private pattern: any;
@@ -68,12 +74,9 @@ class BoomSeries implements IBoomSeries {
                 this.display_value = String(this.value);
             }
             if (!isNaN(this.value)) {
-                let decimalInfo: any = getDecimalsForValue(this.value, this.decimals);
-                let formatFunc = kbn.valueFormats[this.pattern.format];
-                this.value_formatted = formatFunc(this.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
+                this.value_formatted = get_formatted_value(this.value, this.decimals, this.pattern.format);
                 this.display_value = String(this.value_formatted);
             }
-            this.template_value = this.display_value;
         }
         if (this.value && this.pattern && this.pattern.filter && (this.pattern.filter.value_below !== "" || this.pattern.filter.value_above !== "")) {
             if (this.pattern.filter.value_below !== "" && this.value < +(this.pattern.filter.value_below)) {
@@ -97,7 +100,7 @@ class BoomSeries implements IBoomSeries {
             this.link += (this.link.indexOf("?") > -1 ? `&from=${range.from}` : `?from=${range.from}`);
             this.link += `&to=${range.to}`;
         }
-        this.replaceTokens(templateSrv, scopedVars);
+        this.replaceTokens(templateSrv, scopedVars, series);
         this.cleanup();
     }
     private getThresholds(templateSrv: any, scopedVars: any) {
@@ -127,6 +130,7 @@ class BoomSeries implements IBoomSeries {
                 bgColor = "transparent";
             }
         } else {
+            bgColor = this.pattern.defaultBGColor || bgColor;
             if (this.pattern.enable_bgColor && this.pattern.bgColors) {
                 let list_of_bgColors_based_on_thresholds = templateSrv.replace(this.pattern.bgColors, scopedVars).split("|");
                 bgColor = getItemBasedOnThreshold(this.thresholds, list_of_bgColors_based_on_thresholds, this.value, bgColor);
@@ -146,6 +150,7 @@ class BoomSeries implements IBoomSeries {
         if (_.isNaN(this.value) || this.value === null) {
             textColor = this.pattern.null_textcolor || textColor;
         } else {
+            textColor = this.pattern.defaultTextColor || textColor;
             if (this.pattern.enable_textColor && this.pattern.textColors) {
                 let list_of_textColors_based_on_thresholds = templateSrv.replace(this.pattern.textColors, scopedVars).split("|");
                 textColor = getItemBasedOnThreshold(this.thresholds, list_of_textColors_based_on_thresholds, this.value, textColor);
@@ -160,13 +165,14 @@ class BoomSeries implements IBoomSeries {
         return normalizeColor(textColor);
     }
     private getDisplayValueTemplate(): string {
-        let template = this.template_value;
+        let template = "_value_";
         if (_.isNaN(this.value) || this.value === null) {
             template = this.pattern.null_value || "No data";
             if (this.pattern.null_value === "") {
                 template = "";
             }
         } else {
+            template = this.pattern.displayTemplate || template;
             if (this.pattern.enable_transform) {
                 let transform_values = this.pattern.transform_values.split("|");
                 template = getItemBasedOnThreshold(this.thresholds, transform_values, this.value, template);
@@ -220,7 +226,7 @@ class BoomSeries implements IBoomSeries {
         this.template_col_name = col_name;
         return col_name;
     }
-    private replaceTokens(templateSrv: any, scopedVars: any) {
+    private replaceTokens(templateSrv: any, scopedVars: any, series: any) {
         // colnames can be specified in the link
         this.link = this.seriesName.split(this.pattern.delimiter || ".").reduce((r, it, i) => {
             return r.replace(new RegExp(this.row_col_wrapper + i + this.row_col_wrapper, "g"), it);
@@ -246,6 +252,16 @@ class BoomSeries implements IBoomSeries {
         this.link = this.link.replace(new RegExp("_value_raw_", "g"), value_raw);
         this.tooltip = this.tooltip.replace(new RegExp("_value_raw_", "g"), value_raw);
         this.display_value = this.display_value.replace(new RegExp("_value_raw_", "g"), value_raw);
+        this.display_value = this.display_value.replace(new RegExp("_value_min_raw_", "g"), series.stats.min);
+        this.display_value = this.display_value.replace(new RegExp("_value_min_", "g"), get_formatted_value(series.stats.min, this.decimals, this.pattern.format));
+        this.display_value = this.display_value.replace(new RegExp("_value_max_raw_", "g"), series.stats.max);
+        this.display_value = this.display_value.replace(new RegExp("_value_max_", "g"), get_formatted_value(series.stats.max, this.decimals, this.pattern.format));
+        this.display_value = this.display_value.replace(new RegExp("_value_avg_raw_", "g"), series.stats.avg);
+        this.display_value = this.display_value.replace(new RegExp("_value_avg_", "g"), get_formatted_value(series.stats.avg, this.decimals, this.pattern.format));
+        this.display_value = this.display_value.replace(new RegExp("_value_current_raw_", "g"), series.stats.current);
+        this.display_value = this.display_value.replace(new RegExp("_value_current_", "g"), get_formatted_value(series.stats.current, this.decimals, this.pattern.format));
+        this.display_value = this.display_value.replace(new RegExp("_value_total_raw_", "g"), series.stats.total);
+        this.display_value = this.display_value.replace(new RegExp("_value_total_", "g"), get_formatted_value(series.stats.total, this.decimals, this.pattern.format));
         // _value_ can be specified in Display Value, Tooltip & Link
         let value_formatted = _.isNaN(this.value) || this.value === null ? "null" : this.value_formatted.toString().trim();
         this.link = this.link.replace(new RegExp("_value_", "g"), value_formatted);
@@ -255,6 +271,7 @@ class BoomSeries implements IBoomSeries {
         this.row_name = replaceTokens(this.row_name);
         this.col_name = replaceTokens(this.col_name);
         this.display_value = replaceTokens(this.display_value);
+
         // Replace Grafana Variables
         this.row_name = templateSrv.replace(this.row_name, scopedVars);
         this.col_name = templateSrv.replace(this.col_name, scopedVars);

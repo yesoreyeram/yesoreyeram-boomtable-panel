@@ -155,6 +155,18 @@
                                 bs-tooltip="'Decimals'" ng-blur="ctrl.render()">
                         </div>
                     </div>
+                    <div class="gr-form-inline">
+                        <div class="gf-form">
+                            <label class="gf-form-label width-12">Value Template</label>
+                            <input type="text" placeholder="_value_" class="gf-form-input width-18" ng-model="pattern.displayTemplate" bs-tooltip="'Template'" ng-blur="ctrl.render()">
+                            <span class="split"></span>
+                            <label class="gf-form-label width-12">BG Color</label>
+                            <input type="text" placeholder="transparent" class="gf-form-input width-18" ng-model="pattern.defaultBGColor" bs-tooltip="'Default BG Color'" ng-blur="ctrl.render()">
+                            <span class="split"></span>
+                            <label class="gf-form-label width-12">Text Color</label>
+                            <input type="text" placeholder="white" class="gf-form-input width-6" ng-model="pattern.defaultTextColor" bs-tooltip="'Default Text Color'" ng-blur="ctrl.render()">
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="editor-row" id="boom-editor-pattern-thresholds">

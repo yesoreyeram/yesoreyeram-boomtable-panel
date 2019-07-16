@@ -9,15 +9,49 @@ const normalizeColor = function (color) {
         return "rgba(245, 54, 54, 0.9)";
     } else { return color.toLowerCase(); }
 };
+const parseMathExpression = function (expression, index): number {
+    let valuestring = expression.replace(/\_/g, "").split(",")[index];
+    let returnvalue = 0;
+    if (valuestring.indexOf("+") > -1) {
+        returnvalue = +(valuestring.split("+")[0]) + +(valuestring.split("+")[1]);
+    } else if (valuestring.indexOf("-") > -1) {
+        returnvalue = +(valuestring.split("-")[0]) - +(valuestring.split("-")[1]);
+    } else if (valuestring.indexOf("*") > -1) {
+        returnvalue = +(valuestring.split("*")[0]) * +(valuestring.split("*")[1]);
+    } else if (valuestring.indexOf("/") > -1) {
+        returnvalue = +(valuestring.split("/")[0]) / +(valuestring.split("/")[1]);
+    } else if (valuestring.indexOf("min") > -1) {
+        returnvalue = _.min([+(valuestring.split("min")[0]), +(valuestring.split("min")[1])]) || 0;
+    } else if (valuestring.indexOf("max") > -1) {
+        returnvalue = _.max([+(valuestring.split("max")[0]), +(valuestring.split("max")[1])]) || 0;
+    } else if (valuestring.indexOf("mean") > -1) {
+        returnvalue = _.mean([+(valuestring.split("avg")[0]), +(valuestring.split("avg")[1])]) || 0;
+    } else {
+        returnvalue = +(valuestring);
+    }
+    return Math.round(+(returnvalue));
+};
+const getColor = function (expression, index) {
+    let returnValue = (expression || "").split(",").length > index ? ` style="color:${normalizeColor(expression.replace(/\_/g, "").split(",")[index])}" ` : "";
+    return returnValue;
+};
 const replaceTokens = function (value) {
     if (!value) { return value; }
     value = value + "";
     value = value.split(" ").map(a => {
         if (a.startsWith("_fa-") && a.endsWith("_")) {
+            let returnvalue = "";
             let icon = a.replace(/\_/g, "").split(",")[0];
-            let color = a.indexOf(",") > -1 ? ` style="color:${normalizeColor(a.replace(/\_/g, "").split(",")[1])}" ` : "";
-            let repeatCount = a.split(",").length > 2 ? +(a.replace(/\_/g, "").split(",")[2]) : 1;
-            a = `<i class="fa ${icon}" ${color}></i> `.repeat(repeatCount);
+            let color = getColor(a, 1);
+            let repeatCount = a.split(",").length >= 3 ? parseMathExpression(a, 2) : 1;
+            returnvalue = `<i class="fa ${icon}" ${color}></i> `.repeat(repeatCount);
+            if (a.split(",").length >= 4) {
+                let maxColor = getColor(a, 3);
+                let maxLength = a.split(",").length >= 5 ? parseMathExpression(a, 4) : 0;
+                returnvalue += `<i class="fa ${icon}" ${maxColor}></i> `.repeat(_.max([maxLength - repeatCount, 0]) || 0);
+            }
+            return returnvalue;
+
         } else if (a.startsWith("_img-") && a.endsWith("_")) {
             a = a.slice(0, -1);
             let imgUrl = a.replace("_img-", "").split(",")[0];
@@ -99,7 +133,7 @@ const getItemBasedOnThreshold = function (thresholds, ranges, value, defaultValu
                 return ranges[i];
             }
         }
-        return _.first(ranges);
+        return _.first(ranges) || "";
     }
     return c;
 

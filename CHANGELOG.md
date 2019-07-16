@@ -2,6 +2,9 @@
 
 | Version            | Changes |
 | -------------------|-----------|
+| 1.3.0              | More options in display template (Min, Max, Avg, Current, Total etc) | 
+|                    | Font awesome icons empty fill |
+|                    | Maths expression in font awesome repeat mode |
 | 1.2.1              | Time range in cell links |
 |                    | Time of last data point stat added |
 |                    | Patterns Quick Editor |

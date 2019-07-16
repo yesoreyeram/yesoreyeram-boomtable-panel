@@ -6,6 +6,9 @@ class BoomPattern implements IBoomPattern {
     public bgColors_overrides: string;
     public clickable_cells_link: string;
     public col_name: string;
+    public displayTemplate: string;
+    public defaultBGColor: string;
+    public defaultTextColor: string;
     public decimals: Number;
     public delimiter: string;
     public enable_bgColor: Boolean;
@@ -53,6 +56,9 @@ class BoomPattern implements IBoomPattern {
         this.col_name = options && options.col_name ? options.col_name : this.row_col_wrapper + "1" + this.row_col_wrapper;
         this.decimals = options && options.decimals ? options.decimals : 2;
         this.delimiter = options && options.delimiter ? options.delimiter : ".";
+        this.displayTemplate = options && options.displayTemplate ? options.displayTemplate : "_value_";
+        this.defaultBGColor = options && options.defaultBGColor ? options.defaultBGColor : "";
+        this.defaultTextColor = options && options.defaultTextColor ? options.defaultTextColor : "";
         this.enable_bgColor = false;
         this.enable_bgColor_overrides = false;
         this.enable_textColor = false;

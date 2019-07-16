@@ -13,6 +13,9 @@ interface IBoomPattern {
     enable_time_based_thresholds: Boolean;
     enable_transform: Boolean;
     enable_transform_overrides: Boolean;
+    displayTemplate: string;
+    defaultBGColor: string;
+    defaultTextColor: string;
     filter: {
         value_above: string;
         value_below: string;
