@@ -11,6 +11,66 @@ const get_formatted_value = function (value, decimals, format): string {
     return formatFunc(value, decimalInfo.decimals, decimalInfo.scaledDecimals);
 };
 
+const getMetricNameFromAlias = function (target): string {
+    target = target.trim();
+    let _metricname = target;
+    if (target.indexOf("{") > -1 && target.indexOf("}") > -1 && target[target.length - 1] === "}") {
+        _metricname = target.split("{")[0].trim();
+    }
+    return _metricname;
+};
+
+const getLablesFromAlias = function (target, label): any[] {
+    let _tags: any[] = [];
+    target = target.trim();
+    let tagsstring = target.replace(label, "").trim();
+    if (tagsstring.startsWith("{") && tagsstring.endsWith("}")) {
+        // Snippet from https://github.com/grafana/grafana/blob/3f15170914c3189ee7835f0b19ff500db113af73/packages/grafana-data/src/utils/labels.ts
+        const parsePrometheusLabels = function (labels: string) {
+            const labelsByKey: any = {};
+            labels.replace(/\b(\w+)(!?=~?)"([^"\n]*?)"/g, (__, key, operator, value) => {
+                if (!operator) {
+                    console.log(operator);
+                }
+                labelsByKey[key] = value;
+                return '';
+            });
+            return labelsByKey;
+        };
+        _.each(parsePrometheusLabels(tagsstring), (k: string, v: string) => {
+            _tags.push({ tag: v, value: k });
+        });
+        if (tagsstring.indexOf(":") > -1 && _tags.length === 0) {
+            let label_values = tagsstring.slice(1).trim().slice(0, -1).trim() || "";
+            _tags = label_values
+                .split(",")
+                .map(item => (item || "").trim())
+                .filter(item => item && item.indexOf(":") > -1)
+                .map(item => {
+                    if (item.split(":").length === 2) {
+                        let ret: any = {};
+                        ret.tag = item.split(":")[0].trim();
+                        ret.value = item.split(":")[1].trim();
+                        return ret;
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(item => item);
+        }
+    }
+    return _tags;
+};
+
+const replace_tags_from_field = function (field: string, tags: any[]): string {
+    if (tags && tags.length > 0) {
+        field = tags.reduce((r, it) => {
+            return r.replace(new RegExp("{{" + it.tag.trim() + "}}", "g"), it.value).replace(/\"/g, "");
+        }, field);
+    }
+    return field;
+};
+
 class BoomSeries implements IBoomSeries {
     private debug_mode: Boolean;
     private pattern: any;
@@ -33,6 +93,8 @@ class BoomSeries implements IBoomSeries {
     public link = "-";
     public thresholds: Number[];
     public hidden: Boolean;
+    public _metricname = "";
+    public _tags: any[] = [];
     constructor(seriesData: any, panelDefaultPattern: any, panelPatterns: any[], options: any, scopedVars: any, templateSrv: any, timeSrv: any) {
         this.debug_mode = options && options.debug_mode === true ? true : false;
         let nullPointMode = options && options.nullPointMode ? options.nullPointMode : "connected";
@@ -85,6 +147,10 @@ class BoomSeries implements IBoomSeries {
             if (this.pattern.filter.value_above !== "" && this.value > +(this.pattern.filter.value_above)) {
                 this.hidden = true;
             }
+        }
+        if (this.pattern.delimiter.toLowerCase() === "tag") {
+            this._metricname = getMetricNameFromAlias(seriesData.target);
+            this._tags = getLablesFromAlias(seriesData.target, this._metricname);
         }
         this.row_name = this.getRowName(this.pattern, this.row_col_wrapper, (this.seriesName || "").toString());
         this.row_name_raw = this.getRowName(this.pattern, this.row_col_wrapper, (this.seriesName || "").toString());
@@ -206,22 +272,32 @@ class BoomSeries implements IBoomSeries {
     }
     private getRowName(pattern, row_col_wrapper: string, seriesName: string): string {
         let row_name = pattern.row_name;
-        row_name = seriesName.split(pattern.delimiter || ".").reduce((r, it, i) => {
-            return r.replace(new RegExp(row_col_wrapper + i + row_col_wrapper, "g"), it);
-        }, row_name);
-        if (seriesName.split(pattern.delimiter || ".").length === 1) {
-            row_name = seriesName;
+        if (pattern.delimiter.toLowerCase() === "tag") {
+            row_name = row_name.replace(new RegExp("{{metric_name}}", "g"), this._metricname);
+            row_name = replace_tags_from_field(row_name, this._tags);
+        } else {
+            row_name = seriesName.split(pattern.delimiter || ".").reduce((r, it, i) => {
+                return r.replace(new RegExp(row_col_wrapper + i + row_col_wrapper, "g"), it);
+            }, row_name);
+            if (seriesName.split(pattern.delimiter || ".").length === 1) {
+                row_name = seriesName;
+            }
         }
         this.template_row_name = row_name;
         return row_name;
     }
     private getColName(pattern, row_col_wrapper: string, seriesName: string, row_name: string): string {
         let col_name = pattern.col_name;
-        col_name = seriesName.split(pattern.delimiter || ".").reduce((r, it, i) => {
-            return r.replace(new RegExp(row_col_wrapper + i + row_col_wrapper, "g"), it);
-        }, col_name);
-        if (seriesName.split(pattern.delimiter || ".").length === 1 || row_name === seriesName) {
-            col_name = pattern.col_name || "Value";
+        if (pattern.delimiter.toLowerCase() === "tag") {
+            col_name = col_name.replace(new RegExp("{{metric_name}}", "g"), this._metricname);
+            row_name = replace_tags_from_field(col_name, this._tags);
+        } else {
+            col_name = seriesName.split(pattern.delimiter || ".").reduce((r, it, i) => {
+                return r.replace(new RegExp(row_col_wrapper + i + row_col_wrapper, "g"), it);
+            }, col_name);
+            if (seriesName.split(pattern.delimiter || ".").length === 1 || row_name === seriesName) {
+                col_name = pattern.col_name || "Value";
+            }
         }
         this.template_col_name = col_name;
         return col_name;
@@ -262,6 +338,14 @@ class BoomSeries implements IBoomSeries {
         this.display_value = this.display_value.replace(new RegExp("_value_current_", "g"), get_formatted_value(series.stats.current, this.decimals, this.pattern.format));
         this.display_value = this.display_value.replace(new RegExp("_value_total_raw_", "g"), series.stats.total);
         this.display_value = this.display_value.replace(new RegExp("_value_total_", "g"), get_formatted_value(series.stats.total, this.decimals, this.pattern.format));
+        if ((this.pattern.delimiter || "").toLowerCase() === "tag") {
+            this.display_value = this.display_value.replace(new RegExp("{{metric_name}}", "g"), this._metricname);
+            this.link = this.link.replace(new RegExp("{{metric_name}}", "g"), this._metricname);
+            this.tooltip = this.tooltip.replace(new RegExp("{{metric_name}}", "g"), this._metricname);
+            this.display_value = replace_tags_from_field(this.display_value, this._tags);
+            this.link = replace_tags_from_field(this.link, this._tags);
+            this.tooltip = replace_tags_from_field(this.tooltip, this._tags);
+        }
         // _value_ can be specified in Display Value, Tooltip & Link
         let value_formatted = _.isNaN(this.value) || this.value === null ? "null" : this.value_formatted.toString().trim();
         this.link = this.link.replace(new RegExp("_value_", "g"), value_formatted);

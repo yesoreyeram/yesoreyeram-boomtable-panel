@@ -47,6 +47,8 @@ interface IBoomSeries {
     tooltip: string;
     value_formatted: string;
     link: string;
+    _tags: any[];
+    _metricname: string;
 }
 interface IBoomTimeBasedThreshold {
     enabledDays: string;

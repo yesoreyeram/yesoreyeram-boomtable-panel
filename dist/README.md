@@ -399,23 +399,43 @@ Options
 
 `Font Size` -> Specify font size to be used in the table. Leave blank for default. size can be specified in css units such as `1.4rem` , `16px` etc
 
-Prometheus Guidelines
----------------------
-
-Though this plugin was initially designed to support graphite, It is also capable of handling timeseries database like Prometheus. In order to achieve this, you need to **alias** your timeseries/Prometheus metrics to proper delimited format. Following screenshot explains plugin usage with Prometheus where the metrics are aliased with pipe delimiter. This can be any delimiter like space, dot, etc.#
-
-![Prometheus Usage](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/prometheus-usage.png)
-
-InfluxDB Guidelines 
---------------------
-
-Though this plugin was initially designed to support graphite, It is also capable of handling timeseries database like influxDB. In order to achieve this, you need to **alias** your timeseries/InfluxDB metrics to some proper delimited format. Following screenshot explains plugin usage with influxdb where the metrics are aliased with dot delimiter.This can be any delimiter like space, dot, etc.
-
-![InfluxDB Usage](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/influx-usage.png)
-
 Azure Monitor Usage
 -------------------
 
 Same as other time series data sources. You need to properly format your legend to extract the row and column name.
 
 ![Azure Monitor Usage](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/azure-monitor-usage.png)
+
+Prometheus & InfluxDB Guidelines
+---------------------
+
+Though this plugin was initially designed to support graphite, It is also capable of handling timeseries database like Prometheus & InfluxDB. In order to achieve this, you need to **alias** your timeseries/Prometheus/Infludb metrics to proper delimited format. Following screenshot explains plugin usage with Prometheus/InfluxDB where the metrics are aliased with pipe delimiter. This can be any delimiter like space, dot, etc.#
+
+![Prometheus Usage](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/prometheus-usage.png)
+
+![InfluxDB Usage](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/influx-usage.png)
+
+Optionally, you can experiement with the new tags feature instead of **alias** . (Not for production use)
+
+Tag delimiter for influxdb and prometheus   ( Experimental Feature )
+====================================================================
+
+**WARNING** :  This may have bugs. Not suitable for production.
+
+To use , tags from your series use `tag` as a delimiter as shown below. Then in the row / column, you can specify the tags surronded by double curly braces as shown below. Metric can be referred by {{metric_name}}}.
+
+Rowname, Colname, Links, Tooltips and display template can also have this tag tokens.
+
+# Influx DB
+
+![image](https://user-images.githubusercontent.com/153843/61379520-9be12200-a89f-11e9-8bcd-b55e7f86249d.png)
+![image](https://user-images.githubusercontent.com/153843/61379533-a4395d00-a89f-11e9-8fd8-b62c3df0630a.png)
+![image](https://user-images.githubusercontent.com/153843/61379567-b1eee280-a89f-11e9-81dc-f128b5ec17dd.png)
+
+
+# Prometheus
+
+![image](https://user-images.githubusercontent.com/153843/61379602-c206c200-a89f-11e9-8dfb-462e5f28965b.png)
+![image](https://user-images.githubusercontent.com/153843/61379630-cf23b100-a89f-11e9-9677-bfa05c05d7ea.png)
+![image](https://user-images.githubusercontent.com/153843/61379652-db0f7300-a89f-11e9-8cef-254e8f1a8b7a.png)
+

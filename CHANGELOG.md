@@ -2,6 +2,7 @@
 
 | Version            | Changes |
 | -------------------|-----------|
+| 1.3.1              | Tags for prometheus and influxdb (EXPERIMENTAL FEATURE) |
 | 1.3.0              | More options in display template (Min, Max, Avg, Current, Total etc) | 
 |                    | Font awesome icons empty fill |
 |                    | Maths expression in font awesome repeat mode |
