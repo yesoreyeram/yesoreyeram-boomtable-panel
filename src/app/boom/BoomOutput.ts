@@ -31,7 +31,7 @@ BoomOutput.prototype.getDataAsHTML = function (data: IBoomTable, sorting_props):
   let output: IBoomHTML = {
     body: ""
   };
-  if (sorting_props && sorting_props.col_index !== undefined && sorting_props.col_index > -1) {
+  if (sorting_props && sorting_props.col_index !== undefined && sorting_props.col_index > -1 && data && data.output && data.output.length >= sorting_props.col_index) {
     let sortFunction = (a, b, sortMethod) => {
       if (sortMethod === "asc") {
         return a[sorting_props.col_index].value - b[sorting_props.col_index].value;
