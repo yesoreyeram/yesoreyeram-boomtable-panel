@@ -209,13 +209,28 @@ Value transformation based on thresholds
 
 Logic is same as background color. But the value to be displayed can be altered here. Display value will be replaced with the value provided. Values are seperated by pipe. if the value is wrapped with _, then it will represent the actual value. 
 
-`_value_` will be replaced by actual value
+`_value_` will be replaced by actual value with format and decimals
+
+`_value_raw_` will be replaced by actual value without format and decimals
 
 `_row_name_` will be replaced by row name. This will be useful when you hide the first column.
 
 `_col_name_` will be replaced by col name. This will be useful when you hide the table header.
 
 `_n_` will be replaced by nth part of the series using `_` delimiter. Same rule as row_name and col_name
+
+The following tokens can be also used in value transform / default value template
+
+`_value_min_raw_` - Min value of the series without formatting
+`_value_min_` - Min value of the series with formatting
+`_value_max_raw_`- Max value of the series without formatting
+`_value_max_` - Max value of the series with formatting
+`_value_avg_raw_`- Average value of the series without formatting
+`_value_avg_` - Average value of the series with formatting
+`_value_current_raw_`- Current value of the series without formatting
+`_value_current_` - Current value of the series with formatting
+`_value_total_raw_`- Total value of the series without formatting
+`_value_total_` - Total value of the series with formatting
 
 Example transformation patterns :
 
