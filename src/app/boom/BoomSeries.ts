@@ -2,7 +2,8 @@
 
 import TimeSeries from "app/core/time_series2";
 import _ from "lodash";
-import { IBoomSeries, replaceTokens, getActualNameWithoutTokens, getItemBasedOnThreshold, normalizeColor, get_formatted_value, getMetricNameFromTaggedAlias, getLablesFromTaggedAlias, replace_tags_from_field } from "./index";
+import { IBoomSeries, replaceTokens, getActualNameWithoutTokens, getItemBasedOnThreshold, normalizeColor, getMetricNameFromTaggedAlias, getLablesFromTaggedAlias, replace_tags_from_field } from "./index";
+import { get_formatted_value } from "./../GrafanaUtils";
 
 class BoomSeries implements IBoomSeries {
     private debug_mode: Boolean;
