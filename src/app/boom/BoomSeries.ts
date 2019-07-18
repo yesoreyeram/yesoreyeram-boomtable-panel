@@ -1,75 +1,8 @@
 ///<reference path="../../../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
 
-import kbn from 'app/core/utils/kbn';
 import TimeSeries from "app/core/time_series2";
 import _ from "lodash";
-import { IBoomSeries, replaceTokens, getActualNameWithoutTokens, getDecimalsForValue, getItemBasedOnThreshold, normalizeColor } from "./index";
-
-const get_formatted_value = function (value, decimals, format): string {
-    let decimalInfo: any = getDecimalsForValue(value, decimals);
-    let formatFunc = kbn.valueFormats[format];
-    return formatFunc(value, decimalInfo.decimals, decimalInfo.scaledDecimals);
-};
-
-const getMetricNameFromAlias = function (target): string {
-    target = target.trim();
-    let _metricname = target;
-    if (target.indexOf("{") > -1 && target.indexOf("}") > -1 && target[target.length - 1] === "}") {
-        _metricname = target.split("{")[0].trim();
-    }
-    return _metricname;
-};
-
-const getLablesFromAlias = function (target, label): any[] {
-    let _tags: any[] = [];
-    target = target.trim();
-    let tagsstring = target.replace(label, "").trim();
-    if (tagsstring.startsWith("{") && tagsstring.endsWith("}")) {
-        // Snippet from https://github.com/grafana/grafana/blob/3f15170914c3189ee7835f0b19ff500db113af73/packages/grafana-data/src/utils/labels.ts
-        const parsePrometheusLabels = function (labels: string) {
-            const labelsByKey: any = {};
-            labels.replace(/\b(\w+)(!?=~?)"([^"\n]*?)"/g, (__, key, operator, value) => {
-                if (!operator) {
-                    console.log(operator);
-                }
-                labelsByKey[key] = value;
-                return '';
-            });
-            return labelsByKey;
-        };
-        _.each(parsePrometheusLabels(tagsstring), (k: string, v: string) => {
-            _tags.push({ tag: v, value: k });
-        });
-        if (tagsstring.indexOf(":") > -1 && _tags.length === 0) {
-            let label_values = tagsstring.slice(1).trim().slice(0, -1).trim() || "";
-            _tags = label_values
-                .split(",")
-                .map(item => (item || "").trim())
-                .filter(item => item && item.indexOf(":") > -1)
-                .map(item => {
-                    if (item.split(":").length === 2) {
-                        let ret: any = {};
-                        ret.tag = item.split(":")[0].trim();
-                        ret.value = item.split(":")[1].trim();
-                        return ret;
-                    } else {
-                        return null;
-                    }
-                })
-                .filter(item => item);
-        }
-    }
-    return _tags;
-};
-
-const replace_tags_from_field = function (field: string, tags: any[]): string {
-    if (tags && tags.length > 0) {
-        field = tags.reduce((r, it) => {
-            return r.replace(new RegExp("{{" + it.tag.trim() + "}}", "g"), it.value).replace(/\"/g, "");
-        }, field);
-    }
-    return field;
-};
+import { IBoomSeries, replaceTokens, getActualNameWithoutTokens, getItemBasedOnThreshold, normalizeColor, get_formatted_value, getMetricNameFromTaggedAlias, getLablesFromTaggedAlias, replace_tags_from_field } from "./index";
 
 class BoomSeries implements IBoomSeries {
     private debug_mode: Boolean;
@@ -149,8 +82,8 @@ class BoomSeries implements IBoomSeries {
             }
         }
         if (this.pattern.delimiter.toLowerCase() === "tag") {
-            this._metricname = getMetricNameFromAlias(seriesData.target);
-            this._tags = getLablesFromAlias(seriesData.target, this._metricname);
+            this._metricname = getMetricNameFromTaggedAlias(seriesData.target);
+            this._tags = getLablesFromTaggedAlias(seriesData.target, this._metricname);
         }
         this.row_name = this.getRowName(this.pattern, this.row_col_wrapper, (this.seriesName || "").toString());
         this.row_name_raw = this.getRowName(this.pattern, this.row_col_wrapper, (this.seriesName || "").toString());

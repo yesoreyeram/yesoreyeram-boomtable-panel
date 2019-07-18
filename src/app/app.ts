@@ -1,14 +1,29 @@
 import _ from "lodash";
-import { IBoomSeries, IBoomCellDetails, IBoomTable, IBoomTableTransformationOptions } from "./boom/index";
+import { IBoomSeries, IBoomCellDetails, IBoomTable, IBoomTableTransformationOptions, IBoomPattern } from "./boom/index";
 import { BoomPattern, replaceTokens } from './boom/index';
 
-const defaultPattern = new BoomPattern({
+let default_pattern_options: IBoomPattern = {
     bgColors: "green|orange|red",
     bgColors_overrides: "0->green|2->red|1->yellow",
     clickable_cells_link: "",
     col_name: "Value",
     decimals: 2,
+    defaultBGColor: "transparent",
+    defaultTextColor: "",
     delimiter: ".",
+    displayTemplate: "_value_",
+    enable_bgColor: false,
+    enable_bgColor_overrides: false,
+    enable_clickable_cells: false,
+    enable_textColor: false,
+    enable_textColor_overrides: false,
+    enable_time_based_thresholds: false,
+    enable_transform: false,
+    enable_transform_overrides: false,
+    filter: {
+        value_above: "",
+        value_below: ""
+    },
     format: "none",
     name: "Default Pattern",
     null_color: "darkred",
@@ -16,14 +31,17 @@ const defaultPattern = new BoomPattern({
     null_value: "No data",
     pattern: "*",
     row_name: "_series_",
-    textColor: "red|orange|green",
+    textColors: "red|orange|green",
     textColors_overrides: "0->red|2->green|1->yellow",
     thresholds: "70,90",
     time_based_thresholds: [],
+    tooltipTemplate: "",
     transform_values: "_value_|_value_|_value_",
     transform_values_overrides: "0->down|1->up",
     valueName: "avg"
-});
+};
+const defaultPattern = new BoomPattern(default_pattern_options);
+
 const seriesToTable = function (inputdata: IBoomSeries[], options: IBoomTableTransformationOptions): IBoomTable {
     let rows_found = _.uniq(_.map(inputdata, d => d.row_name));
     let rows_without_token = _.uniq(_.map(inputdata, d => d.row_name_raw));

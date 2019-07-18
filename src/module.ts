@@ -13,7 +13,7 @@ loadPluginCss({
   light: `plugins/${plugin_id}/css/default.light.css`
 });
 
-class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
+class GrafanaBoomTableCtrl extends MetricsPanelCtrl{
   public static templateUrl = "partials/module.html";
   public unitFormats = kbn.getUnitFormats();
   public valueNameOptions = value_name_options;
