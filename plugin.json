@@ -2,6 +2,9 @@
   "type": "panel",
   "name": "Boom Table",
   "id": "yesoreyeram-boomtable-panel",
+  "dataFormats": [
+    "time_series"
+  ],
   "info": {
     "description": "Boom table panel for Graphite, InfluxDB, Prometheus",
     "author": {
