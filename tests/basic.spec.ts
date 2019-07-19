@@ -2,7 +2,7 @@ jest.mock("app/core/utils/kbn", () => { });
 jest.mock("app/core/time_series2", () => { });
 
 import _ from "lodash";
-import { normalizeColor, parseMathExpression, getColor, getActualNameWithoutTokens, getItemBasedOnThreshold } from "./../src/app/boom"
+import { normalizeColor, parseMathExpression, getColor, getActualNameWithoutTokens, getItemBasedOnThreshold, getMetricNameFromTaggedAlias } from "./../src/app/boom"
 
 describe("Normalize Color", () => {
     it("Normalize Named Colors", () => {
@@ -68,4 +68,27 @@ describe("Threshold Validator", () => {
         expect(getItemBasedOnThreshold([10, 20], ["green", "orange", "red"], 20, "black")).toBe("red");
         expect(getItemBasedOnThreshold([10, 20], ["green", "orange"], 25, "black")).toBe("black");
     })
-})
+});
+
+describe("Mertic Name from prometheus / influxdb Alias", () => {
+    it("Prometheus Format", () => {
+        expect(getMetricNameFromTaggedAlias("container_cpu_load_average_10s")).toBe("container_cpu_load_average_10s");
+        expect(getMetricNameFromTaggedAlias("container_cpu_load_average_10s ")).toBe("container_cpu_load_average_10s");
+        expect(getMetricNameFromTaggedAlias("container_cpu_load_average_10s {}")).toBe("container_cpu_load_average_10s");
+        expect(getMetricNameFromTaggedAlias(" container_cpu_load_average_10s {}")).toBe("container_cpu_load_average_10s");
+        expect(getMetricNameFromTaggedAlias(`container_cpu_load_average_10s{agentpool="agentpool1"}`)).toBe("container_cpu_load_average_10s");
+        expect(getMetricNameFromTaggedAlias(`container_cpu_load_average_10s {agentpool="agentpool1"}`)).toBe("container_cpu_load_average_10s");
+        expect(getMetricNameFromTaggedAlias(` container_cpu_load_average_10s { agentpool = "agentpool1" } `)).toBe("container_cpu_load_average_10s");
+        expect(getMetricNameFromTaggedAlias(` container_cpu_load_average_10s { image = "abc:cba12:hello" } `)).toBe("container_cpu_load_average_10s");
+        expect(getMetricNameFromTaggedAlias(`container_memory_usage_bytes{beta_kubernetes_io_arch="amd64",beta_kubernetes_io_instance_type="Standard_D2_v2",beta_kubernetes_io_os="linux",container_name="omsagent",failure_domain_beta_kubernetes_io_region="westeurope",failure_domain_beta_kubernetes_io_zone="0",id="/kubepods/burstable/pod481c9cd6-aaa-11e9-9392-aaaa/aaaaa",image="microsoft/oms@sha256:aaaaa",instance="aaa-aaaa-k8s-nonprod-euw-001-master-2",job="kubernetes-nodes-cadvisor",kubernetes_azure_com_cluster="aaa-aaa-aaa-aaa-K8s-aaa-aaa-001",kubernetes_io_hostname="aaa-aaa-k8s-nonprod-euw-001-master-2",kubernetes_io_role="master",name="k8s_omsagent_omsagent-xh4g9_kube-aaaa-a7ef-11e9-9392-aaaa",namespace="kube-system",pod_name="omsagent-aaaa"}`)).toBe("container_memory_usage_bytes")
+    });
+    it("InfluxDB Format", () => {
+        expect(getMetricNameFromTaggedAlias("CPU.CPU TIme")).toBe("CPU.CPU TIme");
+        expect(getMetricNameFromTaggedAlias("CPU.CPU TIme ")).toBe("CPU.CPU TIme");
+        expect(getMetricNameFromTaggedAlias("CPU.CPU TIme {} ")).toBe("CPU.CPU TIme");
+        expect(getMetricNameFromTaggedAlias("CPU.CPU TIme {environment: 279, instance: _Total}")).toBe("CPU.CPU TIme");
+        expect(getMetricNameFromTaggedAlias(" CPU.CPU TIme { environment: 279, instance: _Total}")).toBe("CPU.CPU TIme");
+        expect(getMetricNameFromTaggedAlias(" CPU.CPU TIme { environment: 279, equation: `_Tota=l`}")).toBe("CPU.CPU TIme");
+    });
+
+});

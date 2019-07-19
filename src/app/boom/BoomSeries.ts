@@ -4,6 +4,103 @@ import TimeSeries from "app/core/time_series2";
 import _ from "lodash";
 import { IBoomSeries, replaceTokens, getActualNameWithoutTokens, getItemBasedOnThreshold, normalizeColor, getMetricNameFromTaggedAlias, getLablesFromTaggedAlias, replace_tags_from_field } from "./index";
 import { get_formatted_value } from "./../GrafanaUtils";
+import { IBoomPattern } from "./Boom.interface";
+
+let getDisplayValueTemplate = function (value, pattern, seriesName, row_col_wrapper, thresholds): string {
+    let template = "_value_";
+    if (_.isNaN(value) || value === null) {
+        template = pattern.null_value || "No data";
+        if (pattern.null_value === "") {
+            template = "";
+        }
+    } else {
+        template = pattern.displayTemplate || template;
+        if (pattern.enable_transform) {
+            let transform_values = pattern.transform_values.split("|");
+            template = getItemBasedOnThreshold(thresholds, transform_values, value, template);
+        }
+        if (pattern.enable_transform_overrides && pattern.transform_values_overrides !== "") {
+            let _transform_values_overrides = pattern.transform_values_overrides
+                .split("|")
+                .filter(con => con.indexOf("->"))
+                .map(con => con.split("->"))
+                .filter(con => +(con[0]) === value)
+                .map(con => con[1]);
+            if (_transform_values_overrides.length > 0 && _transform_values_overrides[0] !== "") {
+                template = ("" + _transform_values_overrides[0]).trim();
+            }
+        }
+        if (pattern.enable_transform || pattern.enable_transform_overrides) {
+            template = seriesName
+                .split(pattern.delimiter || ".")
+                .reduce((r, it, i) => {
+                    return r.replace(new RegExp(row_col_wrapper + i + row_col_wrapper, "g"), it);
+                }, template);
+        }
+    }
+    return template;
+};
+let getThresholds = function (templateSrv: any, scopedVars: any, pattern: IBoomPattern, currentTimeStamp: Date) {
+    let thresholds = templateSrv.replace(pattern.thresholds, scopedVars).split(",").map(d => +d);
+    if (pattern.enable_time_based_thresholds) {
+        let metricrecivedTimeStamp = currentTimeStamp || new Date();
+        let metricrecivedTimeStamp_innumber = metricrecivedTimeStamp.getHours() * 100 + metricrecivedTimeStamp.getMinutes();
+        let weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+        _.each(pattern.time_based_thresholds, (tbtx) => {
+            if (tbtx && tbtx.from && tbtx.to && tbtx.enabledDays &&
+                (metricrecivedTimeStamp_innumber >= +(tbtx.from)) &&
+                (metricrecivedTimeStamp_innumber <= +(tbtx.to)) &&
+                (tbtx.enabledDays.toLowerCase().indexOf(weekdays[metricrecivedTimeStamp.getDay()]) > -1) &&
+                tbtx.threshold
+            ) {
+                thresholds = (tbtx.threshold + "").split(",").map(d => +d);
+            }
+        });
+    }
+    return thresholds;
+};
+let getBGColor = function (templateSrv: any, scopedVars: any, value, pattern: IBoomPattern, thresholds): string {
+    let bgColor = "transparent";
+    if (_.isNaN(value) || value === null) {
+        bgColor = pattern.null_color || "darkred";
+        if (pattern.null_color === "") {
+            bgColor = "transparent";
+        }
+    } else {
+        bgColor = pattern.defaultBGColor || bgColor;
+        if (pattern.enable_bgColor && pattern.bgColors) {
+            let list_of_bgColors_based_on_thresholds = templateSrv.replace(pattern.bgColors, scopedVars).split("|");
+            bgColor = getItemBasedOnThreshold(thresholds, list_of_bgColors_based_on_thresholds, value, bgColor);
+
+        }
+        if (pattern.enable_bgColor_overrides && pattern.bgColors_overrides !== "") {
+            let _bgColors_overrides = templateSrv.replace(pattern.bgColors_overrides, scopedVars).split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === value).map(con => con[1]);
+            if (_bgColors_overrides.length > 0 && _bgColors_overrides[0] !== "") {
+                bgColor = ("" + _bgColors_overrides[0]).trim();
+            }
+        }
+    }
+    return normalizeColor(bgColor);
+};
+let getTextColor = function (templateSrv: any, scopedVars: any, value, pattern: IBoomPattern, thresholds): string {
+    let textColor = document.body.classList.contains("theme-light") ? "black" : "white";
+    if (_.isNaN(value) || value === null) {
+        textColor = pattern.null_textcolor || textColor;
+    } else {
+        textColor = pattern.defaultTextColor || textColor;
+        if (pattern.enable_textColor && pattern.textColors) {
+            let list_of_textColors_based_on_thresholds = templateSrv.replace(pattern.textColors, scopedVars).split("|");
+            textColor = getItemBasedOnThreshold(thresholds, list_of_textColors_based_on_thresholds, value, textColor);
+        }
+        if (pattern.enable_textColor_overrides && pattern.textColors_overrides !== "") {
+            let _textColors_overrides = templateSrv.replace(pattern.textColors_overrides, scopedVars).split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === value).map(con => con[1]);
+            if (_textColors_overrides.length > 0 && _textColors_overrides[0] !== "") {
+                textColor = ("" + _textColors_overrides[0]).trim();
+            }
+        }
+    }
+    return normalizeColor(textColor);
+};
 
 class BoomSeries implements IBoomSeries {
     private debug_mode: Boolean;
@@ -89,10 +186,10 @@ class BoomSeries implements IBoomSeries {
         this.row_name = this.getRowName(this.pattern, this.row_col_wrapper, (this.seriesName || "").toString());
         this.row_name_raw = this.getRowName(this.pattern, this.row_col_wrapper, (this.seriesName || "").toString());
         this.col_name = this.getColName(this.pattern, this.row_col_wrapper, (this.seriesName || "").toString(), this.row_name);
-        this.thresholds = this.getThresholds(templateSrv, scopedVars);
-        this.color_bg = this.getBGColor(templateSrv, scopedVars);
-        this.color_text = this.getTextColor(templateSrv, scopedVars);
-        this.template_value = this.getDisplayValueTemplate();
+        this.thresholds = getThresholds(templateSrv, scopedVars, this.pattern, this.currentTimeStamp);
+        this.color_bg = getBGColor(templateSrv, scopedVars, this.value, this.pattern, this.thresholds);
+        this.color_text = getTextColor(templateSrv, scopedVars, this.value, this.pattern, this.thresholds);
+        this.template_value = getDisplayValueTemplate(this.value, this.pattern, this.seriesName, this.row_col_wrapper, this.thresholds);
         this.tooltip = this.pattern.tooltipTemplate || "Series : _series_ <br/>Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_";
         this.link = this.pattern.enable_clickable_cells ? this.pattern.clickable_cells_link || "#" : "#";
         if (this.link !== "#") {
@@ -102,94 +199,6 @@ class BoomSeries implements IBoomSeries {
         }
         this.replaceTokens(templateSrv, scopedVars, series);
         this.cleanup();
-    }
-    private getThresholds(templateSrv: any, scopedVars: any) {
-        let thresholds = templateSrv.replace(this.pattern.thresholds, scopedVars).split(",").map(d => +d);
-        if (this.pattern.enable_time_based_thresholds) {
-            let metricrecivedTimeStamp = this.currentTimeStamp || new Date();
-            let metricrecivedTimeStamp_innumber = metricrecivedTimeStamp.getHours() * 100 + metricrecivedTimeStamp.getMinutes();
-            let weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
-            _.each(this.pattern.time_based_thresholds, (tbtx) => {
-                if (tbtx && tbtx.from && tbtx.to && tbtx.enabledDays &&
-                    (metricrecivedTimeStamp_innumber >= +(tbtx.from)) &&
-                    (metricrecivedTimeStamp_innumber <= +(tbtx.to)) &&
-                    (tbtx.enabledDays.toLowerCase().indexOf(weekdays[metricrecivedTimeStamp.getDay()]) > -1) &&
-                    tbtx.threshold
-                ) {
-                    thresholds = (tbtx.threshold + "").split(",").map(d => +d);
-                }
-            });
-        }
-        return thresholds;
-    }
-    private getBGColor(templateSrv: any, scopedVars: any): string {
-        let bgColor = "transparent";
-        if (_.isNaN(this.value) || this.value === null) {
-            bgColor = this.pattern.null_color || "darkred";
-            if (this.pattern.null_color === "") {
-                bgColor = "transparent";
-            }
-        } else {
-            bgColor = this.pattern.defaultBGColor || bgColor;
-            if (this.pattern.enable_bgColor && this.pattern.bgColors) {
-                let list_of_bgColors_based_on_thresholds = templateSrv.replace(this.pattern.bgColors, scopedVars).split("|");
-                bgColor = getItemBasedOnThreshold(this.thresholds, list_of_bgColors_based_on_thresholds, this.value, bgColor);
-
-            }
-            if (this.pattern.enable_bgColor_overrides && this.pattern.bgColors_overrides !== "") {
-                let _bgColors_overrides = templateSrv.replace(this.pattern.bgColors_overrides, scopedVars).split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === this.value).map(con => con[1]);
-                if (_bgColors_overrides.length > 0 && _bgColors_overrides[0] !== "") {
-                    bgColor = ("" + _bgColors_overrides[0]).trim();
-                }
-            }
-        }
-        return normalizeColor(bgColor);
-    }
-    private getTextColor(templateSrv: any, scopedVars: any): string {
-        let textColor = document.body.classList.contains("theme-light") ? "black" : "white";
-        if (_.isNaN(this.value) || this.value === null) {
-            textColor = this.pattern.null_textcolor || textColor;
-        } else {
-            textColor = this.pattern.defaultTextColor || textColor;
-            if (this.pattern.enable_textColor && this.pattern.textColors) {
-                let list_of_textColors_based_on_thresholds = templateSrv.replace(this.pattern.textColors, scopedVars).split("|");
-                textColor = getItemBasedOnThreshold(this.thresholds, list_of_textColors_based_on_thresholds, this.value, textColor);
-            }
-            if (this.pattern.enable_textColor_overrides && this.pattern.textColors_overrides !== "") {
-                let _textColors_overrides = templateSrv.replace(this.pattern.textColors_overrides, scopedVars).split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === this.value).map(con => con[1]);
-                if (_textColors_overrides.length > 0 && _textColors_overrides[0] !== "") {
-                    textColor = ("" + _textColors_overrides[0]).trim();
-                }
-            }
-        }
-        return normalizeColor(textColor);
-    }
-    private getDisplayValueTemplate(): string {
-        let template = "_value_";
-        if (_.isNaN(this.value) || this.value === null) {
-            template = this.pattern.null_value || "No data";
-            if (this.pattern.null_value === "") {
-                template = "";
-            }
-        } else {
-            template = this.pattern.displayTemplate || template;
-            if (this.pattern.enable_transform) {
-                let transform_values = this.pattern.transform_values.split("|");
-                template = getItemBasedOnThreshold(this.thresholds, transform_values, this.value, template);
-            }
-            if (this.pattern.enable_transform_overrides && this.pattern.transform_values_overrides !== "") {
-                let _transform_values_overrides = this.pattern.transform_values_overrides.split("|").filter(con => con.indexOf("->")).map(con => con.split("->")).filter(con => +(con[0]) === this.value).map(con => con[1]);
-                if (_transform_values_overrides.length > 0 && _transform_values_overrides[0] !== "") {
-                    template = ("" + _transform_values_overrides[0]).trim();
-                }
-            }
-            if (this.pattern.enable_transform || this.pattern.enable_transform_overrides) {
-                template = this.seriesName.split(this.pattern.delimiter || ".").reduce((r, it, i) => {
-                    return r.replace(new RegExp(this.row_col_wrapper + i + this.row_col_wrapper, "g"), it);
-                }, template);
-            }
-        }
-        return template;
     }
     private cleanup() {
         if (this.debug_mode !== true) {

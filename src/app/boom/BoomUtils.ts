@@ -1,5 +1,3 @@
-
-
 import _ from "lodash";
 
 const normalizeColor = function (color) {
