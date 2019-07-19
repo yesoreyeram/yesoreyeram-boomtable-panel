@@ -48,9 +48,13 @@ const getDecimalsForValue = function (value, _decimals) {
     return result;
 };
 const get_formatted_value = function (value, decimals, format): string {
-    let decimalInfo: any = getDecimalsForValue(value, decimals);
-    let formatFunc = kbn.valueFormats[format];
-    return formatFunc(value, decimalInfo.decimals, decimalInfo.scaledDecimals);
+    if (!isNaN(value)) {
+        let decimalInfo: any = getDecimalsForValue(value, decimals);
+        let formatFunc = kbn.valueFormats[format];
+        return formatFunc(value, decimalInfo.decimals, decimalInfo.scaledDecimals);
+    } else {
+        return value;
+    }
 };
 export {
     get_formatted_value,
