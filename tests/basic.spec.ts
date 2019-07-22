@@ -3,6 +3,7 @@ jest.mock("app/core/time_series2", () => { });
 
 import _ from "lodash";
 import { normalizeColor, parseMathExpression, getColor, getActualNameWithoutTokens, getItemBasedOnThreshold, getMetricNameFromTaggedAlias } from "./../src/app/boom"
+import { doesValueNeedsToHide } from "./../src/app/boom/BoomSeriesUtils";
 
 describe("Normalize Color", () => {
     it("Normalize Named Colors", () => {
@@ -91,4 +92,20 @@ describe("Mertic Name from prometheus / influxdb Alias", () => {
         expect(getMetricNameFromTaggedAlias(" CPU.CPU TIme { environment: 279, equation: `_Tota=l`}")).toBe("CPU.CPU TIme");
     });
 
+});
+
+describe("Value needs to hidden", () => {
+    it("Default Values", () => {
+        expect(doesValueNeedsToHide(10, undefined)).toBe(false);
+        expect(doesValueNeedsToHide(10, { value_below: "5" })).toBe(false);
+        expect(doesValueNeedsToHide(10, { value_above: "15" })).toBe(false);
+        expect(doesValueNeedsToHide(10, { value_below: "5", value_above: "30" })).toBe(false);
+        expect(doesValueNeedsToHide(10, { value_below: " 5 ", value_above: " 30 " })).toBe(false);
+        expect(doesValueNeedsToHide(10, { value_below: "15", value_above: "30" })).toBe(true);
+        expect(doesValueNeedsToHide(10, { value_below: "5", value_above: "5" })).toBe(true);
+        expect(doesValueNeedsToHide(10, { value_below: "15", value_above: "5" })).toBe(true);
+        expect(doesValueNeedsToHide(10, { value_below: "015", value_above: "05" })).toBe(true);
+        expect(doesValueNeedsToHide(10, { value_below: " 015 ", value_above: " 05 " })).toBe(true);
+        expect(doesValueNeedsToHide(10, { value_below: " 5 ", value_above: "-5 " })).toBe(true);
+    })
 });

@@ -1,6 +1,7 @@
 import _ from "lodash";
 
 import { getItemBasedOnThreshold, normalizeColor, replace_tags_from_field } from "./index";
+import { get_formatted_value } from "./../GrafanaUtils";
 import { IBoomPattern } from "./Boom.interface";
 
 export let getDisplayValueTemplate = function (value: number, pattern: IBoomPattern, seriesName: string, row_col_wrapper: string, thresholds: any[]): string {
@@ -32,24 +33,6 @@ export let getDisplayValueTemplate = function (value: number, pattern: IBoomPatt
         }
     }
     return template;
-};
-export let getThresholds = function (thresholdsArray: any[], pattern: IBoomPattern, currentTimeStamp: Date) {
-    if (pattern.enable_time_based_thresholds) {
-        let metricrecivedTimeStamp = currentTimeStamp || new Date();
-        let metricrecivedTimeStamp_innumber = metricrecivedTimeStamp.getHours() * 100 + metricrecivedTimeStamp.getMinutes();
-        let weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
-        _.each(pattern.time_based_thresholds, (tbtx) => {
-            if (tbtx && tbtx.from && tbtx.to && tbtx.enabledDays &&
-                (metricrecivedTimeStamp_innumber >= +(tbtx.from)) &&
-                (metricrecivedTimeStamp_innumber <= +(tbtx.to)) &&
-                (tbtx.enabledDays.toLowerCase().indexOf(weekdays[metricrecivedTimeStamp.getDay()]) > -1) &&
-                tbtx.threshold
-            ) {
-                thresholdsArray = (tbtx.threshold + "").split(",").map(d => +d);
-            }
-        });
-    }
-    return thresholdsArray;
 };
 export let getBGColor = function (value: number, pattern: IBoomPattern, thresholds: any[], list_of_bgColors_based_on_thresholds: string[], bgColorOverRides: string[]): string {
     let bgColor = "transparent";
@@ -91,6 +74,24 @@ export let getTextColor = function (value: number, pattern: IBoomPattern, thresh
     }
     return normalizeColor(textColor);
 };
+export let getThresholds = function (thresholdsArray: any[], enable_time_based_thresholds: boolean, time_based_thresholds: any[], currentTimeStamp: Date) {
+    if (enable_time_based_thresholds) {
+        let metricrecivedTimeStamp = currentTimeStamp || new Date();
+        let metricrecivedTimeStamp_innumber = metricrecivedTimeStamp.getHours() * 100 + metricrecivedTimeStamp.getMinutes();
+        let weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+        _.each(time_based_thresholds, (tbtx) => {
+            if (tbtx && tbtx.from && tbtx.to && tbtx.enabledDays &&
+                (metricrecivedTimeStamp_innumber >= +(tbtx.from)) &&
+                (metricrecivedTimeStamp_innumber <= +(tbtx.to)) &&
+                (tbtx.enabledDays.toLowerCase().indexOf(weekdays[metricrecivedTimeStamp.getDay()]) > -1) &&
+                tbtx.threshold
+            ) {
+                thresholdsArray = (tbtx.threshold + "").split(",").map(d => +d);
+            }
+        });
+    }
+    return thresholdsArray || [];
+};
 export let getSeriesValue = function (series: any, statType: string): number {
     let value = NaN;
     if (statType === "last_time") {
@@ -109,7 +110,7 @@ export let getSeriesValue = function (series: any, statType: string): number {
 };
 export let getLink = function (enable_clickable_cells: boolean, clickable_cells_link: string, range: any): string {
     let link = enable_clickable_cells ? clickable_cells_link || "#" : "#";
-    if (link !== "#") {
+    if (link && link !== "#") {
         link += (link.indexOf("?") > -1 ? `&from=${range.from}` : `?from=${range.from}`);
         link += `&to=${range.to}`;
     }
@@ -122,13 +123,13 @@ export let getCurrentTimeStamp = function (dataPoints: any[]): Date {
     }
     return currentTimeStamp;
 };
-export let doesValueNeedsToHide = function (value: number, pattern: IBoomPattern): boolean {
+export let doesValueNeedsToHide = function (value: number, filter: any): boolean {
     let hidden = false;
-    if (value && pattern && pattern.filter && (pattern.filter.value_below !== "" || pattern.filter.value_above !== "")) {
-        if (pattern.filter.value_below !== "" && value < +(pattern.filter.value_below)) {
+    if (value && filter && (filter.value_below !== "" || filter.value_above !== "")) {
+        if (filter.value_below !== "" && value < +(filter.value_below)) {
             hidden = true;
         }
-        if (pattern.filter.value_above !== "" && value > +(pattern.filter.value_above)) {
+        if (filter.value_above !== "" && value > +(filter.value_above)) {
             hidden = true;
         }
     }
@@ -142,29 +143,53 @@ export let replaceDelimitedColumns = function (inputstring: string, seriesName: 
         }, inputstring);
     return outputString;
 };
-export let getRowName = function (pattern: IBoomPattern, row_col_wrapper: string, seriesName: string, _metricname: string, _tags: any[]): string {
-    let row_name = pattern.row_name;
-    if (pattern.delimiter.toLowerCase() === "tag") {
+export let getRowName = function (row_name: string, delimiter: string, row_col_wrapper: string, seriesName: string, _metricname: string, _tags: any[]): string {
+    if (delimiter.toLowerCase() === "tag") {
         row_name = row_name.replace(new RegExp("{{metric_name}}", "g"), _metricname);
         row_name = replace_tags_from_field(row_name, _tags);
     } else {
-        row_name = replaceDelimitedColumns(row_name, seriesName, pattern.delimiter, row_col_wrapper);
-        if (seriesName.split(pattern.delimiter || ".").length === 1) {
+        row_name = replaceDelimitedColumns(row_name, seriesName, delimiter, row_col_wrapper);
+        if (seriesName.split(delimiter || ".").length === 1) {
             row_name = seriesName;
         }
     }
     return row_name.replace(new RegExp("_series_", "g"), seriesName.toString());
 };
-export let getColName = function (pattern: IBoomPattern, row_col_wrapper: string, seriesName: string, row_name: string, _metricname: string, _tags: any[]): string {
-    let col_name = pattern.col_name;
-    if (pattern.delimiter.toLowerCase() === "tag") {
+export let getColName = function (col_name: string, delimiter: string, row_col_wrapper: string, seriesName: string, row_name: string, _metricname: string, _tags: any[]): string {
+    if (delimiter.toLowerCase() === "tag") {
         col_name = col_name.replace(new RegExp("{{metric_name}}", "g"), _metricname);
         row_name = replace_tags_from_field(col_name, _tags);
     } else {
-        col_name = replaceDelimitedColumns(col_name, seriesName, pattern.delimiter, row_col_wrapper);
-        if (seriesName.split(pattern.delimiter || ".").length === 1 || row_name === seriesName) {
-            col_name = pattern.col_name || "Value";
+        col_name = replaceDelimitedColumns(col_name, seriesName, delimiter, row_col_wrapper);
+        if (seriesName.split(delimiter || ".").length === 1 || row_name === seriesName) {
+            col_name = col_name || "Value";
         }
     }
     return col_name.replace(new RegExp("_series_", "g"), seriesName.toString());
+};
+export let GetValuesReplaced = function (strToReplace: string, value, valueformatted, stats: any, decimals: Number, format: string, _metricname: string, _tags: any[], delimiter: string): string {
+
+    let value_raw = _.isNaN(value) || value === null ? "null" : value.toString().trim();
+    let value_formatted = _.isNaN(value) || value === null ? "null" : valueformatted.toString().trim();
+
+    strToReplace = strToReplace.replace(new RegExp("_value_min_raw_", "g"), stats.min);
+    strToReplace = strToReplace.replace(new RegExp("_value_max_raw_", "g"), stats.max);
+    strToReplace = strToReplace.replace(new RegExp("_value_avg_raw_", "g"), stats.avg);
+    strToReplace = strToReplace.replace(new RegExp("_value_current_raw_", "g"), stats.current);
+    strToReplace = strToReplace.replace(new RegExp("_value_total_raw_", "g"), stats.total);
+    strToReplace = strToReplace.replace(new RegExp("_value_raw_", "g"), value_raw);
+
+    strToReplace = strToReplace.replace(new RegExp("_value_min_", "g"), get_formatted_value(stats.min, decimals, format));
+    strToReplace = strToReplace.replace(new RegExp("_value_max_", "g"), get_formatted_value(stats.max, decimals, format));
+    strToReplace = strToReplace.replace(new RegExp("_value_avg_", "g"), get_formatted_value(stats.avg, decimals, format));
+    strToReplace = strToReplace.replace(new RegExp("_value_current_", "g"), get_formatted_value(stats.current, decimals, format));
+    strToReplace = strToReplace.replace(new RegExp("_value_total_", "g"), get_formatted_value(stats.total, decimals, format));
+    strToReplace = strToReplace.replace(new RegExp("_value_", "g"), value_formatted);
+
+    if (delimiter.toLowerCase() === "tag") {
+        strToReplace = strToReplace.replace(new RegExp("{{metric_name}}", "g"), _metricname);
+        strToReplace = replace_tags_from_field(strToReplace, _tags);
+    }
+
+    return strToReplace;
 };

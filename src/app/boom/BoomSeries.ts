@@ -2,12 +2,13 @@
 
 import TimeSeries from "app/core/time_series2";
 import _ from "lodash";
-import { replaceTokens, getActualNameWithoutTokens, getMetricNameFromTaggedAlias, getLablesFromTaggedAlias, replace_tags_from_field } from "./index";
-import { getDisplayValueTemplate, getThresholds, getBGColor, getTextColor, getSeriesValue, getLink, getCurrentTimeStamp, doesValueNeedsToHide, replaceDelimitedColumns, getRowName, getColName } from "./BoomSeriesUtils";
+import { replaceTokens, getActualNameWithoutTokens, getMetricNameFromTaggedAlias, getLablesFromTaggedAlias } from "./index";
+import { getDisplayValueTemplate, getThresholds, getBGColor, getTextColor, getSeriesValue, getLink, getCurrentTimeStamp, doesValueNeedsToHide, replaceDelimitedColumns, getRowName, getColName, GetValuesReplaced } from "./BoomSeriesUtils";
 import { get_formatted_value } from "./../GrafanaUtils";
 import { IBoomSeries } from "./Boom.interface";
 
 class BoomSeries implements IBoomSeries {
+
     private debug_mode: Boolean;
     private pattern: any = undefined;
     private seriesName: string;
@@ -29,16 +30,20 @@ class BoomSeries implements IBoomSeries {
     public hidden: Boolean = false;
     public _metricname = "";
     public _tags: any[] = [];
+
     constructor(seriesData: any, panelDefaultPattern: any, panelPatterns: any[], options: any, scopedVars: any, templateSrv: any, timeSrv: any) {
+
         let series = new TimeSeries({
             alias: seriesData.target,
             datapoints: seriesData.datapoints || []
         });
         series.flotpairs = series.getFlotPairs("connected");
+
         this.debug_mode = options && options.debug_mode === true ? true : false;
         this.row_col_wrapper = options && options.row_col_wrapper ? options.row_col_wrapper : this.row_col_wrapper;
         this.currentTimeStamp = getCurrentTimeStamp(series.dataPoints);
         this.seriesName = series.alias || series.aliasEscaped || series.label || series.id || "";
+
         let getMatchingAndEnabledPattern = (patterns, seriesName) => patterns.find(p => seriesName.match(p.pattern) && p.disabled !== true);
         this.pattern = getMatchingAndEnabledPattern(panelPatterns, this.seriesName) || panelDefaultPattern;
 
@@ -47,19 +52,41 @@ class BoomSeries implements IBoomSeries {
         this.display_value = (_.isNaN(this.value) || this.value === null) ? this.pattern.null_value : String(this.value);
         this.value_formatted = get_formatted_value(this.value, this.decimals, this.pattern.format);
         this.display_value = String(this.value_formatted);
-        this.hidden = doesValueNeedsToHide(this.value, this.pattern);
+        this.hidden = doesValueNeedsToHide(this.value, this.pattern.filter);
         this._metricname = this.pattern.delimiter.toLowerCase() === "tag" ? getMetricNameFromTaggedAlias(seriesData.target) : "";
         this._tags = this.pattern.delimiter.toLowerCase() === "tag" ? getLablesFromTaggedAlias(seriesData.target, this._metricname) : [];
-        this.row_name = getRowName(this.pattern, this.row_col_wrapper, this.seriesName, this._metricname, this._tags);
-        this.row_name_raw = getRowName(this.pattern, this.row_col_wrapper, this.seriesName, this._metricname, this._tags);
-        this.col_name = getColName(this.pattern, this.row_col_wrapper, this.seriesName, this.row_name, this._metricname, this._tags);
-        this.thresholds = getThresholds(templateSrv.replace(this.pattern.thresholds, scopedVars).split(",").map(d => +d), this.pattern, this.currentTimeStamp);
+
+        this.row_name = getRowName(this.pattern.row_name, this.pattern.delimiter, this.row_col_wrapper, this.seriesName, this._metricname, this._tags);
+        this.row_name_raw = getRowName(this.pattern.row_name, this.pattern.delimiter, this.row_col_wrapper, this.seriesName, this._metricname, this._tags);
+        this.col_name = getColName(this.pattern.col_name, this.pattern.delimiter, this.row_col_wrapper, this.seriesName, this.row_name, this._metricname, this._tags);
+
+        this.thresholds = getThresholds(templateSrv.replace(this.pattern.thresholds, scopedVars).split(",").map(d => +d), this.pattern.enable_time_based_thresholds, this.pattern.time_based_thresholds, this.currentTimeStamp);
         this.color_bg = getBGColor(this.value, this.pattern, this.thresholds, templateSrv.replace(this.pattern.bgColors, scopedVars).split("|"), templateSrv.replace(this.pattern.bgColors_overrides, scopedVars).split("|"));
         this.color_text = getTextColor(this.value, this.pattern, this.thresholds, templateSrv.replace(this.pattern.textColors, scopedVars).split("|"), templateSrv.replace(this.pattern.textColors_overrides, scopedVars).split("|"));
         this.template_value = getDisplayValueTemplate(this.value, this.pattern, this.seriesName, this.row_col_wrapper, this.thresholds);
-        this.tooltip = this.pattern.tooltipTemplate || "Series : _series_ <br/>Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_";
+
         this.link = getLink(this.pattern.enable_clickable_cells, this.pattern.clickable_cells_link, timeSrv.timeRangeForUrl());
-        this.replaceTokens(templateSrv, scopedVars, series);
+        this.link = replaceDelimitedColumns(this.link, this.seriesName, this.pattern.delimiter, this.row_col_wrapper);
+
+        this.tooltip = this.pattern.tooltipTemplate || "Series : _series_ <br/>Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_";
+
+        this.replaceSeriesRowColTokens();
+
+        this.link = GetValuesReplaced(this.link, this.value, this.value_formatted, series.stats, this.decimals, this.pattern.format, this._metricname, this._tags, this.pattern.delimiter || "");
+        this.tooltip = GetValuesReplaced(this.tooltip, this.value, this.value_formatted, series.stats, this.decimals, this.pattern.format, this._metricname, this._tags, this.pattern.delimiter || "");
+        this.display_value = GetValuesReplaced(this.display_value, this.value, this.value_formatted, series.stats, this.decimals, this.pattern.format, this._metricname, this._tags, this.pattern.delimiter || "");
+
+        this.row_name = replaceTokens(this.row_name);
+        this.col_name = replaceTokens(this.col_name);
+        this.display_value = replaceTokens(this.display_value);
+
+        this.row_name = templateSrv.replace(this.row_name, scopedVars);
+        this.col_name = templateSrv.replace(this.col_name, scopedVars);
+        this.display_value = templateSrv.replace(this.display_value, scopedVars);
+
+        this.tooltip = templateSrv.replace(this.tooltip, scopedVars);
+        this.link = templateSrv.replace(this.link, scopedVars);
+
         if (this.debug_mode !== true) {
             delete this.seriesName;
             delete this.pattern;
@@ -69,55 +96,26 @@ class BoomSeries implements IBoomSeries {
             delete this.value_formatted;
             delete this.currentTimeStamp;
         }
+
     }
-    private replaceTokens(templateSrv: any, scopedVars: any, series: any) {
-        this.link = replaceDelimitedColumns(this.link, this.seriesName, this.pattern.delimiter, this.row_col_wrapper);
+    private replaceSeriesRowColTokens() {
+
         this.link = this.link.replace(new RegExp("_series_", "g"), this.seriesName.toString().trim());
         this.tooltip = this.tooltip.replace(new RegExp("_series_", "g"), this.seriesName.toString().trim());
         this.display_value = this.template_value.replace(new RegExp("_series_", "g"), this.seriesName.toString());
+
         this.col_name = this.col_name.replace(new RegExp("_row_name_", "g"), this.row_name.toString());
         this.link = this.link.replace(new RegExp("_row_name_", "g"), getActualNameWithoutTokens(this.row_name.toString()).trim());
         this.tooltip = this.tooltip.replace(new RegExp("_row_name_", "g"), getActualNameWithoutTokens(this.row_name.toString()).trim());
         this.display_value = this.display_value.replace(new RegExp("_row_name_", "g"), this.row_name.toString());
+
         this.row_name = this.row_name.replace(new RegExp("_col_name_", "g"), this.col_name.toString());
         this.link = this.link.replace(new RegExp("_col_name_", "g"), getActualNameWithoutTokens(this.col_name.toString()).trim());
         this.tooltip = this.tooltip.replace(new RegExp("_col_name_", "g"), getActualNameWithoutTokens(this.col_name.toString()).trim());
         this.display_value = this.display_value.replace(new RegExp("_col_name_", "g"), this.col_name.toString());
-        let value_raw = _.isNaN(this.value) || this.value === null ? "null" : this.value.toString().trim();
-        this.link = this.link.replace(new RegExp("_value_raw_", "g"), value_raw);
-        this.tooltip = this.tooltip.replace(new RegExp("_value_raw_", "g"), value_raw);
-        this.display_value = this.display_value.replace(new RegExp("_value_raw_", "g"), value_raw);
-        this.display_value = this.display_value.replace(new RegExp("_value_min_raw_", "g"), series.stats.min);
-        this.display_value = this.display_value.replace(new RegExp("_value_min_", "g"), get_formatted_value(series.stats.min, this.decimals, this.pattern.format));
-        this.display_value = this.display_value.replace(new RegExp("_value_max_raw_", "g"), series.stats.max);
-        this.display_value = this.display_value.replace(new RegExp("_value_max_", "g"), get_formatted_value(series.stats.max, this.decimals, this.pattern.format));
-        this.display_value = this.display_value.replace(new RegExp("_value_avg_raw_", "g"), series.stats.avg);
-        this.display_value = this.display_value.replace(new RegExp("_value_avg_", "g"), get_formatted_value(series.stats.avg, this.decimals, this.pattern.format));
-        this.display_value = this.display_value.replace(new RegExp("_value_current_raw_", "g"), series.stats.current);
-        this.display_value = this.display_value.replace(new RegExp("_value_current_", "g"), get_formatted_value(series.stats.current, this.decimals, this.pattern.format));
-        this.display_value = this.display_value.replace(new RegExp("_value_total_raw_", "g"), series.stats.total);
-        this.display_value = this.display_value.replace(new RegExp("_value_total_", "g"), get_formatted_value(series.stats.total, this.decimals, this.pattern.format));
-        if ((this.pattern.delimiter || "").toLowerCase() === "tag") {
-            this.display_value = this.display_value.replace(new RegExp("{{metric_name}}", "g"), this._metricname);
-            this.link = this.link.replace(new RegExp("{{metric_name}}", "g"), this._metricname);
-            this.tooltip = this.tooltip.replace(new RegExp("{{metric_name}}", "g"), this._metricname);
-            this.display_value = replace_tags_from_field(this.display_value, this._tags);
-            this.link = replace_tags_from_field(this.link, this._tags);
-            this.tooltip = replace_tags_from_field(this.tooltip, this._tags);
-        }
-        let value_formatted = _.isNaN(this.value) || this.value === null ? "null" : this.value_formatted.toString().trim();
-        this.link = this.link.replace(new RegExp("_value_", "g"), value_formatted);
-        this.tooltip = this.tooltip.replace(new RegExp("_value_", "g"), value_formatted);
-        this.display_value = this.display_value.replace(new RegExp("_value_", "g"), value_formatted);
-        this.row_name = replaceTokens(this.row_name);
-        this.col_name = replaceTokens(this.col_name);
-        this.display_value = replaceTokens(this.display_value);
-        this.row_name = templateSrv.replace(this.row_name, scopedVars);
-        this.col_name = templateSrv.replace(this.col_name, scopedVars);
-        this.display_value = templateSrv.replace(this.display_value, scopedVars);
-        this.tooltip = templateSrv.replace(this.tooltip, scopedVars);
-        this.link = templateSrv.replace(this.link, scopedVars);
+
     }
+
 }
 
 export {
