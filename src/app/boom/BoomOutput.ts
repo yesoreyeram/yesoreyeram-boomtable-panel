@@ -44,8 +44,10 @@ BoomOutput.prototype.getDataAsHTML = function (data: IBoomTable, sorting_props):
       .concat(data.output.filter(a => isNaN(a[sorting_props.col_index].value)))
       .sort((a, b) => sortFunction(a, b, sorting_props.direction));
   }
+  let lines = 0;
   _.each(data.output, o => {
     if (o.map(item => item.hidden.toString()).indexOf("false") > -1) {
+      lines += 1;
       output.body += "<tr>";
       if (this.hide_first_column !== true) {
         let raw_rowName = (_.first(o.map(item => item.row_name_raw)));
@@ -66,10 +68,12 @@ BoomOutput.prototype.getDataAsHTML = function (data: IBoomTable, sorting_props):
             : `<a href="${item.link}" target="_blank" style="color:${
             item.color_text
             }">${item.display_value}</a>`;
+        let position =
+          lines === 1 ? "bottom" : "top";
         let tooltip =
           !item.tooltip || item.tooltip === "-"
             ? undefined
-            : ` data-toggle="tooltip" data-html="true" data-placement="auto" title="${
+            : ` data-toggle="tooltip" data-html="true" data-placement="${position}"  title="${
             item.tooltip
             }" `;
         output.body += `
