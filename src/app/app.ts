@@ -10,9 +10,9 @@ const seriesToTable = function (inputdata: IBoomSeries[], options: IBoomTableTra
     let rows_without_token = _.uniq(_.map(inputdata, d => d.row_name_raw));
     let cols_found = _.uniq(_.map(inputdata, d => d.col_name));
     let output: IBoomCellDetails[][] = [];
-    _.each(rows_found, row_name => {
+    _.each(rows_found.sort(), row_name => {
         let cols: IBoomCellDetails[] = [];
-        _.each(cols_found, col_name => {
+        _.each(cols_found.sort(), col_name => {
             let matched_items = _.filter(inputdata, o => {
                 return o.row_name === row_name && o.col_name === col_name;
             });
