@@ -69,7 +69,7 @@ BoomOutput.prototype.getDataAsHTML = function (data: IBoomTable, sorting_props):
         let tooltip =
           !item.tooltip || item.tooltip === "-"
             ? undefined
-            : ` data-toggle="tooltip" data-html="true" data-placement="autografana-deployment-58b6bc7776-7qt92" title="${
+            : ` data-toggle="tooltip" data-html="true" data-placement="auto" title="${
             item.tooltip
             }" `;
         output.body += `
