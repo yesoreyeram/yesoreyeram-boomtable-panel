@@ -294,7 +294,7 @@ Refer issue [#85](https://github.com/yesoreyeram/yesoreyeram-boomtable-panel/iss
 Filter
 ------
 
-If your output have more rows and if you require to hide certain rows based on their output value, you can use the filter option to hide those rows.
+If your output have more rows and if you require to hide certain rows based on their output value, you can use the filter option to hide those rows. Series will be hidden if any one of the condition match.
 
 ![Filter rows based on value](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/filters.png)
 

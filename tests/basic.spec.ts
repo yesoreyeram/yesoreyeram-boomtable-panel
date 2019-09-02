@@ -97,15 +97,29 @@ describe("Mertic Name from prometheus / influxdb Alias", () => {
 describe("Value needs to hidden", () => {
     it("Default Values", () => {
         expect(doesValueNeedsToHide(10, undefined)).toBe(false);
+        expect(doesValueNeedsToHide(0, { value_below: "5" })).toBe(true);
+        expect(doesValueNeedsToHide(-2, { value_below: "-1" })).toBe(true);
+        expect(doesValueNeedsToHide(2, { value_below: "10" })).toBe(true);
         expect(doesValueNeedsToHide(10, { value_below: "5" })).toBe(false);
+        expect(doesValueNeedsToHide(2, { value_below: "-1" })).toBe(false);
+        expect(doesValueNeedsToHide(15, { value_above: "10" })).toBe(true);
+        expect(doesValueNeedsToHide(15, { value_above: "0" })).toBe(true);
         expect(doesValueNeedsToHide(10, { value_above: "15" })).toBe(false);
-        expect(doesValueNeedsToHide(10, { value_below: "5", value_above: "30" })).toBe(false);
-        expect(doesValueNeedsToHide(10, { value_below: " 5 ", value_above: " 30 " })).toBe(false);
+        expect(doesValueNeedsToHide(0, { value_above: "15" })).toBe(false);
+        expect(doesValueNeedsToHide(0, { value_below: "5", value_above: "-5" })).toBe(true);
         expect(doesValueNeedsToHide(10, { value_below: "15", value_above: "30" })).toBe(true);
         expect(doesValueNeedsToHide(10, { value_below: "5", value_above: "5" })).toBe(true);
         expect(doesValueNeedsToHide(10, { value_below: "15", value_above: "5" })).toBe(true);
         expect(doesValueNeedsToHide(10, { value_below: "015", value_above: "05" })).toBe(true);
+        expect(doesValueNeedsToHide(0, { value_below: "5", value_above: "2" })).toBe(true);
+        expect(doesValueNeedsToHide(0, { value_below: "2", value_above: "5" })).toBe(true);
         expect(doesValueNeedsToHide(10, { value_below: " 015 ", value_above: " 05 " })).toBe(true);
         expect(doesValueNeedsToHide(10, { value_below: " 5 ", value_above: "-5 " })).toBe(true);
+        expect(doesValueNeedsToHide(10, { value_below: "15", value_above: "5 " })).toBe(true);
+        expect(doesValueNeedsToHide(10, { value_below: "5", value_above: "30" })).toBe(false);
+        expect(doesValueNeedsToHide(10, { value_below: " 5 ", value_above: " 30 " })).toBe(false);
+        expect(doesValueNeedsToHide(0, { value_below: "-2", value_above: "5" })).toBe(false);
+
+
     })
 });

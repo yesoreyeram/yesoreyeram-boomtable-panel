@@ -125,7 +125,7 @@ export let getCurrentTimeStamp = function (dataPoints: any[]): Date {
 };
 export let doesValueNeedsToHide = function (value: number, filter: any): boolean {
     let hidden = false;
-    if ((value || value==0) && filter && (filter.value_below !== "" || filter.value_above !== "")) {
+    if ((value || value === 0) && filter && (filter.value_below !== "" || filter.value_above !== "")) {
         if (filter.value_below !== "" && value < +(filter.value_below)) {
             hidden = true;
         }
