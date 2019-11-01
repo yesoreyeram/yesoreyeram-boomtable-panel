@@ -104,7 +104,7 @@ export let getSeriesValue = function (series: any, statType: string): number {
             value = _.last(non_null_data)[1];
         }
     } else if (series.stats) {
-        value = series.stats[statType] || null;
+        value = series.stats[statType];
     }
     return value;
 };
