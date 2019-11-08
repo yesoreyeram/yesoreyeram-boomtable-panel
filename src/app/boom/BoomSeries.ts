@@ -41,7 +41,7 @@ class BoomSeries implements IBoomSeries {
 
         this.debug_mode = options && options.debug_mode === true ? true : false;
         this.row_col_wrapper = options && options.row_col_wrapper ? options.row_col_wrapper : this.row_col_wrapper;
-        this.currentTimeStamp = getCurrentTimeStamp(series.dataPoints);
+        this.currentTimeStamp = getCurrentTimeStamp(series.datapoints);
         this.seriesName = series.alias || series.aliasEscaped || series.label || series.id || "";
 
         let getMatchingAndEnabledPattern = (patterns, seriesName) => patterns.find(p => seriesName.match(p.pattern) && p.disabled !== true);
