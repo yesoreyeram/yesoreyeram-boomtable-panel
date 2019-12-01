@@ -1,6 +1,7 @@
 import _ from "lodash";
+import { IBoomPattern } from "./Boom.interface";
 
-export const normalizeColor = function (color) {
+export const normalizeColor = function (color: string) {
     if (color.toLowerCase() === "green") {
         return "rgba(50, 172, 45, 0.97)";
     } else if (color.toLowerCase() === "orange") {
@@ -30,16 +31,16 @@ export const parseMath = function (valuestring: string): number {
     }
     return Math.round(+returnvalue);
 };
-export const parseMathExpression = function (expression, index): number {
+export const parseMathExpression = function (expression: string, index: number): number {
     let valuestring = expression.replace(/\_/g, "").split(",")[index];
     return +(parseMath(valuestring));
 
 };
-export const getColor = function (expression, index) {
+export const getColor = function (expression: string, index: number) {
     let returnValue = (expression || "").split(",").length > index ? ` style="color:${normalizeColor(expression.replace(/\_/g, "").split(",")[index])}" ` : "";
     return returnValue;
 };
-export const replaceTokens = function (value) {
+export const replaceTokens = function (value: string) {
     if (!value) { return value; }
     value = value + "";
     value = value.split(" ").map(a => {
@@ -68,7 +69,7 @@ export const replaceTokens = function (value) {
     }).join(" ");
     return value;
 };
-export const getActualNameWithoutTokens = function (value) {
+export const getActualNameWithoutTokens = function (value: string) {
     if (!value) { return value + ""; }
     value = value + "";
     return value.split(" ").map(a => {
@@ -80,7 +81,7 @@ export const getActualNameWithoutTokens = function (value) {
         return a;
     }).join(" ");
 };
-export const getItemBasedOnThreshold = function (thresholds, ranges, value, defaultValue): string {
+export const getItemBasedOnThreshold = function (thresholds: any[], ranges: any, value: number, defaultValue: string): string {
     let c = defaultValue;
     if (thresholds && ranges && typeof value === "number" && thresholds.length + 1 <= ranges.length) {
         ranges = _.dropRight(ranges, ranges.length - thresholds.length - 1);
@@ -159,17 +160,89 @@ export const replace_tags_from_field = function (field: string, tags: any[]): st
 export const getSeriesValue = function (series: any, statType: string): number {
     let value = NaN;
     statType = (statType || "").toLowerCase();
-    if (statType === "last_time" && series.datapoints && series.datapoints.length > 0) {
-        if (_.last(series.datapoints)) {
-            value = _.last(series.datapoints)[1];
+    if (series) {
+        if (statType === "last_time" && series.datapoints && series.datapoints.length > 0) {
+            if (_.last(series.datapoints)) {
+                value = _.last(series.datapoints)[1];
+            }
+        } else if (statType === "last_time_nonnull") {
+            let non_null_data = series.datapoints.filter(s => s[0]);
+            if (_.last(non_null_data) && _.last(non_null_data)[1]) {
+                value = _.last(non_null_data)[1];
+            }
+        } else if (series.stats) {
+            value = series.stats[statType] || null;
         }
-    } else if (statType === "last_time_nonnull") {
-        let non_null_data = series.datapoints.filter(s => s[0]);
-        if (_.last(non_null_data) && _.last(non_null_data)[1]) {
-            value = _.last(non_null_data)[1];
-        }
-    } else if (series.stats) {
-        value = series.stats[statType] || null;
     }
     return value;
+};
+export const getCurrentTimeStamp = function (dataPoints: any[]): Date {
+    let currentTimeStamp = new Date();
+    if (dataPoints && dataPoints.length > 0 && _.last(dataPoints).length === 2) {
+        currentTimeStamp = new Date(_.last(dataPoints)[1]);
+    }
+    return currentTimeStamp;
+};
+export const replaceDelimitedColumns = function (inputstring: string, seriesName: string, delimiter: string, row_col_wrapper: string): string {
+    let outputString = seriesName
+        .split(delimiter || ".")
+        .reduce((r, it, i) => {
+            return r.replace(new RegExp(row_col_wrapper + i + row_col_wrapper, "g"), it);
+        }, inputstring);
+    return outputString;
+};
+export const getRowName = function (row_name: string, delimiter: string, row_col_wrapper: string, seriesName: string, _metricname: string, _tags: any[]): string {
+    if (delimiter.toLowerCase() === "tag") {
+        row_name = row_name.replace(new RegExp("{{metric_name}}", "g"), _metricname);
+        row_name = replace_tags_from_field(row_name, _tags);
+    } else {
+        row_name = replaceDelimitedColumns(row_name, seriesName, delimiter, row_col_wrapper);
+        if (seriesName.split(delimiter || ".").length === 1) {
+            row_name = seriesName;
+        }
+    }
+    return row_name.replace(new RegExp("_series_", "g"), seriesName.toString());
+};
+export const getColName = function (col_name: string, delimiter: string, row_col_wrapper: string, seriesName: string, row_name: string, _metricname: string, _tags: any[]): string {
+    if (delimiter.toLowerCase() === "tag") {
+        col_name = col_name.replace(new RegExp("{{metric_name}}", "g"), _metricname);
+        row_name = replace_tags_from_field(col_name, _tags);
+    } else {
+        col_name = replaceDelimitedColumns(col_name, seriesName, delimiter, row_col_wrapper);
+        console.log(col_name, row_name, seriesName);
+        if (seriesName.split(delimiter || ".").length === 1 || row_name === seriesName) {
+            col_name = col_name || "Value";
+        }
+    }
+    return col_name.replace(new RegExp("_series_", "g"), seriesName.toString());
+};
+export const getDisplayValueTemplate = function (value: number, pattern: IBoomPattern, seriesName: string, row_col_wrapper: string, thresholds: any[]): string {
+    let template = "_value_";
+    if (_.isNaN(value) || value === null) {
+        template = pattern.null_value || "No data";
+        if (pattern.null_value === "") {
+            template = "";
+        }
+    } else {
+        template = pattern.displayTemplate || template;
+        if (pattern.enable_transform) {
+            let transform_values = pattern.transform_values.split("|");
+            template = getItemBasedOnThreshold(thresholds, transform_values, value, template);
+        }
+        if (pattern.enable_transform_overrides && pattern.transform_values_overrides !== "") {
+            let _transform_values_overrides = pattern.transform_values_overrides
+                .split("|")
+                .filter(con => con.indexOf("->"))
+                .map(con => con.split("->"))
+                .filter(con => +(con[0]) === value)
+                .map(con => con[1]);
+            if (_transform_values_overrides.length > 0 && _transform_values_overrides[0] !== "") {
+                template = ("" + _transform_values_overrides[0]).trim();
+            }
+        }
+        if (pattern.enable_transform || pattern.enable_transform_overrides) {
+            template = replaceDelimitedColumns(template, seriesName, pattern.delimiter, row_col_wrapper);
+        }
+    }
+    return template;
 };

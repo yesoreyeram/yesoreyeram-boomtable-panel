@@ -4,36 +4,7 @@ import { getItemBasedOnThreshold, normalizeColor, replace_tags_from_field } from
 import { get_formatted_value } from "./../GrafanaUtils";
 import { IBoomPattern } from "./Boom.interface";
 
-export let getDisplayValueTemplate = function (value: number, pattern: IBoomPattern, seriesName: string, row_col_wrapper: string, thresholds: any[]): string {
-    let template = "_value_";
-    if (_.isNaN(value) || value === null) {
-        template = pattern.null_value || "No data";
-        if (pattern.null_value === "") {
-            template = "";
-        }
-    } else {
-        template = pattern.displayTemplate || template;
-        if (pattern.enable_transform) {
-            let transform_values = pattern.transform_values.split("|");
-            template = getItemBasedOnThreshold(thresholds, transform_values, value, template);
-        }
-        if (pattern.enable_transform_overrides && pattern.transform_values_overrides !== "") {
-            let _transform_values_overrides = pattern.transform_values_overrides
-                .split("|")
-                .filter(con => con.indexOf("->"))
-                .map(con => con.split("->"))
-                .filter(con => +(con[0]) === value)
-                .map(con => con[1]);
-            if (_transform_values_overrides.length > 0 && _transform_values_overrides[0] !== "") {
-                template = ("" + _transform_values_overrides[0]).trim();
-            }
-        }
-        if (pattern.enable_transform || pattern.enable_transform_overrides) {
-            template = replaceDelimitedColumns(template, seriesName, pattern.delimiter, row_col_wrapper);
-        }
-    }
-    return template;
-};
+
 export let getBGColor = function (value: number, pattern: IBoomPattern, thresholds: any[], list_of_bgColors_based_on_thresholds: string[], bgColorOverRides: string[]): string {
     let bgColor = "transparent";
     if (_.isNaN(value) || value === null) {
@@ -92,22 +63,6 @@ export let getThresholds = function (thresholdsArray: any[], enable_time_based_t
     }
     return thresholdsArray || [];
 };
-export let getSeriesValue = function (series: any, statType: string): number {
-    let value = NaN;
-    if (statType === "last_time") {
-        if (_.last(series.datapoints)) {
-            value = _.last(series.datapoints)[1];
-        }
-    } else if (statType === "last_time_nonnull") {
-        let non_null_data = series.datapoints.filter(s => s[0]);
-        if (_.last(non_null_data) && _.last(non_null_data)[1]) {
-            value = _.last(non_null_data)[1];
-        }
-    } else if (series.stats) {
-        value = series.stats[statType];
-    }
-    return value;
-};
 export let getLink = function (enable_clickable_cells: boolean, clickable_cells_link: string, range: any): string {
     let link = enable_clickable_cells ? clickable_cells_link || "#" : "#";
     if (link && link !== "#") {
@@ -115,13 +70,6 @@ export let getLink = function (enable_clickable_cells: boolean, clickable_cells_
         link += `&to=${range.to}`;
     }
     return link;
-};
-export let getCurrentTimeStamp = function (dataPoints: any[]): Date {
-    let currentTimeStamp = new Date();
-    if (dataPoints && dataPoints.length > 0 && _.last(dataPoints).length === 2) {
-        currentTimeStamp = new Date(_.last(dataPoints)[1]);
-    }
-    return currentTimeStamp;
 };
 export let doesValueNeedsToHide = function (value: number, filter: any): boolean {
     let hidden = false;
@@ -134,38 +82,6 @@ export let doesValueNeedsToHide = function (value: number, filter: any): boolean
         }
     }
     return hidden;
-};
-export let replaceDelimitedColumns = function (inputstring: string, seriesName: string, delimiter: string, row_col_wrapper: string): string {
-    let outputString = seriesName
-        .split(delimiter || ".")
-        .reduce((r, it, i) => {
-            return r.replace(new RegExp(row_col_wrapper + i + row_col_wrapper, "g"), it);
-        }, inputstring);
-    return outputString;
-};
-export let getRowName = function (row_name: string, delimiter: string, row_col_wrapper: string, seriesName: string, _metricname: string, _tags: any[]): string {
-    if (delimiter.toLowerCase() === "tag") {
-        row_name = row_name.replace(new RegExp("{{metric_name}}", "g"), _metricname);
-        row_name = replace_tags_from_field(row_name, _tags);
-    } else {
-        row_name = replaceDelimitedColumns(row_name, seriesName, delimiter, row_col_wrapper);
-        if (seriesName.split(delimiter || ".").length === 1) {
-            row_name = seriesName;
-        }
-    }
-    return row_name.replace(new RegExp("_series_", "g"), seriesName.toString());
-};
-export let getColName = function (col_name: string, delimiter: string, row_col_wrapper: string, seriesName: string, row_name: string, _metricname: string, _tags: any[]): string {
-    if (delimiter.toLowerCase() === "tag") {
-        col_name = col_name.replace(new RegExp("{{metric_name}}", "g"), _metricname);
-        row_name = replace_tags_from_field(col_name, _tags);
-    } else {
-        col_name = replaceDelimitedColumns(col_name, seriesName, delimiter, row_col_wrapper);
-        if (seriesName.split(delimiter || ".").length === 1 || row_name === seriesName) {
-            col_name = col_name || "Value";
-        }
-    }
-    return col_name.replace(new RegExp("_series_", "g"), seriesName.toString());
 };
 export let GetValuesReplaced = function (strToReplace: string, value, valueformatted, stats: any, decimals: Number, format: string, _metricname: string, _tags: any[], delimiter: string): string {
 
