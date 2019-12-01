@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-const normalizeColor = function (color) {
+export const normalizeColor = function (color) {
     if (color.toLowerCase() === "green") {
         return "rgba(50, 172, 45, 0.97)";
     } else if (color.toLowerCase() === "orange") {
@@ -9,7 +9,7 @@ const normalizeColor = function (color) {
         return "rgba(245, 54, 54, 0.9)";
     } else { return color.trim(); }
 };
-const parseMath = function (valuestring: string): number {
+export const parseMath = function (valuestring: string): number {
     let returnvalue = 0;
     if (valuestring.indexOf("+") > -1) {
         returnvalue = +(valuestring.split("+")[0]) + +(valuestring.split("+")[1]);
@@ -30,16 +30,16 @@ const parseMath = function (valuestring: string): number {
     }
     return Math.round(+returnvalue);
 };
-const parseMathExpression = function (expression, index): number {
+export const parseMathExpression = function (expression, index): number {
     let valuestring = expression.replace(/\_/g, "").split(",")[index];
     return +(parseMath(valuestring));
 
 };
-const getColor = function (expression, index) {
+export const getColor = function (expression, index) {
     let returnValue = (expression || "").split(",").length > index ? ` style="color:${normalizeColor(expression.replace(/\_/g, "").split(",")[index])}" ` : "";
     return returnValue;
 };
-const replaceTokens = function (value) {
+export const replaceTokens = function (value) {
     if (!value) { return value; }
     value = value + "";
     value = value.split(" ").map(a => {
@@ -68,7 +68,7 @@ const replaceTokens = function (value) {
     }).join(" ");
     return value;
 };
-const getActualNameWithoutTokens = function (value) {
+export const getActualNameWithoutTokens = function (value) {
     if (!value) { return value + ""; }
     value = value + "";
     return value.split(" ").map(a => {
@@ -80,7 +80,7 @@ const getActualNameWithoutTokens = function (value) {
         return a;
     }).join(" ");
 };
-const getItemBasedOnThreshold = function (thresholds, ranges, value, defaultValue): string {
+export const getItemBasedOnThreshold = function (thresholds, ranges, value, defaultValue): string {
     let c = defaultValue;
     if (thresholds && ranges && typeof value === "number" && thresholds.length + 1 <= ranges.length) {
         ranges = _.dropRight(ranges, ranges.length - thresholds.length - 1);
@@ -97,7 +97,7 @@ const getItemBasedOnThreshold = function (thresholds, ranges, value, defaultValu
     return c;
 
 };
-const getMetricNameFromTaggedAlias = function (target): string {
+export const getMetricNameFromTaggedAlias = function (target): string {
     target = target.trim();
     let _metricname = target;
     if (target.indexOf("{") > -1 && target.indexOf("}") > -1 && target[target.length - 1] === "}") {
@@ -107,7 +107,7 @@ const getMetricNameFromTaggedAlias = function (target): string {
     }
     return _metricname;
 };
-const getLablesFromTaggedAlias = function (target, label): any[] {
+export const getLablesFromTaggedAlias = function (target, label): any[] {
     let _tags: any[] = [];
     target = target.trim();
     let tagsstring = target.replace(label, "").trim();
@@ -148,7 +148,7 @@ const getLablesFromTaggedAlias = function (target, label): any[] {
     }
     return _tags;
 };
-const replace_tags_from_field = function (field: string, tags: any[]): string {
+export const replace_tags_from_field = function (field: string, tags: any[]): string {
     if (tags && tags.length > 0) {
         field = tags.reduce((r, it) => {
             return r.replace(new RegExp("{{" + it.tag.trim() + "}}", "g"), it.value).replace(/\"/g, "");
@@ -156,15 +156,20 @@ const replace_tags_from_field = function (field: string, tags: any[]): string {
     }
     return field;
 };
-export {
-    normalizeColor,
-    replaceTokens,
-    getColor,
-    getActualNameWithoutTokens,
-    getItemBasedOnThreshold,
-    getMetricNameFromTaggedAlias,
-    getLablesFromTaggedAlias,
-    parseMath,
-    parseMathExpression,
-    replace_tags_from_field
+export const getSeriesValue = function (series: any, statType: string): number {
+    let value = NaN;
+    statType = (statType || "").toLowerCase();
+    if (statType === "last_time" && series.datapoints && series.datapoints.length > 0) {
+        if (_.last(series.datapoints)) {
+            value = _.last(series.datapoints)[1];
+        }
+    } else if (statType === "last_time_nonnull") {
+        let non_null_data = series.datapoints.filter(s => s[0]);
+        if (_.last(non_null_data) && _.last(non_null_data)[1]) {
+            value = _.last(non_null_data)[1];
+        }
+    } else if (series.stats) {
+        value = series.stats[statType] || null;
+    }
+    return value;
 };

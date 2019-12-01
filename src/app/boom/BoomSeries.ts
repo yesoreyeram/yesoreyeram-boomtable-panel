@@ -3,7 +3,8 @@
 import TimeSeries from "app/core/time_series2";
 import _ from "lodash";
 import { replaceTokens, getActualNameWithoutTokens, getMetricNameFromTaggedAlias, getLablesFromTaggedAlias } from "./index";
-import { getDisplayValueTemplate, getThresholds, getBGColor, getTextColor, getSeriesValue, getLink, getCurrentTimeStamp, doesValueNeedsToHide, replaceDelimitedColumns, getRowName, getColName, GetValuesReplaced } from "./BoomSeriesUtils";
+import { getDisplayValueTemplate, getThresholds, getBGColor, getTextColor,  getLink, getCurrentTimeStamp, doesValueNeedsToHide, replaceDelimitedColumns, getRowName, getColName, GetValuesReplaced } from "./BoomSeriesUtils";
+import { getSeriesValue } from "./BoomUtils";
 import { get_formatted_value } from "./../GrafanaUtils";
 import { IBoomSeries } from "./Boom.interface";
 
@@ -49,9 +50,8 @@ class BoomSeries implements IBoomSeries {
 
         this.decimals = this.pattern.decimals || panelDefaultPattern.decimals || 2;
         this.value = getSeriesValue(series, this.pattern.valueName);
-        this.display_value = (_.isNaN(this.value) || this.value === null) ? this.pattern.null_value : String(this.value);
         this.value_formatted = get_formatted_value(this.value, this.decimals, this.pattern.format);
-        this.display_value = String(this.value_formatted);
+        this.display_value = ((_.isNaN(this.value) || this.value === null) ? this.pattern.null_value : String(this.value)).toString();
         this.hidden = doesValueNeedsToHide(this.value, this.pattern.filter);
         this._metricname = this.pattern.delimiter.toLowerCase() === "tag" ? getMetricNameFromTaggedAlias(seriesData.target) : "";
         this._tags = this.pattern.delimiter.toLowerCase() === "tag" ? getLablesFromTaggedAlias(seriesData.target, this._metricname) : [];
