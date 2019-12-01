@@ -5,7 +5,7 @@ import _ from "lodash";
 import { replaceTokens, getActualNameWithoutTokens, getMetricNameFromTaggedAlias, getLablesFromTaggedAlias } from "./index";
 import { getThresholds, getBGColor, getTextColor, getLink, GetValuesReplaced } from "./BoomSeriesUtils";
 import { getDisplayValueTemplate, getSeriesValue, getCurrentTimeStamp, replaceDelimitedColumns, getRowName, getColName, doesValueNeedsToHide } from "./BoomUtils";
-import { get_formatted_value } from "./../GrafanaUtils";
+import { get_formatted_value } from  "./../GrafanaUtils";
 import { IBoomSeries } from "./Boom.interface";
 
 class BoomSeries implements IBoomSeries {

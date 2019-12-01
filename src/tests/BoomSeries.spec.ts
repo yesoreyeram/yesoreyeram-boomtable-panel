@@ -1,22 +1,24 @@
-import { normalizeColor, parseMathExpression, getColor, getActualNameWithoutTokens, getItemBasedOnThreshold, getMetricNameFromTaggedAlias, getSeriesValue, getCurrentTimeStamp, replaceDelimitedColumns, getRowName, getColName, doesValueNeedsToHide } from "./../app/boom/BoomUtils"
+import { normalizeColor, parseMathExpression, getColor, getActualNameWithoutTokens, getItemBasedOnThreshold, getMetricNameFromTaggedAlias, getSeriesValue, getCurrentTimeStamp, replaceDelimitedColumns, getRowName, getColName, doesValueNeedsToHide } from "./../app/boom/BoomUtils";
 
 const dummy_series_1 = {
     stats: {
-        "total": 3268,
-        "max": 24,
-        "min": 0,
-        "logmin": 1,
         "avg": 9.077777777777778,
+        "count": 360,
         "current": 6,
-        "first": 2,
         "delta": 1396,
         "diff": 4,
+        "first": 2,
+        "logmin": 1,
+        "max": 24,
+        "min": 0,
         "range": 24,
         "timeStep": 60000,
-        "count": 360
+        "total": 3268,
     }
 };
 const dummy_series_2 = {
+    "alias": "COM # count",
+    "aliasEscaped": "COM # count",
     "datapoints": [
         [
             108,
@@ -51,23 +53,21 @@ const dummy_series_2 = {
             1575199260000
         ]
     ],
-    "label": "COM # count",
     "id": "COM # count",
-    "alias": "COM # count",
-    "aliasEscaped": "COM # count",
+    "label": "COM # count",
     "stats": {
-        "total": 335,
-        "max": 108,
-        "min": 0,
-        "logmin": 48,
         "avg": 41.875,
+        "count": 8,
         "current": 0,
-        "first": 108,
         "delta": 93,
         "diff": -108,
+        "first": 108,
+        "logmin": 48,
+        "max": 108,
+        "min": 0,
         "range": 108,
         "timeStep": 60000,
-        "count": 8
+        "total": 335,
     }
 };
 describe("Boom Series", () => {
@@ -162,7 +162,7 @@ describe("Threshold Validator", () => {
         expect(getItemBasedOnThreshold([10, 20], ["green", "orange", "red"], 25, "black")).toBe("red");
         expect(getItemBasedOnThreshold([10, 20], ["green", "orange", "red"], 20, "black")).toBe("red");
         expect(getItemBasedOnThreshold([10, 20], ["green", "orange"], 25, "black")).toBe("black");
-    })
+    });
 });
 describe("Mertic Name from prometheus / influxdb Alias", () => {
     it("Prometheus Format", () => {
@@ -174,7 +174,7 @@ describe("Mertic Name from prometheus / influxdb Alias", () => {
         expect(getMetricNameFromTaggedAlias(`container_cpu_load_average_10s {agentpool="agentpool1"}`)).toBe("container_cpu_load_average_10s");
         expect(getMetricNameFromTaggedAlias(` container_cpu_load_average_10s { agentpool = "agentpool1" } `)).toBe("container_cpu_load_average_10s");
         expect(getMetricNameFromTaggedAlias(` container_cpu_load_average_10s { image = "abc:cba12:hello" } `)).toBe("container_cpu_load_average_10s");
-        expect(getMetricNameFromTaggedAlias(`container_memory_usage_bytes{beta_kubernetes_io_arch="amd64",beta_kubernetes_io_instance_type="Standard_D2_v2",beta_kubernetes_io_os="linux",container_name="omsagent",failure_domain_beta_kubernetes_io_region="westeurope",failure_domain_beta_kubernetes_io_zone="0",id="/kubepods/burstable/pod481c9cd6-aaa-11e9-9392-aaaa/aaaaa",image="microsoft/oms@sha256:aaaaa",instance="aaa-aaaa-k8s-nonprod-euw-001-master-2",job="kubernetes-nodes-cadvisor",kubernetes_azure_com_cluster="aaa-aaa-aaa-aaa-K8s-aaa-aaa-001",kubernetes_io_hostname="aaa-aaa-k8s-nonprod-euw-001-master-2",kubernetes_io_role="master",name="k8s_omsagent_omsagent-xh4g9_kube-aaaa-a7ef-11e9-9392-aaaa",namespace="kube-system",pod_name="omsagent-aaaa"}`)).toBe("container_memory_usage_bytes")
+        expect(getMetricNameFromTaggedAlias(`container_memory_usage_bytes{beta_kubernetes_io_arch="amd64",beta_kubernetes_io_instance_type="Standard_D2_v2"}`)).toBe("container_memory_usage_bytes");
     });
     it("InfluxDB Format", () => {
         expect(getMetricNameFromTaggedAlias("CPU.CPU TIme")).toBe("CPU.CPU TIme");
@@ -211,5 +211,5 @@ describe("Value needs to hidden", () => {
         expect(doesValueNeedsToHide(10, { value_below: "5", value_above: "30" })).toBe(false);
         expect(doesValueNeedsToHide(10, { value_below: " 5 ", value_above: " 30 " })).toBe(false);
         expect(doesValueNeedsToHide(0, { value_below: "-2", value_above: "5" })).toBe(false);
-    })
+    });
 });

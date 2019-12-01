@@ -70,21 +70,14 @@ module.exports = grunt => {
       default: {
         tsconfig: "./tsconfig.json"
       }
-    },
-
-    run: {
-      options: {},
-      tests: {
-        exec: "npm run jest"
-      }
     }
+
   });
 
   grunt.registerTask("test", ["run:tests", "tslint"]);
 
   grunt.registerTask("default", [
     "clean",
-    "run:tests",
     "tslint",
     "ts:default",
     "sass:build",
