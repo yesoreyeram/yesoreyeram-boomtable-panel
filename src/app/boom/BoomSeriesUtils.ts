@@ -92,6 +92,22 @@ export let getThresholds = function (thresholdsArray: any[], enable_time_based_t
     }
     return thresholdsArray || [];
 };
+export let getSeriesValue = function (series: any, statType: string): number {
+    let value = NaN;
+    if (statType === "last_time") {
+        if (_.last(series.datapoints)) {
+            value = _.last(series.datapoints)[1];
+        }
+    } else if (statType === "last_time_nonnull") {
+        let non_null_data = series.datapoints.filter(s => s[0]);
+        if (_.last(non_null_data) && _.last(non_null_data)[1]) {
+            value = _.last(non_null_data)[1];
+        }
+    } else if (series.stats) {
+        value = series.stats[statType];
+    }
+    return value;
+};
 export let getLink = function (enable_clickable_cells: boolean, clickable_cells_link: string, range: any): string {
     let link = enable_clickable_cells ? clickable_cells_link || "#" : "#";
     if (link && link !== "#") {
