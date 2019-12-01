@@ -13,8 +13,8 @@ import {
   BoomSeries,
   BoomOutput,
 } from './app/boom/index';
-import { defaultPattern, seriesToTable } from './app/app';
-import { plugin_id, value_name_options, textAlignmentOptions, config } from './app/config';
+import { defaultPattern, seriesToTable } from "./app/app";
+import { plugin_id, value_name_options, textAlignmentOptions, config } from "./app/config";
 
 loadPluginCss({
   dark: `plugins/${plugin_id}/css/default.dark.css`,
