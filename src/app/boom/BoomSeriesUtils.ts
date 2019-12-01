@@ -71,18 +71,6 @@ export let getLink = function (enable_clickable_cells: boolean, clickable_cells_
     }
     return link;
 };
-export let doesValueNeedsToHide = function (value: number, filter: any): boolean {
-    let hidden = false;
-    if ((value || value === 0) && filter && (filter.value_below !== "" || filter.value_above !== "")) {
-        if (filter.value_below !== "" && value < +(filter.value_below)) {
-            hidden = true;
-        }
-        if (filter.value_above !== "" && value > +(filter.value_above)) {
-            hidden = true;
-        }
-    }
-    return hidden;
-};
 export let GetValuesReplaced = function (strToReplace: string, value, valueformatted, stats: any, decimals: Number, format: string, _metricname: string, _tags: any[], delimiter: string): string {
 
     let value_raw = _.isNaN(value) || value === null ? "null" : value.toString().trim();

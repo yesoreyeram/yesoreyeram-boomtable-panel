@@ -209,7 +209,6 @@ export const getColName = function (col_name: string, delimiter: string, row_col
         row_name = replace_tags_from_field(col_name, _tags);
     } else {
         col_name = replaceDelimitedColumns(col_name, seriesName, delimiter, row_col_wrapper);
-        console.log(col_name, row_name, seriesName);
         if (seriesName.split(delimiter || ".").length === 1 || row_name === seriesName) {
             col_name = col_name || "Value";
         }
@@ -245,4 +244,16 @@ export const getDisplayValueTemplate = function (value: number, pattern: IBoomPa
         }
     }
     return template;
+};
+export const doesValueNeedsToHide = function (value: number, filter: any): boolean {
+    let hidden = false;
+    if ((value || value === 0) && filter && (filter.value_below !== "" || filter.value_above !== "")) {
+        if (filter.value_below !== "" && value < +(filter.value_below)) {
+            hidden = true;
+        }
+        if (filter.value_above !== "" && value > +(filter.value_above)) {
+            hidden = true;
+        }
+    }
+    return hidden;
 };

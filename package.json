@@ -1,12 +1,12 @@
 {
   "name": "yesoreyeram-boomtable-panel",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "description": "Boom table panel for Graphite, InfluxDB, Prometheus",
   "main": "dist/module.js",
   "scripts": {
     "build": "grunt",
     "jest": "jest",
-    "test": "grunt test"
+    "test": "grafana-toolkit plugin:test"
   },
   "repository": {
     "type": "git",
@@ -49,6 +49,7 @@
     "typescript": "^3.2.2"
   },
   "dependencies": {
+    "@grafana/toolkit": "^6.5.1",
     "lodash": "^4.17.4"
   }
 }
