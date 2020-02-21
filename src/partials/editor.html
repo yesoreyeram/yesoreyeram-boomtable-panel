@@ -180,7 +180,7 @@
                         <div class="gf-form">
                             <label class="gf-form-label width-12">Thresholds</label>
                             <input type="text" placeholder="Thresholds" class="gf-form-input width-18" ng-model="pattern.thresholds"
-                                bs-tooltip="'Comma seperated thresholds'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
+                                bs-tooltip="'Comma separated thresholds'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                         </div>
                     </div>
 
@@ -193,7 +193,7 @@
                             <label class="gf-form-label width-20" data-ng-if="pattern.enable_bgColor === true">BG
                                 Colors for thresholds</label>
                             <input type="text" placeholder="green|orange|red" class="gf-form-input width-18" ng-model="pattern.bgColors"
-                                bs-tooltip="'BG Colors seperated by | (pipe)'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();"
+                                bs-tooltip="'BG Colors separated by | (pipe)'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();"
                                 data-ng-if="pattern.enable_bgColor === true">
                             <button type="button" class="btn btn-primary btn-small" ng-click="pattern.inverseBGColors();ctrl.render();"
                                 title="Inverse" data-ng-if="pattern.enable_bgColor === true">Inverse</button>
@@ -208,7 +208,7 @@
                             <label class="gf-form-label width-20" data-ng-if="pattern.enable_textColor === true">Text
                                 Colors for thresholds</label>
                             <input type="text" placeholder="red|orange|green" class="gf-form-input width-18" ng-model="pattern.textColors"
-                                bs-tooltip="'Text Colors seperated by | (pipe)'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();"
+                                bs-tooltip="'Text Colors separated by | (pipe)'" ng-blur="ctrl.render()" data-ng-change="ctrl.render();"
                                 data-ng-if="pattern.enable_textColor === true">
                             <button type="button" class="btn btn-primary btn-small" ng-click="pattern.inverseTextColors();ctrl.render();"
                                 title="Inverse" data-ng-if="pattern.enable_textColor === true">Inverse</button>
@@ -485,7 +485,7 @@
                     <div class="gf-form">
                         <div class="gr-form-inline">
                             <div class="gf-form">
-                                <label class="gf-form-label width-20">Row / Column indentification wrapper</label>
+                                <label class="gf-form-label width-20">Row / Column identification wrapper</label>
                                 <input type="text" placeholder="Value" class="gf-form-input width-18" ng-model="ctrl.panel.row_col_wrapper" bs-tooltip="'Default is _'"
                                     ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                             </div>
