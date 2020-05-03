@@ -63,10 +63,13 @@ BoomOutput.prototype.getDataAsHTML = function(data: IBoomTable, sorting_props): 
       }
       _.each(o, item => {
         let item_style = `padding:4px;background-color:${item.color_bg};color:${item.color_text};text-align:${this.text_alignment_values}`;
+        let item_link_value = item.open_link_new_tab
+              ? `<a href="${item.link}" target="_blank" style="color:${item.color_text}">${item.display_value}</a>`
+              : `<a href="${item.link}" style="color:${item.color_text}">${item.display_value}</a>`;
         let item_display =
           item.link === '#'
             ? item.display_value
-            : `<a href="${item.link}" target="_blank" style="color:${item.color_text}">${item.display_value}</a>`;
+            : item_link_value;
         let tooltip =
           !item.tooltip || item.tooltip === '-'
             ? undefined

@@ -25,6 +25,7 @@ interface IBoomPattern {
   null_color: string;
   null_value: string;
   null_textcolor: string;
+  open_link_new_tab: Boolean;
   pattern: string;
   row_name: string;
   textColors: string;
@@ -78,6 +79,7 @@ interface IBoomCellDetails {
   color_text: string;
   display_value: string;
   link: string;
+  open_link_new_tab: Boolean;
   tooltip: string;
   value: number;
 }
