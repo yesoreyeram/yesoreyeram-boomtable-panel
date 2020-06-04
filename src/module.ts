@@ -176,6 +176,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
       boundary: 'scrollParent',
     });
     this.adjustScrollBar();
+    this.renderingCompleted();
   }
 };
 
