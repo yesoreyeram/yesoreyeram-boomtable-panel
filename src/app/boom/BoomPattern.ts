@@ -14,6 +14,7 @@ class BoomPattern implements IBoomPattern {
   public enable_bgColor: Boolean;
   public enable_bgColor_overrides: Boolean;
   public enable_clickable_cells: Boolean;
+  public open_link_new_tab: Boolean;
   public enable_textColor: Boolean;
   public enable_textColor_overrides: Boolean;
   public enable_time_based_thresholds: Boolean;
@@ -64,6 +65,7 @@ class BoomPattern implements IBoomPattern {
     this.enable_textColor = false;
     this.enable_textColor_overrides = false;
     this.enable_clickable_cells = false;
+    this.open_link_new_tab = false;
     this.enable_time_based_thresholds = false;
     this.enable_transform = false;
     this.enable_transform_overrides = false;

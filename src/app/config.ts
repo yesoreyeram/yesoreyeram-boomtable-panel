@@ -49,6 +49,7 @@ const default_pattern_options: any = {
   null_color: 'darkred',
   null_textcolor: 'white',
   null_value: 'No data',
+  open_link_new_tab: false,
   pattern: '*',
   row_name: '_series_',
   textColors: 'red|orange|green',

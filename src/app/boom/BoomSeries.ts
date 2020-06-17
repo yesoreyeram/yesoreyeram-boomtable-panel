@@ -27,6 +27,7 @@ class BoomSeries implements IBoomSeries {
     public value = NaN;
     public value_formatted = "-";
     public link = "-";
+    public open_link_new_tab = false;
     public thresholds: Number[];
     public hidden: Boolean = false;
     public _metricname = "";
@@ -67,6 +68,8 @@ class BoomSeries implements IBoomSeries {
 
         this.link = getLink(this.pattern.enable_clickable_cells, this.pattern.clickable_cells_link, timeSrv.timeRangeForUrl());
         this.link = replaceDelimitedColumns(this.link, this.seriesName, this.pattern.delimiter, this.row_col_wrapper);
+
+        this.open_link_new_tab = this.pattern.open_link_new_tab;
 
         this.tooltip = this.pattern.tooltipTemplate || "Series : _series_ <br/>Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_";
 

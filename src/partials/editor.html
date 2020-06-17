@@ -372,6 +372,10 @@
                             <input type="text" placeholder="Series : _series_ <br/>Row Name : _row_name_ <br/>Col Name : _col_name_ <br/>Value : _value_"
                                 class="gf-form-input width-18" ng-model="pattern.tooltipTemplate" bs-tooltip="'Tooltip Template; Leave blank for default template; Enter - to disable tooltip'"
                                 ng-blur="ctrl.render()">
+                            <span class="split"></span>
+                            <label class="gf-form-label width-26">Open Link in New Tab</label>
+                            <input type="checkbox" class="gf-form-input width-4" ng-model="pattern.open_link_new_tab"
+                                ng-blur="ctrl.render()" ng-change="ctrl.render()">
                         </div>
                     </div>
                 </div>
