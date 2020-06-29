@@ -1,8 +1,6 @@
 # Boom Table Panel for Grafana
 
 
-[![CircleCI](https://circleci.com/gh/yesoreyeram/yesoreyeram-boomtable-panel.svg?style=svg)](https://circleci.com/gh/yesoreyeram/yesoreyeram-boomtable-panel)
-
 Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for Graphite, InfluxDB, Prometheus, Azure Monitor.
 
 ![Boom Table - Sample Panel](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panel.png)
