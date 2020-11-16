@@ -75,6 +75,7 @@ describe("Boom Series", () => {
         expect(getSeriesValue({}, "total")).toBe(NaN);
         expect(getSeriesValue({}, "foo")).toBe(NaN);
         expect(getSeriesValue(dummy_series_1, "foo")).toBe(null);
+        expect(getSeriesValue(dummy_series_1, "current")).toBe(6);
         expect(getSeriesValue(dummy_series_1, "total")).toBe(3268);
         expect(getSeriesValue(dummy_series_1, "TOTAL")).toBe(3268);
         expect(getSeriesValue(dummy_series_1, "last_time")).toBe(null);
@@ -82,6 +83,7 @@ describe("Boom Series", () => {
         expect(getSeriesValue(dummy_series_2, "total")).toBe(dummy_series_2.stats.total);
         expect(getSeriesValue(dummy_series_2, "last_time_nonnull")).toBe(1575199020000);
         expect(getSeriesValue(dummy_series_2, "last_time")).toBe(1575199260000);
+        expect(getSeriesValue(dummy_series_2, "current")).toBe(0);
     });
     it("getCurrentTimeStamp", () => {
         expect(getCurrentTimeStamp(dummy_series_2.datapoints)).toStrictEqual(new Date(1575199260000));
