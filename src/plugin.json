@@ -1,10 +1,8 @@
 {
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
   "type": "panel",
   "name": "Boom Table",
   "id": "yesoreyeram-boomtable-panel",
-  "dataFormats": [
-    "time_series"
-  ],
   "info": {
     "description": "Boom table panel for Graphite, InfluxDB, Prometheus",
     "author": {
@@ -28,10 +26,9 @@
         "url": "https://github.com/yesoreyeram/yesoreyeram-boomtable-panel"
       }
     ],
-    "version": "1.4.0"
+    "version": "1.4.1"
   },
   "dependencies": {
-    "grafanaVersion": "4.x.x",
-    "plugins": []
+    "grafanaDependency": ">4.0.0"
   }
 }
