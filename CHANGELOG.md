@@ -2,6 +2,7 @@
 
 | Version            | Changes |
 | -------------------|-----------|
+| 1.4.0              | Pipeline updates |
 | 1.3.1              | Tags for prometheus and influxdb (EXPERIMENTAL FEATURE) |
 |                    | Replaced circleci with Github Actions |
 | 1.3.0              | More options in display template (Min, Max, Avg, Current, Total etc) | 

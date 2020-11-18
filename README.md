@@ -1,6 +1,8 @@
 # Boom Table Panel for Grafana
 
-![Build & Publish](https://github.com/yesoreyeram/yesoreyeram-boomtable-panel/workflows/Build%20&%20Publish/badge.svg)
+![Build](https://github.com/yesoreyeram/yesoreyeram-boomtable-panel/workflows/Test%20&%20Build/badge.svg)
+
+![Release](https://github.com/yesoreyeram/yesoreyeram-boomtable-panel/workflows/Release/badge.svg)
 
 Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for Graphite, InfluxDB, Prometheus, Azure Monitor.
 
