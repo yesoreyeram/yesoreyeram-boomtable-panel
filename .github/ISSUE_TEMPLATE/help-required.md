@@ -4,12 +4,11 @@ about: Ask questions like How to ?
 title: "[Help Required] Title"
 labels: help wanted
 assignees: ''
-
 ---
 
 **What you are struggling with**
 
-Descibe what assistance you need
+Describe what assistance you need
 
 **What you tried**
 

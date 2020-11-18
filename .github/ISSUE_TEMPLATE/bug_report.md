@@ -4,18 +4,19 @@ about: Report bug/issue to improve the plugin
 title: "[Bug] Title "
 labels: bug
 assignees: ''
-
 ---
 
 **Describe the bug**
 A clear and concise description of what the bug is.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
-
 **Version Details:**
  - Grafana version : 
  - Plugin version :
+ - Did this work in any other version of Grafana :
+ - What datasource you use : 
 
-**Additional context**
-Add any other context about the problem here.
+**Panel JSON**
+If applicable, provide panel json. Make sure to mask any sensitive information
+
+**Screenshots**
+If applicable, add screenshots to help explain your problem.
