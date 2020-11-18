@@ -16,8 +16,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
     - name: NodeJS Setup
       uses: actions/setup-node@v1
       with:
@@ -56,11 +54,6 @@ jobs:
         mv dist $GRAFANA_PLUGIN_ID
         zip $GRAFANA_PLUGIN_ARTIFACT $GRAFANA_PLUGIN_ID -r
         md5sum $GRAFANA_PLUGIN_ARTIFACT > $GRAFANA_PLUGIN_ARTIFACT_CHECKSUM
-    - name: Changelog
-      uses: scottbrenner/generate-changelog-action@master
-      id: Changelog
-      env:
-        REPO: ${{ github.repository }}
     - name: Create release
       id: create_release
       uses: actions/create-release@v1
@@ -69,8 +62,6 @@ jobs:
       with:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
-        body: |
-          ${{ steps.Changelog.outputs.changelog }}
         draft: false
         prerelease: false
     - name: Add plugin to release
