@@ -1,22 +1,6 @@
 import { normalizeColor, parseMathExpression, getColor, getActualNameWithoutTokens, getItemBasedOnThreshold, getMetricNameFromTaggedAlias, getSeriesValue, getCurrentTimeStamp, replaceDelimitedColumns, getRowName, getColName, doesValueNeedsToHide } from "./../app/boom/BoomUtils";
 
 const dummy_series_1 = {
-    stats: {
-        "avg": 9.077777777777778,
-        "count": 360,
-        "current": 6,
-        "delta": 1396,
-        "diff": 4,
-        "first": 2,
-        "logmin": 1,
-        "max": 24,
-        "min": 0,
-        "range": 24,
-        "timeStep": 60000,
-        "total": 3268,
-    }
-};
-const dummy_series_2 = {
     "alias": "COM # count",
     "aliasEscaped": "COM # count",
     "datapoints": [
@@ -54,39 +38,19 @@ const dummy_series_2 = {
         ]
     ],
     "id": "COM # count",
-    "label": "COM # count",
-    "stats": {
-        "avg": 41.875,
-        "count": 8,
-        "current": 0,
-        "delta": 93,
-        "diff": -108,
-        "first": 108,
-        "logmin": 48,
-        "max": 108,
-        "min": 0,
-        "range": 108,
-        "timeStep": 60000,
-        "total": 335,
-    }
+    "label": "COM # count"
 };
 describe("Boom Series", () => {
     it("getSeriesValue", () => {
-        expect(getSeriesValue({}, "total")).toBe(NaN);
-        expect(getSeriesValue({}, "foo")).toBe(NaN);
         expect(getSeriesValue(dummy_series_1, "foo")).toBe(null);
-        expect(getSeriesValue(dummy_series_1, "current")).toBe(6);
-        expect(getSeriesValue(dummy_series_1, "total")).toBe(3268);
-        expect(getSeriesValue(dummy_series_1, "TOTAL")).toBe(3268);
-        expect(getSeriesValue(dummy_series_1, "last_time")).toBe(null);
-        expect(getSeriesValue(dummy_series_1, "LAST_TIME")).toBe(null);
-        expect(getSeriesValue(dummy_series_2, "total")).toBe(dummy_series_2.stats.total);
-        expect(getSeriesValue(dummy_series_2, "last_time_nonnull")).toBe(1575199020000);
-        expect(getSeriesValue(dummy_series_2, "last_time")).toBe(1575199260000);
-        expect(getSeriesValue(dummy_series_2, "current")).toBe(0);
+        expect(getSeriesValue(dummy_series_1, "Total")).toBe(335);
+        expect(getSeriesValue(dummy_series_1, "total")).toBe(335);
+        expect(getSeriesValue(dummy_series_1, "last_time_nonnull")).toBe(1575199020000);
+        expect(getSeriesValue(dummy_series_1, "last_time")).toBe(1575199260000);
+        expect(getSeriesValue(dummy_series_1, "current")).toBe(null);
     });
     it("getCurrentTimeStamp", () => {
-        expect(getCurrentTimeStamp(dummy_series_2.datapoints)).toStrictEqual(new Date(1575199260000));
+        expect(getCurrentTimeStamp(dummy_series_1.datapoints)).toStrictEqual(new Date(1575199260000));
     });
     it("replaceDelimitedColumns", () => {
         expect(replaceDelimitedColumns("Hello _0_ is _1_", "foo.bar.baz", ".", "_")).toBe("Hello foo is bar");

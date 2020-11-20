@@ -1,18 +1,19 @@
-interface IBoomPattern {
+export interface IBoomPattern {
+  disabled: boolean;
   bgColors: string;
   bgColors_overrides: string;
   clickable_cells_link: string;
   col_name: string;
-  decimals: Number;
+  decimals: number;
   delimiter: string;
-  enable_bgColor: Boolean;
-  enable_bgColor_overrides: Boolean;
-  enable_clickable_cells: Boolean;
-  enable_textColor: Boolean;
-  enable_textColor_overrides: Boolean;
-  enable_time_based_thresholds: Boolean;
-  enable_transform: Boolean;
-  enable_transform_overrides: Boolean;
+  enable_bgColor: boolean;
+  enable_bgColor_overrides: boolean;
+  enable_clickable_cells: boolean;
+  enable_textColor: boolean;
+  enable_textColor_overrides: boolean;
+  enable_time_based_thresholds: boolean;
+  enable_transform: boolean;
+  enable_transform_overrides: boolean;
   displayTemplate: string;
   defaultBGColor: string;
   defaultTextColor: string;
@@ -36,8 +37,8 @@ interface IBoomPattern {
   tooltipTemplate: string;
   valueName: string;
 }
-interface IBoomSeries {
-  hidden: Boolean;
+export interface IBoomSeries {
+  hidden: boolean;
   col_name: string;
   row_name: string;
   row_name_raw: string;
@@ -50,28 +51,28 @@ interface IBoomSeries {
   _tags: any[];
   _metricname: string;
 }
-interface IBoomTimeBasedThreshold {
+export interface IBoomTimeBasedThreshold {
   enabledDays: string;
   from: string;
   name: string;
   threshold: string;
   to: string;
 }
-interface IBoomTableTransformationOptions {
+export interface IBoomTableTransformationOptions {
   non_matching_cells_color_bg: string;
   non_matching_cells_color_text: string;
   non_matching_cells_text: string;
 }
-interface IBoomRenderingOptions {
+export interface IBoomRenderingOptions {
   default_title_for_rows: String;
-  hide_first_column: Boolean;
-  hide_headers: Boolean;
+  hide_first_column: boolean;
+  hide_headers: boolean;
   text_alignment_firstcolumn: String;
   text_alignment_values: String;
   first_column_link: String;
 }
-interface IBoomCellDetails {
-  hidden: Boolean;
+export interface IBoomCellDetails {
+  hidden: boolean;
   col_name: string;
   row_name: string;
   color_bg: string;
@@ -81,22 +82,45 @@ interface IBoomCellDetails {
   tooltip: string;
   value: number;
 }
-interface IBoomTable {
+export interface IBoomTable {
   rows_without_token: string[];
   rows_found: string[];
   cols_found: string[];
   output: IBoomCellDetails[][];
 }
-interface IBoomHTML {
+export interface IBoomHTML {
   body: string;
 }
-export {
-  IBoomTableTransformationOptions,
-  IBoomRenderingOptions,
-  IBoomPattern,
-  IBoomSeries,
-  IBoomTimeBasedThreshold,
-  IBoomHTML,
-  IBoomTable,
-  IBoomCellDetails,
-};
+export interface IBoomSortingOptions {
+  col_index : number;
+  direction: 'asc'|'desc';
+}
+
+type HORIZONTAL_ALIGNMENT_OPTIONS = 'LEFT' | 'RIGHT' | 'CENTER';
+
+export interface PanelOptions {
+
+    debug_mode: boolean;
+
+    default_title_for_rows: string;
+    activePatternIndex: number;
+    row_col_wrapper: string;
+    hide_first_column: boolean;
+    hide_headers: boolean;
+    text_alignment_firstcolumn: HORIZONTAL_ALIGNMENT_OPTIONS;
+    text_alignment_values: HORIZONTAL_ALIGNMENT_OPTIONS;
+    text_alignment_header: HORIZONTAL_ALIGNMENT_OPTIONS;
+
+    sorting_props: IBoomSortingOptions;
+
+    non_matching_cells_text: string;
+    non_matching_cells_color_bg: string;
+    non_matching_cells_color_text: string;
+
+    first_column_link: string;
+    font_size: string;
+
+    defaultPattern: IBoomPattern;
+    patterns: IBoomPattern[];
+
+}

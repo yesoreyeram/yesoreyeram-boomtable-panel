@@ -1,10 +1,11 @@
 import _ from 'lodash';
 
-import { getItemBasedOnThreshold, normalizeColor, replace_tags_from_field } from './index';
+import { DecimalCount, TimeRange } from "@grafana/data"
+import { getItemBasedOnThreshold, normalizeColor, replace_tags_from_field } from './BoomUtils';
 import { get_formatted_value } from '../GrafanaUtils';
 import { IBoomPattern } from './Boom.interface';
 
-export let getBGColor = function(
+export let getBGColor = function (
   value: number,
   pattern: IBoomPattern,
   thresholds: any[],
@@ -35,10 +36,10 @@ export let getBGColor = function(
   }
   return normalizeColor(bgColor);
 };
-export let getTextColor = function(
+export let getTextColor = function (
   value: number,
   pattern: IBoomPattern,
-  thresholds,
+  thresholds: any,
   list_of_textColors_based_on_thresholds: string,
   txtColorOverrides: string[]
 ): string {
@@ -63,34 +64,34 @@ export let getTextColor = function(
   }
   return normalizeColor(textColor);
 };
-export let getThresholds = function(
+export let getThresholds = function (
   thresholdsArray: any[],
   enable_time_based_thresholds: boolean,
   time_based_thresholds: any[],
   currentTimeStamp: Date
 ) {
   if (enable_time_based_thresholds) {
-    let metricrecivedTimeStamp = currentTimeStamp || new Date();
-    let metricrecivedTimeStamp_innumber = metricrecivedTimeStamp.getHours() * 100 + metricrecivedTimeStamp.getMinutes();
+    let metricReceivedTimeStamp = currentTimeStamp || new Date();
+    let metricReceivedTimeStampInNumber = metricReceivedTimeStamp.getHours() * 100 + metricReceivedTimeStamp.getMinutes();
     let weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-    _.each(time_based_thresholds, tbtx => {
+    _.each(time_based_thresholds, (timeBasedThreshold: any) => {
       if (
-        tbtx &&
-        tbtx.from &&
-        tbtx.to &&
-        tbtx.enabledDays &&
-        metricrecivedTimeStamp_innumber >= +tbtx.from &&
-        metricrecivedTimeStamp_innumber <= +tbtx.to &&
-        tbtx.enabledDays.toLowerCase().indexOf(weekdays[metricrecivedTimeStamp.getDay()]) > -1 &&
-        tbtx.threshold
+        timeBasedThreshold &&
+        timeBasedThreshold.from &&
+        timeBasedThreshold.to &&
+        timeBasedThreshold.enabledDays &&
+        metricReceivedTimeStampInNumber >= +timeBasedThreshold.from &&
+        metricReceivedTimeStampInNumber <= +timeBasedThreshold.to &&
+        timeBasedThreshold.enabledDays.toLowerCase().indexOf(weekdays[metricReceivedTimeStamp.getDay()]) > -1 &&
+        timeBasedThreshold.threshold
       ) {
-        thresholdsArray = (tbtx.threshold + '').split(',').map(d => +d);
+        thresholdsArray = (timeBasedThreshold.threshold + '').split(',').map(d => +d);
       }
     });
   }
   return thresholdsArray || [];
 };
-export let getLink = function(enable_clickable_cells: boolean, clickable_cells_link: string, range: any): string {
+export let getLink = function (enable_clickable_cells: boolean, clickable_cells_link: string, range: TimeRange): string {
   let link = enable_clickable_cells ? clickable_cells_link || '#' : '#';
   if (link && link !== '#') {
     link += link.indexOf('?') > -1 ? `&from=${range.from}` : `?from=${range.from}`;
@@ -98,10 +99,10 @@ export let getLink = function(enable_clickable_cells: boolean, clickable_cells_l
   }
   return link;
 };
-export let GetValuesReplaced = function(
+export let GetValuesReplaced = function (
   strToReplace: string,
-  value,
-  valueformatted,
+  value: any,
+  valueFormatted: any,
   stats: any,
   decimals: Number,
   format: string,
@@ -110,7 +111,7 @@ export let GetValuesReplaced = function(
   delimiter: string
 ): string {
   let value_raw = _.isNaN(value) || value === null ? 'null' : value.toString().trim();
-  let value_formatted = _.isNaN(value) || value === null ? 'null' : valueformatted.toString().trim();
+  let value_formatted = _.isNaN(value) || value === null ? 'null' : valueFormatted.toString().trim();
 
   strToReplace = strToReplace.replace(new RegExp('_value_min_raw_', 'g'), stats.min);
   strToReplace = strToReplace.replace(new RegExp('_value_max_raw_', 'g'), stats.max);
@@ -119,11 +120,11 @@ export let GetValuesReplaced = function(
   strToReplace = strToReplace.replace(new RegExp('_value_total_raw_', 'g'), stats.total);
   strToReplace = strToReplace.replace(new RegExp('_value_raw_', 'g'), value_raw);
 
-  strToReplace = strToReplace.replace(new RegExp('_value_min_', 'g'), get_formatted_value(stats.min, decimals, format));
-  strToReplace = strToReplace.replace(new RegExp('_value_max_', 'g'), get_formatted_value(stats.max, decimals, format));
-  strToReplace = strToReplace.replace(new RegExp('_value_avg_', 'g'), get_formatted_value(stats.avg, decimals, format));
-  strToReplace = strToReplace.replace(new RegExp('_value_current_', 'g'), get_formatted_value(stats.current, decimals, format));
-  strToReplace = strToReplace.replace(new RegExp('_value_total_', 'g'), get_formatted_value(stats.total, decimals, format));
+  strToReplace = strToReplace.replace(new RegExp('_value_min_', 'g'), get_formatted_value(stats.min, decimals as DecimalCount, format));
+  strToReplace = strToReplace.replace(new RegExp('_value_max_', 'g'), get_formatted_value(stats.max, decimals as DecimalCount, format));
+  strToReplace = strToReplace.replace(new RegExp('_value_avg_', 'g'), get_formatted_value(stats.avg, decimals as DecimalCount, format));
+  strToReplace = strToReplace.replace(new RegExp('_value_current_', 'g'), get_formatted_value(stats.current, decimals as DecimalCount, format));
+  strToReplace = strToReplace.replace(new RegExp('_value_total_', 'g'), get_formatted_value(stats.total, decimals as DecimalCount, format));
   strToReplace = strToReplace.replace(new RegExp('_value_', 'g'), value_formatted);
 
   if (delimiter.toLowerCase() === 'tag') {

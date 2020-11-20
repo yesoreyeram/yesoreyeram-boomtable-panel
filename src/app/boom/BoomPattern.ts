@@ -1,6 +1,8 @@
-import { IBoomPattern, IBoomTimeBasedThreshold, BoomTimeBasedThreshold } from './index';
+import { IBoomPattern, IBoomTimeBasedThreshold } from './Boom.interface';
+import { BoomTimeBasedThreshold } from "./BoomTimeBasedThreshold";
 
 class BoomPattern implements IBoomPattern {
+  public disabled: boolean;
   private row_col_wrapper = '_';
   public bgColors: string;
   public bgColors_overrides: string;
@@ -9,16 +11,16 @@ class BoomPattern implements IBoomPattern {
   public displayTemplate: string;
   public defaultBGColor: string;
   public defaultTextColor: string;
-  public decimals: Number;
+  public decimals: number;
   public delimiter: string;
-  public enable_bgColor: Boolean;
-  public enable_bgColor_overrides: Boolean;
-  public enable_clickable_cells: Boolean;
-  public enable_textColor: Boolean;
-  public enable_textColor_overrides: Boolean;
-  public enable_time_based_thresholds: Boolean;
-  public enable_transform: Boolean;
-  public enable_transform_overrides: Boolean;
+  public enable_bgColor: boolean;
+  public enable_bgColor_overrides: boolean;
+  public enable_clickable_cells: boolean;
+  public enable_textColor: boolean;
+  public enable_textColor_overrides: boolean;
+  public enable_time_based_thresholds: boolean;
+  public enable_transform: boolean;
+  public enable_transform_overrides: boolean;
   public filter: {
     value_above: string;
     value_below: string;
@@ -38,13 +40,14 @@ class BoomPattern implements IBoomPattern {
   public transform_values_overrides: string;
   public tooltipTemplate: string;
   public valueName: string;
-  public inverseBGColors;
-  public inverseTextColors;
-  public inverseTransformValues;
-  public add_time_based_thresholds;
-  public remove_time_based_thresholds;
-  public setUnitFormat;
+  public inverseBGColors: any;
+  public inverseTextColors: any;
+  public inverseTransformValues: any;
+  public add_time_based_thresholds: any;
+  public remove_time_based_thresholds: any;
+  public setUnitFormat: any;
   constructor(options: any) {
+    this.disabled = false;
     if (options && options.row_col_wrapper) {
       this.row_col_wrapper = options.row_col_wrapper;
     }
@@ -73,7 +76,7 @@ class BoomPattern implements IBoomPattern {
     };
     this.format = options && options.format ? options.format : 'none';
     this.name = options && options.name ? options.name : 'New Pattern';
-    this.null_color = options && options.null_color ? options.null_color : 'darkred';
+    this.null_color = options && options.null_color ? options.null_color : 'red';
     this.null_textcolor = options && options.null_Textcolor ? options.null_Textcolor : 'black';
     this.null_value = options && options.null_value ? options.null_value : 'No data';
     this.pattern = options && options.pattern ? options.pattern : '^server.*cpu$';
@@ -90,46 +93,46 @@ class BoomPattern implements IBoomPattern {
   }
 }
 
-BoomPattern.prototype.inverseBGColors = function(): void {
+BoomPattern.prototype.inverseBGColors = function (): void {
   this.bgColors = this.bgColors
     ? this.bgColors
-        .split('|')
-        .reverse()
-        .join('|')
+      .split('|')
+      .reverse()
+      .join('|')
     : '';
 };
 
-BoomPattern.prototype.inverseTextColors = function(): void {
+BoomPattern.prototype.inverseTextColors = function (): void {
   this.textColors = this.textColors
     ? this.textColors
-        .split('|')
-        .reverse()
-        .join('|')
+      .split('|')
+      .reverse()
+      .join('|')
     : '';
 };
 
-BoomPattern.prototype.inverseTransformValues = function(): void {
+BoomPattern.prototype.inverseTransformValues = function (): void {
   this.transform_values = this.transform_values
     ? this.transform_values
-        .split('|')
-        .reverse()
-        .join('|')
+      .split('|')
+      .reverse()
+      .join('|')
     : '';
 };
 
-BoomPattern.prototype.add_time_based_thresholds = function(): void {
+BoomPattern.prototype.add_time_based_thresholds = function (): void {
   let new_time_based_threshold: IBoomTimeBasedThreshold = new BoomTimeBasedThreshold();
   this.time_based_thresholds = this.time_based_thresholds || [];
   this.time_based_thresholds.push(new_time_based_threshold);
 };
 
-BoomPattern.prototype.remove_time_based_thresholds = function(index: Number): void {
+BoomPattern.prototype.remove_time_based_thresholds = function (index: Number): void {
   if (this.time_based_thresholds.length > 0) {
     this.time_based_thresholds.splice(Number(index), 1);
   }
 };
 
-BoomPattern.prototype.setUnitFormat = function(format: any): void {
+BoomPattern.prototype.setUnitFormat = function (format: any): void {
   this.format = format && format.value ? format.value : 'none';
 };
 

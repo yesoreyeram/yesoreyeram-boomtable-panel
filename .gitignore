@@ -3,3 +3,4 @@ package-lock.json
 .tscache/
 *.tmp.txt
 dist/
+coverage/

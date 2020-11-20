@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { IBoomPattern } from './Boom.interface';
+import { TimeSeriesStats } from './../TimeSeriesStats';
 
 export const normalizeColor = function (color: string) {
   if (color.toLowerCase() === 'green') {
@@ -12,30 +13,30 @@ export const normalizeColor = function (color: string) {
     return color.trim();
   }
 };
-export const parseMath = function (valuestring: string): number {
-  let returnvalue = 0;
-  if (valuestring.indexOf('+') > -1) {
-    returnvalue = +valuestring.split('+')[0] + +valuestring.split('+')[1];
-  } else if (valuestring.indexOf('-') > -1) {
-    returnvalue = +valuestring.split('-')[0] - +valuestring.split('-')[1];
-  } else if (valuestring.indexOf('*') > -1) {
-    returnvalue = +valuestring.split('*')[0] * +valuestring.split('*')[1];
-  } else if (valuestring.indexOf('/') > -1) {
-    returnvalue = +valuestring.split('/')[0] / +valuestring.split('/')[1];
-  } else if (valuestring.indexOf('min') > -1) {
-    returnvalue = _.min([+valuestring.split('min')[0], +valuestring.split('min')[1]]) || 0;
-  } else if (valuestring.indexOf('max') > -1) {
-    returnvalue = _.max([+valuestring.split('max')[0], +valuestring.split('max')[1]]) || 0;
-  } else if (valuestring.indexOf('mean') > -1) {
-    returnvalue = _.mean([+valuestring.split('avg')[0], +valuestring.split('avg')[1]]) || 0;
+export const parseMath = function (valueString: string): number {
+  let returnValue = 0;
+  if (valueString.indexOf('+') > -1) {
+    returnValue = +valueString.split('+')[0] + +valueString.split('+')[1];
+  } else if (valueString.indexOf('-') > -1) {
+    returnValue = +valueString.split('-')[0] - +valueString.split('-')[1];
+  } else if (valueString.indexOf('*') > -1) {
+    returnValue = +valueString.split('*')[0] * +valueString.split('*')[1];
+  } else if (valueString.indexOf('/') > -1) {
+    returnValue = +valueString.split('/')[0] / +valueString.split('/')[1];
+  } else if (valueString.indexOf('min') > -1) {
+    returnValue = _.min([+valueString.split('min')[0], +valueString.split('min')[1]]) || 0;
+  } else if (valueString.indexOf('max') > -1) {
+    returnValue = _.max([+valueString.split('max')[0], +valueString.split('max')[1]]) || 0;
+  } else if (valueString.indexOf('mean') > -1) {
+    returnValue = _.mean([+valueString.split('avg')[0], +valueString.split('avg')[1]]) || 0;
   } else {
-    returnvalue = +valuestring;
+    returnValue = +valueString;
   }
-  return Math.round(+returnvalue);
+  return Math.round(+returnValue);
 };
 export const parseMathExpression = function (expression: string, index: number): number {
-  let valuestring = expression.replace(/\_/g, '').split(',')[index];
-  return +parseMath(valuestring);
+  let valueString = expression.replace(/\_/g, '').split(',')[index];
+  return +parseMath(valueString);
 };
 export const getColor = function (expression: string, index: number) {
   let returnValue =
@@ -51,17 +52,17 @@ export const replaceTokens = function (value: string) {
     .split(' ')
     .map(a => {
       if (a.startsWith('_fa-') && a.endsWith('_')) {
-        let returnvalue = '';
+        let returnValue = '';
         let icon = a.replace(/\_/g, '').split(',')[0];
         let color = getColor(a, 1);
         let repeatCount = a.split(',').length >= 3 ? parseMathExpression(a, 2) : 1;
-        returnvalue = `<i class="fa ${icon}" ${color}></i> `.repeat(repeatCount);
+        returnValue = `<i class="fa ${icon}" ${color}></i> `.repeat(repeatCount);
         if (a.split(',').length >= 4) {
           let maxColor = getColor(a, 3);
           let maxLength = a.split(',').length >= 5 ? parseMathExpression(a, 4) : 0;
-          returnvalue += `<i class="fa ${icon}" ${maxColor}></i> `.repeat(_.max([maxLength - repeatCount, 0]) || 0);
+          returnValue += `<i class="fa ${icon}" ${maxColor}></i> `.repeat(_.max([maxLength - repeatCount, 0]) || 0);
         }
-        return returnvalue;
+        return returnValue;
       } else if (a.startsWith('_img-') && a.endsWith('_')) {
         a = a.slice(0, -1);
         let imgUrl = a.replace('_img-', '').split(',')[0];
@@ -108,21 +109,21 @@ export const getItemBasedOnThreshold = function (thresholds: any[], ranges: any,
   }
   return c;
 };
-export const getMetricNameFromTaggedAlias = function (target): string {
+export const getMetricNameFromTaggedAlias = function (target: string): string {
   target = target.trim();
-  let _metricname = target;
+  let _metricName = target;
   if (target.indexOf('{') > -1 && target.indexOf('}') > -1 && target[target.length - 1] === '}') {
-    _metricname = target.split('{')[0].trim();
+    _metricName = target.split('{')[0].trim();
   } else {
-    _metricname = target;
+    _metricName = target;
   }
-  return _metricname;
+  return _metricName;
 };
-export const getLablesFromTaggedAlias = function (target, label): any[] {
+export const getLabelsFromTaggedAlias = function (target: string, label: string): any[] {
   let _tags: any[] = [];
   target = target.trim();
-  let tagsstring = target.replace(label, '').trim();
-  if (tagsstring.startsWith('{') && tagsstring.endsWith('}')) {
+  let tagsString = target.replace(label, '').trim();
+  if (tagsString.startsWith('{') && tagsString.endsWith('}')) {
     // Snippet from https://github.com/grafana/grafana/blob/3f15170914c3189ee7835f0b19ff500db113af73/packages/grafana-data/src/utils/labels.ts
     const parsePrometheusLabels = function (labels: string) {
       const labelsByKey: any = {};
@@ -135,12 +136,12 @@ export const getLablesFromTaggedAlias = function (target, label): any[] {
       });
       return labelsByKey;
     };
-    _.each(parsePrometheusLabels(tagsstring), (k: string, v: string) => {
+    _.each(parsePrometheusLabels(tagsString), (k: string, v: string) => {
       _tags.push({ tag: v, value: k });
     });
-    if (tagsstring.indexOf(':') > -1 && _tags.length === 0) {
+    if (tagsString.indexOf(':') > -1 && _tags.length === 0) {
       let label_values =
-        tagsstring
+        tagsString
           .slice(1)
           .trim()
           .slice(0, -1)
@@ -172,24 +173,28 @@ export const replace_tags_from_field = function (field: string, tags: any[]): st
   }
   return field;
 };
-export const getSeriesValue = function (series: any, statType: string): number {
-  let value = NaN;
-  statType = (statType || '').toLowerCase();
-  if (series) {
-    if (statType === 'last_time' && series.datapoints && series.datapoints.length > 0) {
-      if (_.last(series.datapoints)) {
-        value = _.last(series.datapoints)[1];
-      }
-    } else if (statType === 'last_time_nonnull') {
-      let non_null_data = series.datapoints.filter(s => s[0]);
-      if (_.last(non_null_data) && _.last(non_null_data)[1]) {
-        value = _.last(non_null_data)[1];
-      }
-    } else if (series.stats) {
-      value = series.stats[statType] !== undefined ? series.stats[statType] : null;
-    }
+export const getSeriesValue = function (series: any, statType: string): any {
+  let stats = new TimeSeriesStats(series.datapoints)
+  switch (statType.toLowerCase()) {
+    case "min":
+      return stats.min;
+    case "max":
+      return stats.max;
+    case "avg":
+      return stats.avg;
+    case "last":
+    case "current":
+      return stats.current;
+    case "total":
+    case "sum":
+      return stats.total;
+    case "last_time":
+      return stats.last_time;
+    case "last_time_nonnull":
+      return stats.last_time_nonnull;
+    default:
+      return null;
   }
-  return value;
 };
 export const getCurrentTimeStamp = function (dataPoints: any[]): Date {
   let currentTimeStamp = new Date();
@@ -198,10 +203,10 @@ export const getCurrentTimeStamp = function (dataPoints: any[]): Date {
   }
   return currentTimeStamp;
 };
-export const replaceDelimitedColumns = function (inputstring: string, seriesName: string, delimiter: string, row_col_wrapper: string): string {
+export const replaceDelimitedColumns = function (inputString: string, seriesName: string, delimiter: string, row_col_wrapper: string): string {
   let outputString = seriesName.split(delimiter || '.').reduce((r, it, i) => {
     return r.replace(new RegExp(row_col_wrapper + i + row_col_wrapper, 'g'), it);
-  }, inputstring);
+  }, inputString);
   return outputString;
 };
 export const getRowName = function (
@@ -209,11 +214,11 @@ export const getRowName = function (
   delimiter: string,
   row_col_wrapper: string,
   seriesName: string,
-  _metricname: string,
+  _metricName: string,
   _tags: any[]
 ): string {
   if (delimiter.toLowerCase() === 'tag') {
-    row_name = row_name.replace(new RegExp('{{metric_name}}', 'g'), _metricname);
+    row_name = row_name.replace(new RegExp('{{metric_name}}', 'g'), _metricName);
     row_name = replace_tags_from_field(row_name, _tags);
   } else {
     row_name = replaceDelimitedColumns(row_name, seriesName, delimiter, row_col_wrapper);
@@ -229,11 +234,11 @@ export const getColName = function (
   row_col_wrapper: string,
   seriesName: string,
   row_name: string,
-  _metricname: string,
+  _metricName: string,
   _tags: any[]
 ): string {
   if (delimiter.toLowerCase() === 'tag') {
-    col_name = col_name.replace(new RegExp('{{metric_name}}', 'g'), _metricname);
+    col_name = col_name.replace(new RegExp('{{metric_name}}', 'g'), _metricName);
     row_name = replace_tags_from_field(col_name, _tags);
   } else {
     col_name = replaceDelimitedColumns(col_name, seriesName, delimiter, row_col_wrapper);

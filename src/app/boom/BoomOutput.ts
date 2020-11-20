@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { IBoomHTML, IBoomTable, IBoomRenderingOptions, IBoomSeries } from './index';
+import { IBoomHTML, IBoomTable, IBoomRenderingOptions, IBoomSeries, IBoomSortingOptions } from './Boom.interface';
 import { getActualNameWithoutTokens } from './BoomUtils';
 
 export class BoomOutput {
@@ -9,8 +9,8 @@ export class BoomOutput {
   public text_alignment_firstcolumn: String;
   public text_alignment_values: String;
   public first_column_link: String;
-  public getDataAsHTML;
-  public getDataAsDebugHTML;
+  public getDataAsHTML: any;
+  public getDataAsDebugHTML: any;
   constructor(options: IBoomRenderingOptions) {
     this.default_title_for_rows = options.default_title_for_rows || '';
     this.hide_first_column = options.hide_first_column;
@@ -20,8 +20,8 @@ export class BoomOutput {
     this.first_column_link = options.first_column_link || '#';
   }
 }
-BoomOutput.prototype.getDataAsHTML = function(data: IBoomTable, sorting_props): IBoomHTML {
-  let getLinkifiedColumn = function(rowName: string, first_column_link: string, raw_rowName: string): string {
+BoomOutput.prototype.getDataAsHTML = function (data: IBoomTable, sorting_props: IBoomSortingOptions): IBoomHTML {
+  let getColumnLink = function (rowName: string, first_column_link: string, raw_rowName: string): string {
     if (first_column_link !== '#') {
       first_column_link = first_column_link.replace(new RegExp('_row_name_', 'g'), getActualNameWithoutTokens(raw_rowName).trim());
       rowName = `<a href="${first_column_link}" target="_blank">${rowName}</a>`;
@@ -39,7 +39,7 @@ BoomOutput.prototype.getDataAsHTML = function(data: IBoomTable, sorting_props): 
     data.output &&
     data.output.length >= sorting_props.col_index
   ) {
-    let sortFunction = (a, b, sortMethod) => {
+    let sortFunction = (a: any, b: any, sortMethod: 'asc' | 'desc') => {
       if (sortMethod === 'asc') {
         return a[sorting_props.col_index].value - b[sorting_props.col_index].value;
       } else {
@@ -55,10 +55,10 @@ BoomOutput.prototype.getDataAsHTML = function(data: IBoomTable, sorting_props): 
     if (o.map(item => item.hidden.toString()).indexOf('false') > -1) {
       output.body += '<tr>';
       if (this.hide_first_column !== true) {
-        let raw_rowName = _.first(o.map(item => item.row_name_raw));
+        let raw_rowName = _.first(o.map((item: any) => item.row_name_raw));
         output.body += `
                     <td style="padding:4px;text-align:${this.text_alignment_firstcolumn}">
-                        ${getLinkifiedColumn(_.first(o.map(item => item.row_name)), String(this.first_column_link), raw_rowName)}
+                        ${getColumnLink(_.first(o.map((item: any) => item.row_name)), String(this.first_column_link), raw_rowName)}
                     </td>`;
       }
       _.each(o, item => {
@@ -84,9 +84,9 @@ BoomOutput.prototype.getDataAsHTML = function(data: IBoomTable, sorting_props): 
   });
   return output;
 };
-BoomOutput.prototype.getDataAsDebugHTML = function(data: IBoomSeries[]): string {
-  let debugdata = ``;
-  debugdata = _.map(data, d => {
+BoomOutput.prototype.getDataAsDebugHTML = function (data: IBoomSeries[]): string {
+  let debugData = ``;
+  debugData = _.map(data, (d: any) => {
     return `
         <tr>
             <td style="padding:4px;text-align:left;width:30%; title="Series Name" >${d.seriesName}</td>
@@ -102,5 +102,5 @@ BoomOutput.prototype.getDataAsDebugHTML = function(data: IBoomSeries[]): string 
         </tr>
         `;
   }).join(``);
-  return debugdata;
+  return debugData;
 };

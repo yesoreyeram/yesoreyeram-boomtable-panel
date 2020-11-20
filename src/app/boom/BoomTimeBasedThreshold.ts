@@ -1,4 +1,4 @@
-import { IBoomTimeBasedThreshold } from './index';
+import { IBoomTimeBasedThreshold } from './Boom.interface';
 
 class BoomTimeBasedThreshold implements IBoomTimeBasedThreshold {
   public enabledDays: string;
