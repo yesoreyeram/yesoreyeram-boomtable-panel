@@ -1,8 +1,8 @@
 # ChangeLog
 
-| Version            | Changes |
+| Version            | Changes   |
 | -------------------|-----------|
-| 1.4.1              | Plugin signed for use |
+| 1.5.0              | Plugin signed for use |
 | 1.4.0              | Pipeline updates |
 | 1.3.1              | Tags for prometheus and influxdb (EXPERIMENTAL FEATURE) |
 |                    | Replaced circleci with Github Actions |
@@ -16,7 +16,7 @@
 |                    | Link in first column |
 |                    | Option to modify font size |
 | 1.2.0              | Template variables in row name, col name, link, tooltip, thresholds, colors |
-| 1.1.0              | Colnames in the link |
+| 1.1.0              | Column names in the link |
 | 1.0.0              | Typescript & TSLint implementation |
 |                    | Jest test cases implemented |
 |                    | SASS implementation for stylesheets |
