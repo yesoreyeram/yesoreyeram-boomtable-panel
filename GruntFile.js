@@ -23,6 +23,12 @@ module.exports = grunt => {
         expand: true,
         src: ["img/**/*"],
         dest: "dist/src/"
+      },
+      logo_to_dist: {
+        cwd: "src",
+        expand: true,
+        src: ["img/logo.png"],
+        dest: "dist/"
       }
     },
 
@@ -83,6 +89,7 @@ module.exports = grunt => {
     "sass:build",
     "copy:src_to_dist",
     "copy:pluginDef",
-    "copy:img_to_dist"
+    "copy:img_to_dist",
+    "copy:logo_to_dist"
   ]);
 };
