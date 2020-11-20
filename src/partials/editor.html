@@ -51,7 +51,7 @@
                                 <label class="width-12 boom-label" data-ng-if="$index >= ctrl.panel.patterns.length">Default Pattern (*)</label>
                             </td>
                             <td>
-                                <input type="text" placeholder="Delimiter" class="gf-form-input width-4" ng-model="pattern.delimiter" bs-tooltip="'Delimiter to seperate metrics row and col'" ng-blur="ctrl.render()">
+                                <input type="text" placeholder="Delimiter" class="gf-form-input width-4" ng-model="pattern.delimiter" bs-tooltip="'Delimiter to separate metrics row and col'" ng-blur="ctrl.render()">
                             </td>
                             <td>
                                 <input type="text" placeholder="Row Name" class="gf-form-input width-12" ng-model="pattern.row_name" ng-blur="ctrl.render()">
@@ -117,7 +117,7 @@
                             <span class="split"></span>
                             <label class="gf-form-label width-12">Delimiter</label>
                             <input type="text" placeholder="Delimiter" class="gf-form-input width-4" ng-model="pattern.delimiter"
-                                bs-tooltip="'Delimiter to seperate metrics row and col'" ng-blur="ctrl.render()">
+                                bs-tooltip="'Delimiter to separate metrics row and col'" ng-blur="ctrl.render()">
                         </div>
                     </div>
                     <div class="gr-form-inline">
@@ -223,7 +223,7 @@
                             <label class="gf-form-label width-20" data-ng-if="pattern.enable_transform === true">Transform
                                 Values for thresholds</label>
                             <input type="text" placeholder="_value_|_value_|_value_" class="gf-form-input width-18"
-                                ng-model="pattern.transform_values" bs-tooltip="'value to be printed _value_ represent actual value; seperate by pipe symbol'"
+                                ng-model="pattern.transform_values" bs-tooltip="'value to be printed _value_ represent actual value; separate by pipe symbol'"
                                 ng-blur="ctrl.render()" data-ng-change="ctrl.render();" data-ng-if="pattern.enable_transform === true">
                             <button type="button" class="btn btn-primary btn-small" ng-click="pattern.inverseTransformValues();ctrl.render();"
                                 title="Inverse" data-ng-if="pattern.enable_transform === true">Inverse</button>
@@ -550,7 +550,7 @@
                         <div class="gr-form-inline">
                             <div class="gf-form">
                                 <label class="gf-form-label width-20">Non matching cells text</label>
-                                <input type="text" placeholder="N/A" class="gf-form-input width-18" ng-model="ctrl.panel.non_matching_cells_text" bs-tooltip="'Cell text for the non matching series. Leave blank if you dont need any text'"
+                                <input type="text" placeholder="N/A" class="gf-form-input width-18" ng-model="ctrl.panel.non_matching_cells_text" bs-tooltip="'Cell text for the non matching series. Leave blank if you don't need any text'"
                                     ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                             </div>
                         </div>
@@ -559,7 +559,7 @@
                         <div class="gr-form-inline">
                             <div class="gf-form">
                                 <label class="gf-form-label width-20">Non matching cells BG Color</label>
-                                <input type="text" placeholder="red" class="gf-form-input width-18" ng-model="ctrl.panel.non_matching_cells_color_bg" bs-tooltip="'Cell text for the non matching series. Leave blank if you dont need any text'"
+                                <input type="text" placeholder="red" class="gf-form-input width-18" ng-model="ctrl.panel.non_matching_cells_color_bg" bs-tooltip="'Cell text for the non matching series. Leave blank if you don't need any text'"
                                     ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                             </div>
                         </div>
@@ -568,7 +568,7 @@
                         <div class="gr-form-inline">
                             <div class="gf-form">
                                 <label class="gf-form-label width-20">Non matching cells Text Color</label>
-                                <input type="text" placeholder="white" class="gf-form-input width-18" ng-model="ctrl.panel.non_matching_cells_color_text" bs-tooltip="'Cell text for the non matching series. Leave blank if you dont need any text'"
+                                <input type="text" placeholder="white" class="gf-form-input width-18" ng-model="ctrl.panel.non_matching_cells_color_text" bs-tooltip="'Cell text for the non matching series. Leave blank if you don't need any text'"
                                     ng-blur="ctrl.render()" data-ng-change="ctrl.render();">
                             </div>
                         </div>
@@ -579,7 +579,7 @@
                 <div class="section gf-form-group">
                     <div class="gr-form-inline">
                         <div class="gf-form">
-                            <h6 class="text-header">Other Optons</h6>
+                            <h6 class="text-header">Other Options</h6>
                         </div>
                     </div>
                     <div class="gf-form">

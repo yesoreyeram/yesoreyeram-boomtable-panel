@@ -21,7 +21,7 @@ export class BoomOutput {
   }
 }
 BoomOutput.prototype.getDataAsHTML = function(data: IBoomTable, sorting_props): IBoomHTML {
-  let getLinkifiedColumn = function(rowName: string, first_column_link: string, raw_rowName: string): string {
+  let getColumnAsLink = function(rowName: string, first_column_link: string, raw_rowName: string): string {
     if (first_column_link !== '#') {
       first_column_link = first_column_link.replace(new RegExp('_row_name_', 'g'), getActualNameWithoutTokens(raw_rowName).trim());
       rowName = `<a href="${first_column_link}" target="_blank">${rowName}</a>`;
@@ -58,7 +58,7 @@ BoomOutput.prototype.getDataAsHTML = function(data: IBoomTable, sorting_props): 
         let raw_rowName = _.first(o.map(item => item.row_name_raw));
         output.body += `
                     <td style="padding:4px;text-align:${this.text_alignment_firstcolumn}">
-                        ${getLinkifiedColumn(_.first(o.map(item => item.row_name)), String(this.first_column_link), raw_rowName)}
+                        ${getColumnAsLink(_.first(o.map(item => item.row_name)), String(this.first_column_link), raw_rowName)}
                     </td>`;
       }
       _.each(o, item => {
@@ -85,8 +85,8 @@ BoomOutput.prototype.getDataAsHTML = function(data: IBoomTable, sorting_props): 
   return output;
 };
 BoomOutput.prototype.getDataAsDebugHTML = function(data: IBoomSeries[]): string {
-  let debugdata = ``;
-  debugdata = _.map(data, d => {
+  let debugData = ``;
+  debugData = _.map(data, d => {
     return `
         <tr>
             <td style="padding:4px;text-align:left;width:30%; title="Series Name" >${d.seriesName}</td>
@@ -102,5 +102,5 @@ BoomOutput.prototype.getDataAsDebugHTML = function(data: IBoomSeries[]): string 
         </tr>
         `;
   }).join(``);
-  return debugdata;
+  return debugData;
 };
