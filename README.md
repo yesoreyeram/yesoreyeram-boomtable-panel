@@ -6,7 +6,7 @@
 
 Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for Graphite, InfluxDB, Prometheus, Azure Monitor.
 
-![image](https://user-images.githubusercontent.com/153843/50149437-1e2a4900-02b3-11e9-94b7-7fd00eeeb3cb.png)
+![image](https://user-images.githubusercontent.com/153843/99523243-b1cc8e80-298e-11eb-9d15-81e446103864.png)
 
 
 Features :
