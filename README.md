@@ -8,7 +8,6 @@ Boom Table Panel for Grafana. Table/MultiStat plugin with multiple columns for G
 
 ![Boom Table - Sample Panel](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panel.png)
 
-![Boom Table - Panel with Font Awesome icons](https://raw.githubusercontent.com/yesoreyeram/yesoreyeram-boomtable-panel/master/dist/src/img/panels-fa.png)
 
 Features :
 ----------
