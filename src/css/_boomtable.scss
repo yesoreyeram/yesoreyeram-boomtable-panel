@@ -20,6 +20,13 @@
     }
 }
 
+#boomtable_output_body_headers th{
+    position: sticky;
+    top: 0;
+    color: rgb(51, 162, 229);
+    background-color: rgb(32, 34, 38);;
+}
+
 .boom-table .debug {
     margin-top: 30px;
 }
