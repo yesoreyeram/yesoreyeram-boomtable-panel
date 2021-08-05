@@ -53,7 +53,7 @@ BoomOutput.prototype.getDataAsHTML = function(data: IBoomTable, sorting_props): 
   }
   _.each(data.output, o => {
     if (o.map(item => item.hidden.toString()).indexOf('false') > -1) {
-      output.body += '<tr>';
+      output.body += '<tr style="white-space: nowrap">';
       if (this.hide_first_column !== true) {
         let raw_rowName = _.first(o.map(item => item.row_name_raw));
         output.body += `

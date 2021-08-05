@@ -166,7 +166,7 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     let boom_output = new BoomOutput(renderingOptions);
     this.outdata = {
       cols_found: boomtabledata.cols_found.map(col => {
-        return this.$sce.trustAsHtml(col);
+        return this.$sce.trustAsHtml(col.replace('&#10240', ''));
       }),
     };
     let renderingdata: IBoomHTML = boom_output.getDataAsHTML(boomtabledata, this.panel.sorting_props);
