@@ -108,6 +108,24 @@ export const getItemBasedOnThreshold = function (thresholds: any[], ranges: any,
   }
   return c;
 };
+
+export const getPicarroThreshold = function (picarroThresholds, species, port) {
+  let threshold = {alarm: {enabled: false, value: Infinity}, warning: {enabled: false, value: Infinity}};
+  picarroThresholds.forEach( (aSpecies) => {
+    if (aSpecies.name.toLowerCase() === species.toLowerCase()) {
+      aSpecies.ports.forEach( (thresholdPort) => {
+        if (thresholdPort.port_id.toLowerCase() === `port_${port}`) {
+          threshold = thresholdPort;
+        }
+      });
+      if (threshold === null && (aSpecies.alarm.enabled || aSpecies.warning.enabled)) {
+        threshold = aSpecies;
+      }
+    }
+  });
+  return threshold;
+};
+
 export const getMetricNameFromTaggedAlias = function (target): string {
   target = target.trim();
   let _metricname = target;

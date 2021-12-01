@@ -32,18 +32,26 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   public elem: any;
   public attrs: any;
   public $sce: any;
+  public picarroThresholds: any;
+  public port: string;
   constructor($scope, $injector, $sce) {
     super($scope, $injector);
     _.defaults(this.panel, config.panelDefaults);
+    console.log('constructor($scope, $injector, $sce)', $scope, $injector, $sce);
     this.panel.defaultPattern = this.panel.defaultPattern || defaultPattern;
     this.$sce = $sce;
     this.templateSrv = $injector.get('templateSrv');
+    // console.log('getvars', this.templateSrv.getVariables()[5].current.value);
+    console.log('getvars', this.templateSrv.getVariables());
+    console.log('this.panel', this.panel);
     this.timeSrv = $injector.get('timeSrv');
     this.updatePrototypes();
+    this.picarroThresholds = [];
     this.events.on('data-received', this.onDataReceived.bind(this));
     this.events.on('data-snapshot-load', this.onDataReceived.bind(this));
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
     this.panel.activePatternIndex = this.panel.activePatternIndex === -1 ? this.panel.patterns.length : this.panel.activePatternIndex;
+    this.port = '';
   }
   private updatePrototypes(): void {
     Object.setPrototypeOf(this.panel.defaultPattern, BoomPattern.prototype);
@@ -52,8 +60,62 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
       return pattern;
     });
   }
-  public onDataReceived(data: any): void {
+  private getPort(rxData: any) {
+    let foundPort = false;
+    rxData.forEach((datum) => {
+      if (datum.target.includes('port:')){
+        this.port = datum.target.split('port:').slice(-1)[0].split(':')[0];
+        foundPort = true;
+      }
+    });
+    if (foundPort){
+      return;
+    }
+    // console.log('getvars', this.templateSrv.getVariables());
+    const templateVars =  this.templateSrv.getVariables();
+    templateVars.forEach((templateVar) => {
+      if (templateVar.name.toLowerCase() === 'port_value_current'){
+        this.port = templateVar.current.value;
+      }
+    });
+  }
+  public async onDataReceived(data: any): Promise<any> {
+    // console.log('onDataReceived(data: any)', data);
+    this.getPort(data);
+    try {
+      if (_.isEmpty(this.picarroThresholds)) {
+        const headers = { Accept: 'application/json', 'Content-Type': 'application/json' };
+        const init = { method: 'GET', headers };
+        const response = await fetch(`http://${window.location.hostname}:${8000}/thresholds/api/v0.1/thresholds_model`, init);
+        const thresholds = await response.json();
+        this.picarroThresholds = thresholds.species;
+      }
+    } catch (e) {
+      console.log(`Unable to use thresholds: ${e}`);
+    }
+    const knownSpecies = new Set(data.map((datum) => {
+      if (datum.target.includes('crds.') && !datum.target.includes('port:')) {
+        return datum.target.split('crds.')[1].toLowerCase();
+      }
+    }).filter(el=>el));
+    const getQuerySpecies = (elStr) => {
+      return elStr.split(':').slice(-1)[0].replace('(', '').replace(')', '').split('|');
+    };
+
+    data.forEach( (datum) => {
+      if (datum.target.includes('port')){
+        const qs = getQuerySpecies(datum.target);
+        qs.forEach( (qsI) => {
+          if (!knownSpecies.has(qsI.toLowerCase()) ){
+            datum.target = `crds.${qsI}`;
+            datum.alias = `crds.${qsI}`;
+          }
+        });
+      }
+    });
+    // console.log('dataafter', data);
     this.dataReceived = data;
+    this.render();
     this.render();
   }
   public onInitEditMode(): void {
@@ -146,7 +208,9 @@ GrafanaBoomTableCtrl.prototype.render = function () {
         seriesOptions,
         this.panel.scopedVars,
         this.templateSrv,
-        this.timeSrv
+        this.timeSrv,
+        this.picarroThresholds,
+        this.port,
       );
     });
     let boomTableTransformationOptions: IBoomTableTransformationOptions = {

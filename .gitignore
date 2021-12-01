@@ -1,6 +1,6 @@
 node_modules/
 package-lock.json
-.tscache/
+r.tscache/
 *.tmp.txt
 dist/
 coverage/

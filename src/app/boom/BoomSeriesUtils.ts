@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { getItemBasedOnThreshold, normalizeColor, replace_tags_from_field } from './index';
 import { get_formatted_value } from '../GrafanaUtils';
 import { IBoomPattern } from './Boom.interface';
+import {getPicarroThreshold} from "./BoomUtils";
 
 export let getBGColor = function(
   value: number,
@@ -40,24 +41,40 @@ export let getTextColor = function(
   pattern: IBoomPattern,
   thresholds,
   list_of_textColors_based_on_thresholds: string,
-  txtColorOverrides: string[]
+  txtColorOverrides: string[],
+  picarroThresholds: any,
+  port: string,
 ): string {
+  let species = '';
+  if (pattern.pattern.includes('.') && pattern.pattern.includes('\\b')){
+    species = pattern.pattern.split('.').slice(-1)[0].split('\\b')[0];
+  }
   let textColor = document.body.classList.contains('theme-light') ? 'black' : 'white';
   if (_.isNaN(value) || value === null) {
     textColor = pattern.null_textcolor || textColor;
   } else {
     textColor = pattern.defaultTextColor || textColor;
-    if (pattern.enable_textColor && pattern.textColors) {
-      textColor = getItemBasedOnThreshold(thresholds, list_of_textColors_based_on_thresholds, value, textColor);
-    }
-    if (pattern.enable_textColor_overrides && pattern.textColors_overrides !== '') {
-      let _textColors_overrides = txtColorOverrides
-        .filter(con => con.indexOf('->'))
-        .map(con => con.split('->'))
-        .filter(con => +con[0] === value)
-        .map(con => con[1]);
-      if (_textColors_overrides.length > 0 && _textColors_overrides[0] !== '') {
-        textColor = ('' + _textColors_overrides[0]).trim();
+    console.log('species', species, 'port', port, 'pattern', pattern.pattern);
+    if (port !== '' && !_.isEmpty(picarroThresholds) && species !== '') {
+      const threshold = getPicarroThreshold(picarroThresholds, species, port);
+      if (threshold.alarm.enabled && (value > threshold.alarm.value)) {
+        textColor = 'red';
+      } else if (threshold.warning.enabled && (value > threshold.warning.value)) {
+        textColor = 'orange';
+      }
+    } else {
+      if (pattern.enable_textColor && pattern.textColors) {
+        textColor = getItemBasedOnThreshold(thresholds, list_of_textColors_based_on_thresholds, value, textColor);
+      }
+      if (pattern.enable_textColor_overrides && pattern.textColors_overrides !== '') {
+        let _textColors_overrides = txtColorOverrides
+            .filter(con => con.indexOf('->'))
+            .map(con => con.split('->'))
+            .filter(con => +con[0] === value)
+            .map(con => con[1]);
+        if (_textColors_overrides.length > 0 && _textColors_overrides[0] !== '') {
+          textColor = ('' + _textColors_overrides[0]).trim();
+        }
       }
     }
   }

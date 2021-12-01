@@ -32,7 +32,7 @@ class BoomSeries implements IBoomSeries {
     public _metricname = "";
     public _tags: any[] = [];
 
-    constructor(seriesData: any, panelDefaultPattern: any, panelPatterns: any[], options: any, scopedVars: any, templateSrv: any, timeSrv: any) {
+    constructor(seriesData: any, panelDefaultPattern: any, panelPatterns: any[], options: any, scopedVars: any, templateSrv: any, timeSrv: any, picarroThresholds: any, port: any) {
 
         let series = new TimeSeries({
             alias: seriesData.target,
@@ -62,7 +62,7 @@ class BoomSeries implements IBoomSeries {
 
         this.thresholds = getThresholds(templateSrv.replace(this.pattern.thresholds, scopedVars).split(",").map(d => +d), this.pattern.enable_time_based_thresholds, this.pattern.time_based_thresholds, this.currentTimeStamp);
         this.color_bg = getBGColor(this.value, this.pattern, this.thresholds, templateSrv.replace(this.pattern.bgColors, scopedVars).split("|"), templateSrv.replace(this.pattern.bgColors_overrides, scopedVars).split("|"));
-        this.color_text = getTextColor(this.value, this.pattern, this.thresholds, templateSrv.replace(this.pattern.textColors, scopedVars).split("|"), templateSrv.replace(this.pattern.textColors_overrides, scopedVars).split("|"));
+        this.color_text = getTextColor(this.value, this.pattern, this.thresholds, templateSrv.replace(this.pattern.textColors, scopedVars).split("|"), templateSrv.replace(this.pattern.textColors_overrides, scopedVars).split("|"), picarroThresholds, port);
         this.template_value = getDisplayValueTemplate(this.value, this.pattern, this.seriesName, this.row_col_wrapper, this.thresholds);
 
         this.link = getLink(this.pattern.enable_clickable_cells, this.pattern.clickable_cells_link, timeSrv.timeRangeForUrl());
@@ -86,6 +86,7 @@ class BoomSeries implements IBoomSeries {
 
         this.tooltip = templateSrv.replace(this.tooltip, scopedVars);
         this.link = templateSrv.replace(this.link, scopedVars);
+
 
         if (this.debug_mode !== true) {
             delete this.seriesName;
