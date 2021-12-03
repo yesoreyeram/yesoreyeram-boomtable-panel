@@ -43,10 +43,15 @@ export let getTextColor = function(
   list_of_textColors_based_on_thresholds: string,
   txtColorOverrides: string[],
   picarroThresholds: any,
-  port: string,
+  port: number,
 ): string {
   let species = '';
-  if (pattern.pattern.includes('.') && pattern.pattern.includes('\\b')){
+  // console.log('pattern.pattern', pattern.pattern);
+  if (pattern.pattern.includes('crds\\\.') && pattern.pattern.includes(' \.valve_pos:')){
+    // example crds\.H2S .valve_pos: 2\b
+    const stage1 = pattern.pattern.split('crds\\\.')[1];
+    species = stage1.split(' \.valve_pos')[0];
+  } else if (pattern.pattern.includes('.') && pattern.pattern.includes('\\b')) {
     species = pattern.pattern.split('.').slice(-1)[0].split('\\b')[0];
   }
   let textColor = document.body.classList.contains('theme-light') ? 'black' : 'white';
@@ -54,8 +59,8 @@ export let getTextColor = function(
     textColor = pattern.null_textcolor || textColor;
   } else {
     textColor = pattern.defaultTextColor || textColor;
-    console.log('species', species, 'port', port, 'pattern', pattern.pattern);
-    if (port !== '' && !_.isEmpty(picarroThresholds) && species !== '') {
+
+    if (port !== Infinity && !_.isEmpty(picarroThresholds) && species !== '') {
       const threshold = getPicarroThreshold(picarroThresholds, species, port);
       if (threshold.alarm.enabled && (value > threshold.alarm.value)) {
         textColor = 'red';

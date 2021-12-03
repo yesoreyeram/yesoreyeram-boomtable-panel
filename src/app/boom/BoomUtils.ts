@@ -109,12 +109,15 @@ export const getItemBasedOnThreshold = function (thresholds: any[], ranges: any,
   return c;
 };
 
-export const getPicarroThreshold = function (picarroThresholds, species, port) {
+export const getPicarroThreshold = function (picarroThresholds, knownSpecies, port: number) {
   let threshold = {alarm: {enabled: false, value: Infinity}, warning: {enabled: false, value: Infinity}};
   picarroThresholds.forEach( (aSpecies) => {
-    if (aSpecies.name.toLowerCase() === species.toLowerCase()) {
+    if (aSpecies.name.toLowerCase() === knownSpecies.toLowerCase()) {
       aSpecies.ports.forEach( (thresholdPort) => {
-        if (thresholdPort.port_id.toLowerCase() === `port_${port}`) {
+        // if (aSpecies.name.toLowerCase() === 'acetic_acid') {
+        //   console.log('actic', aSpecies, aSpecies.ports, thresholdPort.port_id === port, thresholdPort.port_id , port);
+        // }
+        if (thresholdPort.port_id === port) {
           threshold = thresholdPort;
         }
       });

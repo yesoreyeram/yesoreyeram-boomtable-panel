@@ -33,7 +33,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   public attrs: any;
   public $sce: any;
   public picarroThresholds: any;
-  public port: string;
+  public port: number;
   constructor($scope, $injector, $sce) {
     super($scope, $injector);
     _.defaults(this.panel, config.panelDefaults);
@@ -51,7 +51,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     this.events.on('data-snapshot-load', this.onDataReceived.bind(this));
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
     this.panel.activePatternIndex = this.panel.activePatternIndex === -1 ? this.panel.patterns.length : this.panel.activePatternIndex;
-    this.port = '';
+    this.port = Infinity;
   }
   private updatePrototypes(): void {
     Object.setPrototypeOf(this.panel.defaultPattern, BoomPattern.prototype);
@@ -61,43 +61,46 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     });
   }
   private getPort(rxData: any) {
-    let foundPort = false;
-    rxData.forEach((datum) => {
+    const foundPort = rxData.some((datum) => {
       if (datum.target.includes('port:')){
-        this.port = datum.target.split('port:').slice(-1)[0].split(':')[0];
-        foundPort = true;
+        this.port = Number(datum.target.split('port:').slice(-1)[0].split(':')[0]);
+        return true;
+      } else if (datum.target.includes('{valve_pos: ') && datum.target.includes('}')){
+        // example { target: "crds.SO2 {valve_pos: 2}", ... }
+        const stage1 = datum.target.split('{valve_pos: ').slice(-1)[0];
+        this.port = Number(stage1.split('}')[0]);
+        return true;
       }
+      return false;
     });
+    console.log('port try 1', this.port);
+    console.log('sample data', rxData);
     if (foundPort){
       return;
     }
-    // console.log('getvars', this.templateSrv.getVariables());
     const templateVars =  this.templateSrv.getVariables();
     templateVars.forEach((templateVar) => {
       if (templateVar.name.toLowerCase() === 'port_value_current'){
-        this.port = templateVar.current.value;
+        this.port = Number(templateVar.current.value);
       }
     });
+    // console.log('port try 2', this.port);
+    // console.log('sample data', templateVars);
   }
-  public async onDataReceived(data: any): Promise<any> {
-    // console.log('onDataReceived(data: any)', data);
+  public onDataReceived(data: any) {
+    console.log('onDataReceived(data: any)', data);
     this.getPort(data);
-    try {
-      if (_.isEmpty(this.picarroThresholds)) {
-        const headers = { Accept: 'application/json', 'Content-Type': 'application/json' };
-        const init = { method: 'GET', headers };
-        const response = await fetch(`http://${window.location.hostname}:${8000}/thresholds/api/v0.1/thresholds_model`, init);
-        const thresholds = await response.json();
-        this.picarroThresholds = thresholds.species;
-      }
-    } catch (e) {
-      console.log(`Unable to use thresholds: ${e}`);
-    }
     const knownSpecies = new Set(data.map((datum) => {
       if (datum.target.includes('crds.') && !datum.target.includes('port:')) {
-        return datum.target.split('crds.')[1].toLowerCase();
+        const aKnownSpecies = datum.target.split('crds.')[1].toLowerCase();
+        if (aKnownSpecies.includes(' {valve_pos: ') && aKnownSpecies.includes('}')) {
+          return aKnownSpecies.split(' {valve_pos: ')[0];
+        }
+        console.log('aKnownSpecies', aKnownSpecies);
+        return aKnownSpecies;
       }
     }).filter(el=>el));
+    console.log('knownSpecies', knownSpecies);
     const getQuerySpecies = (elStr) => {
       return elStr.split(':').slice(-1)[0].replace('(', '').replace(')', '').split('|');
     };
@@ -113,9 +116,21 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
         });
       }
     });
-    // console.log('dataafter', data);
     this.dataReceived = data;
-    this.render();
+    try {
+      if (_.isEmpty(this.picarroThresholds)) {
+        const headers = { Accept: 'application/json', 'Content-Type': 'application/json' };
+        const init = { method: 'GET', headers };
+        fetch(`http://${window.location.hostname}:${8000}/thresholds/api/v0.1/thresholds_model`, init).then((response) => {
+          response.json().then(j => {
+            this.picarroThresholds = j.species;
+            this.render();
+          });
+        });
+      }
+    } catch (e) {
+      console.log(`Unable to use thresholds: ${e}`);
+    }
     this.render();
   }
   public onInitEditMode(): void {

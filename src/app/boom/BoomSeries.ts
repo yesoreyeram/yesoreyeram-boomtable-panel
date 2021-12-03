@@ -32,7 +32,7 @@ class BoomSeries implements IBoomSeries {
     public _metricname = "";
     public _tags: any[] = [];
 
-    constructor(seriesData: any, panelDefaultPattern: any, panelPatterns: any[], options: any, scopedVars: any, templateSrv: any, timeSrv: any, picarroThresholds: any, port: any) {
+    constructor(seriesData: any, panelDefaultPattern: any, panelPatterns: any[], options: any, scopedVars: any, templateSrv: any, timeSrv: any, picarroThresholds: any, port: number) {
 
         let series = new TimeSeries({
             alias: seriesData.target,
