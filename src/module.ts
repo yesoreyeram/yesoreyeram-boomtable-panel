@@ -37,13 +37,9 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   constructor($scope, $injector, $sce) {
     super($scope, $injector);
     _.defaults(this.panel, config.panelDefaults);
-    console.log('constructor($scope, $injector, $sce)', $scope, $injector, $sce);
     this.panel.defaultPattern = this.panel.defaultPattern || defaultPattern;
     this.$sce = $sce;
     this.templateSrv = $injector.get('templateSrv');
-    // console.log('getvars', this.templateSrv.getVariables()[5].current.value);
-    console.log('getvars', this.templateSrv.getVariables());
-    console.log('this.panel', this.panel);
     this.timeSrv = $injector.get('timeSrv');
     this.updatePrototypes();
     this.picarroThresholds = [];
@@ -62,19 +58,20 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
   }
   private getPort(rxData: any) {
     const foundPort = rxData.some((datum) => {
-      if (datum.target.includes('port:')){
-        this.port = Number(datum.target.split('port:').slice(-1)[0].split(':')[0]);
-        return true;
-      } else if (datum.target.includes('{valve_pos: ') && datum.target.includes('}')){
-        // example { target: "crds.SO2 {valve_pos: 2}", ... }
-        const stage1 = datum.target.split('{valve_pos: ').slice(-1)[0];
-        this.port = Number(stage1.split('}')[0]);
+      if (datum.target.includes('Numerical View}')){
+        this.port = Number(datum.target.split('Numerical View}').slice(-1)[0].split(' ').slice(-1)[0]);
         return true;
       }
+      // else if (datum.target.includes('{valve_pos: ') && datum.target.includes('}')){
+      //   // example { target: "crds.SO2 {valve_pos: 2}", ... }
+      //   const stage1 = datum.target.split('{valve_pos: ').slice(-1)[0];
+      //   this.port = Number(stage1.split('}')[0]);
+      //   return true;
+      // }
       return false;
     });
-    console.log('port try 1', this.port);
-    console.log('sample data', rxData);
+    // console.log('port try 1', this.port);
+    // console.log('sample data', rxData);
     if (foundPort){
       return;
     }
@@ -88,7 +85,6 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     // console.log('sample data', templateVars);
   }
   public onDataReceived(data: any) {
-    console.log('onDataReceived(data: any)', data);
     this.getPort(data);
     const knownSpecies = new Set(data.map((datum) => {
       if (datum.target.includes('crds.') && !datum.target.includes('port:')) {
@@ -96,11 +92,9 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
         if (aKnownSpecies.includes(' {valve_pos: ') && aKnownSpecies.includes('}')) {
           return aKnownSpecies.split(' {valve_pos: ')[0];
         }
-        console.log('aKnownSpecies', aKnownSpecies);
         return aKnownSpecies;
       }
     }).filter(el=>el));
-    console.log('knownSpecies', knownSpecies);
     const getQuerySpecies = (elStr) => {
       return elStr.split(':').slice(-1)[0].replace('(', '').replace(')', '').split('|');
     };
@@ -116,7 +110,7 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
         });
       }
     });
-    this.dataReceived = data;
+    this.dataReceived = data.filter((datum) => !datum.target.includes('Numerical View}'));
     try {
       if (_.isEmpty(this.picarroThresholds)) {
         const headers = { Accept: 'application/json', 'Content-Type': 'application/json' };

@@ -46,11 +46,16 @@ export let getTextColor = function(
   port: number,
 ): string {
   let species = '';
+  let portAlternative = Infinity;
   // console.log('pattern.pattern', pattern.pattern);
   if (pattern.pattern.includes('crds\\\.') && pattern.pattern.includes(' \.valve_pos:')){
     // example crds\.H2S .valve_pos: 2\b
     const stage1 = pattern.pattern.split('crds\\\.')[1];
     species = stage1.split(' \.valve_pos')[0];
+    if (port === Infinity) {
+      const stage3 = pattern.pattern.split('\.valve_pos ').slice(-1)[0];
+      portAlternative = Number(stage3.split('\b')[0]);
+    }
   } else if (pattern.pattern.includes('.') && pattern.pattern.includes('\\b')) {
     species = pattern.pattern.split('.').slice(-1)[0].split('\\b')[0];
   }
@@ -60,8 +65,8 @@ export let getTextColor = function(
   } else {
     textColor = pattern.defaultTextColor || textColor;
 
-    if (port !== Infinity && !_.isEmpty(picarroThresholds) && species !== '') {
-      const threshold = getPicarroThreshold(picarroThresholds, species, port);
+    if ( (port !== Infinity || portAlternative !== Infinity) && !_.isEmpty(picarroThresholds) && species !== '') {
+      const threshold = getPicarroThreshold(picarroThresholds, species, port === Infinity ? portAlternative : port);
       if (threshold.alarm.enabled && (value > threshold.alarm.value)) {
         textColor = 'red';
       } else if (threshold.warning.enabled && (value > threshold.warning.value)) {
