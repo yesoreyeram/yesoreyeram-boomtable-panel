@@ -1,3 +1,32 @@
+/* Limit scroll container to the leftover height below the debug message */
+.boom-table {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.boom-table .debug {
+    flex-shrink: 0;
+}
+.boom-table .table-panel-scroll {
+    overflow: auto;
+    max-height: 100%;
+}
+
+/* Debug mode */
+.boom-table .debug {
+    padding: 10px;
+}
+.boom-table .debug table tr {
+    border: 2px solid red;
+}
+.boom-table .debug table th {
+    text-align: center;
+}
+
+.boom-table th {
+    padding: 4px;
+}
+
 .boom-table {
     .mini-split {
         margin-right: 10px;
@@ -20,16 +49,8 @@
     }
 }
 
-.boom-table .debug {
-    margin-top: 30px;
-}
-
 .boom-table .boom-label {
     padding-left: 10px;
-}
-
-.boom-table .debug table tr {
-    border: 2px solid red;
 }
 
 .boom-table .inline-form-control {

@@ -108,17 +108,6 @@ class GrafanaBoomTableCtrl extends MetricsPanelCtrl {
     }
     return text;
   }
-  public adjustScrollBar(): void {
-    let rootElem = this.elem.find('.table-panel-scroll');
-    let originalHeight = this.ctrl.height;
-    if (isNaN(originalHeight)) {
-      if (this.ctrl && this.ctrl.elem && this.ctrl.elem[0] && this.ctrl.elem[0].clientHeight) {
-        originalHeight = this.ctrl.elem[0].clientHeight;
-      }
-    }
-    let maxheightofpanel = this.panel.debug_mode ? originalHeight - 111 : originalHeight - 31;
-    rootElem.css({ 'max-height': maxheightofpanel + 'px' });
-  }
   public link(scope: any, elem: any, attrs: any, ctrl: any): void {
     this.scope = scope;
     this.elem = elem;
@@ -175,7 +164,6 @@ GrafanaBoomTableCtrl.prototype.render = function () {
     this.elem.find("[data-toggle='tooltip']").tooltip({
       boundary: 'scrollParent',
     });
-    this.adjustScrollBar();
     this.renderingCompleted();
   }
 };
