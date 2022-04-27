@@ -33,7 +33,7 @@
     "@types/jest": "^23.3.10",
     "@types/lodash": "^4.14.119",
     "grafana-sdk-mocks": "github:grafana/grafana-sdk-mocks",
-    "grunt": "^1.0.3",
+    "grunt": "^1.5.2",
     "grunt-contrib-clean": "^2.0.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-watch": "^1.1.0",
