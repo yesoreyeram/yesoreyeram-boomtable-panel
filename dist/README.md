@@ -1,3 +1,9 @@
+# :warning: DEPRECATION
+
+Grafana Boom Table Panel was created during early Grafana days to add some kind of transformations support for the Graphite and other timeseries databases. Given that now grafana have native transformations, I would recommend using Grafana Table Panel + Grafana transformations to achieve the equivalent. Also, it is now the time to archive this repository due to no maintenance.
+
+Thank you community for the support. This plugin will be removed/archived from the grafana plugin catalog. Existing installations should continue to work. If that doesn't work, reach out to [community.grafana.com](https://community.grafana.com) for support. You can also download old binaries from [releases page](https://github.com/yesoreyeram/yesoreyeram-boomtable-panel/releases).
+
 # Boom Table Panel for Grafana
 
 [![Build](https://github.com/yesoreyeram/yesoreyeram-boomtable-panel/workflows/Test%20&%20Build/badge.svg)](https://github.com/yesoreyeram/yesoreyeram-boomtable-panel/actions?query=workflow%3A%22Build+%26+Publish%22)

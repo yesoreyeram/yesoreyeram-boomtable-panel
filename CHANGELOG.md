@@ -2,6 +2,7 @@
 
 | Version            | Changes   |
 | -------------------|-----------|
+| 1.6.0              | Plugin deprecated |
 | 1.5.0              | Plugin signed for use |
 | 1.4.0              | Pipeline updates |
 | 1.3.1              | Tags for prometheus and influxdb (EXPERIMENTAL FEATURE) |
